@@ -1,3 +1,4 @@
+from arte import personaje, etiqueta
 # Importamos pygame
 import pygame
 
@@ -111,46 +112,12 @@ class Enemigo:
     # DIBUJAR
     # -----------------------------------
 
-    def dibujar(
-        self,
-        ventana
-    ):
-
-        # Solo dibujamos
-        # enemigos vivos.
-        if self.vivo == True:
-
-            # Dibujamos enemigo.
-            pygame.draw.rect(
-                ventana,
-                ROJO,
-                self.rectangulo
-            )
-
-
-            # Fuente.
-            fuente = pygame.font.SysFont(
-                "Consolas",
-                18,
-                bold=True
-            )
-
-
-            # Nombre.
-            texto = fuente.render(
-                self.nombre,
-                True,
-                BLANCO
-            )
-
-
-            ventana.blit(
-                texto,
-                (
-                    self.rectangulo.x - 30,
-                    self.rectangulo.y - 25
-                )
-            )
+    def dibujar(self, ventana):
+        if self.vivo:
+            # Diego: cada enemigo tiene una apariencia distinta, sin alterar su zona.
+            tipo = "policia" if "Policia" in self.nombre else "corredor"
+            personaje(ventana, self.rectangulo, tipo)
+            etiqueta(ventana, self.nombre, (self.rectangulo.centerx, self.rectangulo.top - 30), (235, 145, 123))
 
 
 # ===================================

@@ -1,3 +1,4 @@
+from arte import objeto as dibujar_objeto
 # Importamos pygame
 import pygame
 
@@ -63,16 +64,9 @@ class Objeto:
     # -----------------------------------
 
     def dibujar(self, ventana):
-
-        # Solo se dibuja mientras
-        # no haya sido recogido.
-        if self.recogido == False:
-
-            pygame.draw.rect(
-                ventana,
-                self.color,
-                self.rectangulo
-            )
+        if not self.recogido:
+            # Diego: iconos reconocibles para medicina, pistola y munición.
+            dibujar_objeto(ventana, self.rectangulo, self.nombre)
 
 
     # -----------------------------------

@@ -1,564 +1,172 @@
-# Importamos random
-# para utilizar probabilidades.
+"""Autómata del combate por turnos, independiente de los dibujos."""
 import random
+import pygame
 
-
-# -----------------------------------
-# CLASE COMBATE
-# -----------------------------------
 
 class Combate:
+    # Diego: cada acción y respuesta ocupa una fase visible, en lugar de resolver
+    # todo en una pulsación. Esto permite seguir el autómata durante la batalla.
+    DURACION_ACCION = 850
+    DURACION_RESPUESTA = 1000
 
     def __init__(self):
-
-        # Indica si actualmente
-        # existe un combate.
         self.activo = False
-
-        # Estado actual del
-        # autómata de combate.
         self.estado = "SIN_COMBATE"
-
-        # Aquí guardaremos al enemigo.
         self.enemigo = None
-
-        # Mensaje que aparecerá
-        # durante el combate.
         self.mensaje = ""
-
-        # Aquí mostraremos la transición
-        # que realizó el autómata.
         self.transicion = ""
+        self.historial = []
+        self.opcion = 0
+        self.turno = 1
+        self.inicio_fase = 0
+        self.accion_actual = ""
+        self.resultado_actual = ""
+        self.objetivo_animacion = ""
+        self.dano_animacion = 0
+        self.vida_visible_jugador = 100.0
+        self.vida_visible_enemigo = 0.0
 
+    def _registrar(self, texto):
+        self.transicion = texto
+        self.historial.append(texto)
+        self.historial = self.historial[-12:]
 
-    # -----------------------------------
-    # INICIAR COMBATE
-    # -----------------------------------
-
-    def iniciar(self, enemigo):
-
-        # Solamente iniciamos el combate
-        # si el enemigo sigue vivo.
-        if enemigo.vivo == True:
-
-            self.activo = True
-
-            self.enemigo = enemigo
-
-            self.estado = "ELEGIR_ACCION"
-
-            self.mensaje = (
-                "El combate ha comenzado."
-            )
-
-            self.transicion = (
-                "INICIO -> ELEGIR_ACCION"
-            )
-
-
-    # ===================================
-    # ATAQUE CUERPO A CUERPO
-    # ===================================
-
-    def golpear(
-        self,
-        jugador
-    ):
-
-        # Solo podemos atacar cuando
-        # estamos en ELEGIR_ACCION.
-        if self.estado != "ELEGIR_ACCION":
-
+    def iniciar(self, enemigo, jugador=None):
+        if self.activo or not enemigo.vivo:
             return
+        self.enemigo = enemigo
+        self.activo = True
+        self.estado = "ELEGIR_ACCION"
+        self.opcion = 0
+        self.turno = 1
+        self.historial = []
+        self.objetivo_animacion = ""
+        self.dano_animacion = 0
+        self.vida_visible_enemigo = float(enemigo.vida)
+        self.vida_visible_jugador = float(jugador.vida if jugador else 100)
+        self.inicio_fase = pygame.time.get_ticks()
+        self.mensaje = f"¡{enemigo.nombre} bloquea el paso! Elige tu acción."
+        self._registrar("INICIO -> ELEGIR_ACCION")
 
+    def elegir_accion(self, opcion, jugador, inventario):
+        if self.estado != "ELEGIR_ACCION":
+            return
+        self.opcion = opcion
+        if opcion == 0:
+            self.golpear(jugador)
+        elif opcion == 1:
+            self.disparar(jugador, inventario)
+        elif opcion == 2:
+            self.defender(jugador)
 
-        # Cambiamos de estado.
-        self.estado = "ATACANDO"
+    def _iniciar_accion(self, accion, estado, resultado, dano, mensaje):
+        self.accion_actual = accion
+        self.resultado_actual = resultado
+        self.estado = estado
+        self.inicio_fase = pygame.time.get_ticks()
+        self.objetivo_animacion = "enemigo" if accion != "DEFENDER" else "escudo"
+        self.dano_animacion = dano
+        self.mensaje = mensaje
+        self._registrar(f"ELEGIR_ACCION -> {estado} -> {resultado}")
 
-
-        # Número aleatorio entre 1 y 100.
-        numero = random.randint(
-            1,
-            100
-        )
-
-
-        # -----------------------------------
-        # CRÍTICO
-        # -----------------------------------
-
-        # 20% de probabilidad.
+    def golpear(self, jugador):
+        if self.estado != "ELEGIR_ACCION":
+            return
+        numero = random.randint(1, 100)
+        # Conservamos las probabilidades originales: 20% crítico, 65% normal.
         if numero <= 20:
-
-            dano = 20
-
-            resultado = "CRITICO"
-
-
-            self.enemigo.recibir_dano(
-                dano
-            )
-
-
-            self.mensaje = (
-                "Golpe critico. "
-                "Causaste 20 de dano."
-            )
-
-
-        # -----------------------------------
-        # GOLPE NORMAL
-        # -----------------------------------
-
-        # 65% de probabilidad.
+            dano, resultado = 20, "CRITICO"
+            mensaje = "¡Golpe crítico! Causaste 20 de daño."
         elif numero <= 85:
-
-            dano = 10
-
-            resultado = "GOLPE_NORMAL"
-
-
-            self.enemigo.recibir_dano(
-                dano
-            )
-
-
-            self.mensaje = (
-                "Golpe normal. "
-                "Causaste 10 de dano."
-            )
-
-
-        # -----------------------------------
-        # FALLO
-        # -----------------------------------
-
-        # 15% de probabilidad.
+            dano, resultado = 10, "GOLPE_NORMAL"
+            mensaje = "Tu golpe causa 10 de daño."
         else:
+            dano, resultado = 0, "FALLO"
+            mensaje = "El enemigo evitó tu golpe."
+        self.enemigo.recibir_dano(dano)
+        self._iniciar_accion("GOLPEAR", "ATACANDO", resultado, dano, mensaje)
 
-            dano = 0
-
-            resultado = "FALLO"
-
-
-            self.mensaje = (
-                "Tu golpe ha fallado."
-            )
-
-
-        # Revisamos si derrotamos
-        # al enemigo.
-        if self.enemigo.vivo == False:
-
-            self.estado = "VICTORIA"
-
-            self.transicion = (
-                "ELEGIR_ACCION -> "
-                "GOLPEAR -> "
-                + resultado
-                + " -> VICTORIA"
-            )
-
-
-            self.mensaje = (
-                "Has derrotado al zombi."
-            )
-
-
-            return
-
-
-        # Si sigue vivo,
-        # juega el enemigo.
-        self.turno_enemigo(
-            jugador,
-            "GOLPEAR",
-            resultado
-        )
-
-
-    # ===================================
-    # DISPARAR
-    # ===================================
-
-    def disparar(
-        self,
-        jugador,
-        inventario
-    ):
-
-        # Solamente podemos disparar
-        # en este estado.
+    def disparar(self, jugador, inventario):
         if self.estado != "ELEGIR_ACCION":
-
             return
-
-
-        # -----------------------------------
-        # REVISAR PISTOLA
-        # -----------------------------------
-
-        if inventario.tiene(
-            "Pistola"
-        ) == False:
-
-            self.mensaje = (
-                "No tienes una pistola."
-            )
-
+        # Diego: intentar disparar sin recursos no consume turno ni munición.
+        if not inventario.tiene("Pistola"):
+            self.mensaje = "Necesitas una pistola. Puedes golpear o defenderte."
             return
-
-
-        # -----------------------------------
-        # REVISAR MUNICIÓN
-        # -----------------------------------
-
-        if inventario.tiene(
-            "Balas"
-        ) == False:
-
-            self.mensaje = (
-                "No tienes balas."
-            )
-
+        if not inventario.tiene("Balas"):
+            self.mensaje = "No quedan balas. Puedes golpear o defenderte."
             return
-
-
-        # -----------------------------------
-        # GASTAR UNA BALA
-        # -----------------------------------
-
-        inventario.usar(
-            "Balas",
-            1
-        )
-
-
-        # Cambiamos de estado.
-        self.estado = "DISPARANDO"
-
-
-        # Número aleatorio.
-        numero = random.randint(
-            1,
-            100
-        )
-
-
-        # -----------------------------------
-        # DISPARO CRÍTICO
-        # -----------------------------------
-
-        # 30% de probabilidad.
+        inventario.usar("Balas", 1)
+        numero = random.randint(1, 100)
         if numero <= 30:
-
-            dano = 30
-
-            resultado = "CRITICO"
-
-
-            self.enemigo.recibir_dano(
-                dano
-            )
-
-
-            self.mensaje = (
-                "Disparo critico. "
-                "Causaste 30 de dano."
-            )
-
-
-        # -----------------------------------
-        # DISPARO NORMAL
-        # -----------------------------------
-
-        # 60% de probabilidad.
+            dano, resultado = 30, "CRITICO"
+            mensaje = "¡Disparo crítico! Causaste 30 de daño."
         elif numero <= 90:
-
-            dano = 20
-
-            resultado = "IMPACTO"
-
-
-            self.enemigo.recibir_dano(
-                dano
-            )
-
-
-            self.mensaje = (
-                "El disparo impacto. "
-                "Causaste 20 de dano."
-            )
-
-
-        # -----------------------------------
-        # DISPARO FALLIDO
-        # -----------------------------------
-
-        # 10% de probabilidad.
+            dano, resultado = 20, "IMPACTO"
+            mensaje = "El disparo impacta. Causaste 20 de daño."
         else:
+            dano, resultado = 0, "FALLO"
+            mensaje = "El disparo falló. Perdiste una bala."
+        self.enemigo.recibir_dano(dano)
+        self._iniciar_accion("DISPARAR", "DISPARANDO", resultado, dano, mensaje)
 
-            dano = 0
+    def defender(self, jugador):
+        if self.estado == "ELEGIR_ACCION":
+            self._iniciar_accion("DEFENDER", "DEFENDIENDO", "GUARDIA", 0,
+                                "Te pones en guardia. El próximo golpe hará menos daño.")
 
-            resultado = "FALLO"
-
-
-            self.mensaje = (
-                "El disparo ha fallado."
-            )
-
-
-        # -----------------------------------
-        # REVISAR VICTORIA
-        # -----------------------------------
-
-        if self.enemigo.vivo == False:
-
-            self.estado = "VICTORIA"
-
-
-            self.transicion = (
-                "ELEGIR_ACCION -> "
-                "DISPARAR -> "
-                + resultado
-                + " -> VICTORIA"
-            )
-
-
-            self.mensaje = (
-                "Has derrotado al zombi."
-            )
-
-
-            return
-
-
-        # Turno del enemigo.
-        self.turno_enemigo(
-            jugador,
-            "DISPARAR",
-            resultado
-        )
-
-
-    # ===================================
-    # DEFENDER
-    # ===================================
-
-    def defender(
-        self,
-        jugador
-    ):
-
-        if self.estado != "ELEGIR_ACCION":
-
-            return
-
-
-        # Cambiamos de estado.
-        self.estado = "DEFENDIENDO"
-
-
-        # Número aleatorio.
-        numero = random.randint(
-            1,
-            100
-        )
-
-
-        # -----------------------------------
-        # ESQUIVE
-        # -----------------------------------
-
-        # 30% de probabilidad.
-        if numero <= 30:
-
-            self.mensaje = (
-                "Esquivaste completamente "
-                "el ataque."
-            )
-
-
-            self.transicion = (
-                "ELEGIR_ACCION -> "
-                "DEFENDER -> "
-                "ESQUIVE -> "
-                "ELEGIR_ACCION"
-            )
-
-
-        # -----------------------------------
-        # BLOQUEO
-        # -----------------------------------
-
-        else:
-
-            # Al defendernos solamente
-            # recibimos la mitad del daño.
-            dano_reducido = int(
-                self.enemigo.danio / 2
-            )
-
-
-            jugador.recibir_dano(
-                dano_reducido
-            )
-
-
-            self.mensaje = (
-                "Bloqueaste parte del ataque. "
-                "Recibiste "
-                + str(dano_reducido)
-                + " de dano."
-            )
-
-
-            self.transicion = (
-                "ELEGIR_ACCION -> "
-                "DEFENDER -> "
-                "BLOQUEO -> "
-                "ELEGIR_ACCION"
-            )
-
-
-        # -----------------------------------
-        # REVISAR DERROTA
-        # -----------------------------------
-
-        if jugador.esta_vivo() == False:
-
-            self.estado = "DERROTA"
-
-
-            self.transicion = (
-                "DEFENDER -> DERROTA"
-            )
-
-
-            self.mensaje = (
-                "Has sido derrotado."
-            )
-
-
-        else:
-
-            self.estado = "ELEGIR_ACCION"
-
-
-    # ===================================
-    # TURNO DEL ENEMIGO
-    # ===================================
-
-    def turno_enemigo(
-        self,
-        jugador,
-        accion_jugador,
-        resultado_jugador
-    ):
-
-        # Cambiamos de estado.
+    def turno_enemigo(self, jugador, accion_jugador, resultado_jugador):
         self.estado = "TURNO_ENEMIGO"
-
-
-        # Generamos probabilidad.
-        numero = random.randint(
-            1,
-            100
-        )
-
-
-        # -----------------------------------
-        # JUGADOR ESQUIVA
-        # -----------------------------------
-
-        # 30% de probabilidad.
-        if numero <= 30:
-
-            self.mensaje = (
-                self.mensaje
-                + " El zombi ataco, "
-                + "pero lograste esquivar."
-            )
-
-
-            self.transicion = (
-                "ELEGIR_ACCION -> "
-                + accion_jugador
-                + " -> "
-                + resultado_jugador
-                + " -> TURNO_ENEMIGO"
-                + " -> ESQUIVE"
-                + " -> ELEGIR_ACCION"
-            )
-
-
-        # -----------------------------------
-        # ZOMBI GOLPEA
-        # -----------------------------------
-
+        self.inicio_fase = pygame.time.get_ticks()
+        self.objetivo_animacion = "jugador"
+        if random.randint(1, 100) <= 30:
+            dano, resultado = 0, "ESQUIVE"
+            self.mensaje = "¡Esquivaste el ataque enemigo!"
         else:
+            defendiendo = accion_jugador == "DEFENDER"
+            dano = self.enemigo.danio // 2 if defendiendo else self.enemigo.danio
+            resultado = "BLOQUEO" if defendiendo else "GOLPE_ENEMIGO"
+            self.mensaje = (f"Bloqueaste parte del ataque. Recibiste {dano} de daño."
+                            if defendiendo else f"{self.enemigo.nombre} ataca: recibes {dano} de daño.")
+            jugador.recibir_dano(dano)
+        self.dano_animacion = dano
+        self._registrar(f"{accion_jugador} / {resultado_jugador} -> TURNO_ENEMIGO -> {resultado}")
 
-            jugador.recibir_dano(
-                self.enemigo.danio
-            )
-
-
-            self.mensaje = (
-                self.mensaje
-                + " El zombi te golpeo. "
-                + "Recibiste "
-                + str(self.enemigo.danio)
-                + " de dano."
-            )
-
-
-            self.transicion = (
-                "ELEGIR_ACCION -> "
-                + accion_jugador
-                + " -> "
-                + resultado_jugador
-                + " -> TURNO_ENEMIGO"
-                + " -> GOLPE_ENEMIGO"
-            )
-
-
-        # -----------------------------------
-        # DERROTA
-        # -----------------------------------
-
-        if jugador.esta_vivo() == False:
-
-            self.estado = "DERROTA"
-
-
-            self.transicion = (
-                self.transicion
-                + " -> DERROTA"
-            )
-
-
-            self.mensaje = (
-                "Has sido derrotado."
-            )
-
-
-        else:
-
-            self.estado = "ELEGIR_ACCION"
-
-
-    # ===================================
-    # TERMINAR COMBATE
-    # ===================================
+    def actualizar(self, jugador):
+        if not self.activo:
+            return
+        # Diego: las barras se acercan a la vida real sin alterar el daño.
+        for atributo, objetivo in (("vida_visible_jugador", jugador.vida),
+                                   ("vida_visible_enemigo", self.enemigo.vida)):
+            actual = getattr(self, atributo)
+            setattr(self, atributo, objetivo if abs(objetivo - actual) < .2
+                    else actual + (objetivo - actual) * .18)
+        transcurrido = pygame.time.get_ticks() - self.inicio_fase
+        if self.estado in ("ATACANDO", "DISPARANDO", "DEFENDIENDO"):
+            if transcurrido < self.DURACION_ACCION:
+                return
+            if not self.enemigo.vivo:
+                self.estado = "VICTORIA"
+                self.objetivo_animacion = ""
+                self.mensaje = f"¡Victoria! Derrotaste a {self.enemigo.nombre}. Objetivo completado."
+                self._registrar(self.transicion + " -> VICTORIA")
+            else:
+                self.turno_enemigo(jugador, self.accion_actual, self.resultado_actual)
+        elif self.estado == "TURNO_ENEMIGO" and transcurrido >= self.DURACION_RESPUESTA:
+            self.objetivo_animacion = ""
+            if not jugador.esta_vivo():
+                self.estado = "DERROTA"
+                self.mensaje = "Has caído. Volverás al refugio con la vida recuperada."
+                self._registrar(self.transicion + " -> DERROTA")
+            else:
+                self.estado = "ELEGIR_ACCION"
+                self.turno += 1
+                self._registrar(self.transicion + " -> ELEGIR_ACCION")
 
     def terminar(self):
-
         self.activo = False
-
         self.estado = "SIN_COMBATE"
-
         self.enemigo = None
-
         self.mensaje = ""
-
         self.transicion = ""
+        self.objetivo_animacion = ""

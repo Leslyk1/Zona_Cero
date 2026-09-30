@@ -1,3 +1,5 @@
+from arte import fuente as fuente_arte
+from batalla import dibujar_batalla, BOTONES_COMBATE
 import pygame
 
 
@@ -5,25 +7,22 @@ import pygame
 # TEMA VISUAL
 # ===================================
 
-FONDO_PANEL = (3, 13, 13)
-FONDO_INTERNO = (5, 17, 18)
-VERDE_NEON = (45, 255, 85)
-VERDE_SUAVE = (26, 145, 70)
-AMARILLO_NEON = (255, 214, 0)
-ROJO_VIDA = (190, 45, 55)
+# Diego: azul oscuro, verde menta y ámbar unifican mapas, diario y combate.
+FONDO_PANEL = (17, 30, 39)
+FONDO_INTERNO = (12, 23, 32)
+VERDE_NEON = (98, 225, 176)
+VERDE_SUAVE = (53, 121, 110)
+AMARILLO_NEON = (232, 190, 111)
+ROJO_VIDA = (224, 113, 101)
 ROJO_COMBATE = (255, 65, 65)
 BLANCO = (235, 240, 238)
-GRIS_TEXTO = (155, 165, 165)
+GRIS_TEXTO = (149, 174, 183)
 GRIS_BORDE = (70, 88, 88)
 
 
 def _fuente(tamano, negrita=False):
-
-    return pygame.font.SysFont(
-        "Consolas",
-        tamano + 2,
-        bold=negrita
-    )
+    # Diego: tipografía más legible y almacenada en caché para toda la interfaz.
+    return fuente_arte(tamano + 2, negrita)
 
 
 def _panel(
@@ -315,78 +314,17 @@ def _tecla(
 # MOSTRAR INTERACCIÓN
 # ===================================
 
-def mostrar_interaccion(
-    ventana,
-    mensaje
-):
-
-    fondo = pygame.Rect(
-        300,
-        580,
-        400,
-        58
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        VERDE_NEON,
-        2,
-        9
-    )
-
-
+def mostrar_interaccion(ventana, mensaje):
+    # Diego: esta función dibuja en la franja inferior, fuera del mapa.
+    fondo = pygame.Rect(620, 10, 370, 60)
+    _panel(ventana, fondo, VERDE_NEON, 2, 9)
     tiene_tecla = mensaje.startswith("E -")
-
-
     if tiene_tecla:
-
-        _tecla(
-            ventana,
-            "E",
-            325,
-            589,
-            VERDE_NEON
-        )
-
-
-        mensaje_visible = mensaje[3:].strip()
-        x_texto = 390
-
+        _tecla(ventana, "E", 632, 20, VERDE_NEON)
+        mensaje = mensaje[3:].strip()
     else:
-
-        _icono_informacion(
-            ventana,
-            (340, 609),
-            AMARILLO_NEON
-        )
-
-
-        mensaje_visible = mensaje
-        x_texto = 375
-
-
-    fuente = _fuente(17, True)
-
-    mensaje_visible = _texto_limitado(
-        fuente,
-        mensaje_visible,
-        290
-    )
-
-
-    texto = fuente.render(
-        mensaje_visible,
-        True,
-        BLANCO
-    )
-
-
-    ventana.blit(
-        texto,
-        (x_texto, 600)
-    )
+        _icono_informacion(ventana, (654, 40), AMARILLO_NEON)
+    _texto_en_lineas(ventana, mensaje, 690, 23, 280, 2, _fuente(13, True))
 
 
 # ===================================
@@ -403,7 +341,7 @@ def mostrar_estado_afn(
     fondo = pygame.Rect(
         10,
         8,
-        980,
+        ventana.get_width() - 20,
         52
     )
 
@@ -460,7 +398,7 @@ def mostrar_estado_afn(
 
     ventana.blit(
         texto_estado,
-        (165, 21)
+        (180, 21)
     )
 
 
@@ -497,7 +435,7 @@ def mostrar_estado_afn(
     # Mostramos la última transición realizada.
     if automata.estado_anterior is not None:
 
-        fuente_historial = _fuente(9, True)
+        fuente_historial = _fuente(11, True)
 
         transicion = (
             automata.estado_anterior
@@ -511,7 +449,7 @@ def mostrar_estado_afn(
         transicion = _texto_limitado(
             fuente_historial,
             transicion,
-            365
+            ventana.get_width() - 675
         )
 
 
@@ -524,7 +462,7 @@ def mostrar_estado_afn(
 
         ventana.blit(
             texto_transicion,
-            (615, 17)
+            (660, 17)
         )
 
 
@@ -550,7 +488,7 @@ def mostrar_estado_afn(
 
             ventana.blit(
                 texto_posibles,
-                (615, 38)
+                (660, 38)
             )
 
 
@@ -567,7 +505,7 @@ def mostrar_estado_afn(
 
         ventana.blit(
             texto_explorar,
-            (850, 38)
+            (ventana.get_width() - 145, 38)
         )
 
 
@@ -575,807 +513,116 @@ def mostrar_estado_afn(
 # MOSTRAR VIDA
 # ===================================
 
-def mostrar_vida(
-    ventana,
-    jugador
-):
-
-    fondo = pygame.Rect(
-        15,
-        187,
-        215,
-        72
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        VERDE_SUAVE,
-        2,
-        8
-    )
-
-
-    _icono_corazon(
-        ventana,
-        28,
-        198
-    )
-
-
+def mostrar_vida(ventana, jugador):
+    # Diego: coordenadas de la columna lateral; la vida ya no tapa al jugador.
+    fondo = pygame.Rect(10, 145, 230, 80)
+    _panel(ventana, fondo, VERDE_SUAVE, 2, 8)
+    _icono_corazon(ventana, 23, 159)
     fuente = _fuente(14, True)
-
-    texto = fuente.render(
-        "VIDA: "
-        + str(jugador.vida)
-        + "/"
-        + str(jugador.vida_maxima),
-        True,
-        BLANCO
-    )
-
-
-    ventana.blit(
-        texto,
-        (58, 200)
-    )
-
-
-    porcentaje = max(
-        0,
-        min(
-            1,
-            jugador.vida / jugador.vida_maxima
-        )
-    )
-
-
-    barra = pygame.Rect(
-        28,
-        229,
-        189,
-        18
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        (30, 35, 35),
-        barra,
-        border_radius=3
-    )
-
-
-    barra_vida = pygame.Rect(
-        barra.x + 3,
-        barra.y + 3,
-        int((barra.width - 6) * porcentaje),
-        barra.height - 6
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        ROJO_VIDA,
-        barra_vida,
-        border_radius=2
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        BLANCO,
-        barra,
-        2,
-        border_radius=3
-    )
+    texto = fuente.render(f"VIDA: {jugador.vida}/{jugador.vida_maxima}", True, BLANCO)
+    ventana.blit(texto, (55, 160))
+    porcentaje = max(0, min(1, jugador.vida / jugador.vida_maxima))
+    barra = pygame.Rect(23, 192, 204, 18)
+    pygame.draw.rect(ventana, (30, 35, 35), barra, border_radius=3)
+    relleno = pygame.Rect(barra.x + 3, barra.y + 3,
+                         int((barra.width - 6) * porcentaje), barra.height - 6)
+    pygame.draw.rect(ventana, ROJO_VIDA, relleno, border_radius=2)
+    pygame.draw.rect(ventana, BLANCO, barra, 2, border_radius=3)
 
 
 # ===================================
 # MOSTRAR DIÁLOGO
 # ===================================
 
-def mostrar_dialogo(
-    ventana,
-    mensaje
-):
-
-    fondo = pygame.Rect(
-        230,
-        510,
-        540,
-        58
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        VERDE_NEON,
-        2,
-        8
-    )
-
-
-    _icono_informacion(
-        ventana,
-        (265, 539),
-        VERDE_NEON
-    )
-
-
-    fuente = _fuente(15)
-
-    mensaje_visible = _texto_limitado(
-        fuente,
-        mensaje,
-        445
-    )
-
-
-    texto = fuente.render(
-        mensaje_visible,
-        True,
-        BLANCO
-    )
-
-
-    ventana.blit(
-        texto,
-        (295, 530)
-    )
+def mostrar_dialogo(ventana, mensaje):
+    # Diego: los diálogos comparten la franja inferior con la interacción,
+    # pero ocupan su propio espacio y pueden mostrar dos líneas.
+    _panel(ventana, pygame.Rect(10, 10, 600, 60), VERDE_NEON, 2, 8)
+    _icono_informacion(ventana, (35, 40), VERDE_NEON)
+    _texto_en_lineas(ventana, mensaje, 65, 22, 530, 2, _fuente(13))
 
 
 # ===================================
 # MOSTRAR MISIÓN
 # ===================================
 
-def mostrar_mision(
-    ventana,
-    mision
-):
-
-    if (
-        mision.activa == False
-        and
-        mision.completada == False
-    ):
-
+def mostrar_mision(ventana, mision):
+    if not mision.activa and not mision.completada:
         return
-
-
-    # El mensaje de misión completada solo
-    # permanece visible durante 4 segundos.
-    if mision.completada == True:
-
-        tiempo_completada = getattr(
-            mision,
-            "tiempo_completada",
-            0
-        )
-
-
+    # Conservamos los cuatro segundos del aviso incorporado por Darvin.
+    if mision.completada:
+        tiempo_completada = getattr(mision, "tiempo_completada", 0)
         if tiempo_completada == 0:
-
-            tiempo_completada = (
-                pygame.time.get_ticks()
-            )
-
-            mision.tiempo_completada = (
-                tiempo_completada
-            )
-
-
-        tiempo_transcurrido = (
-            pygame.time.get_ticks()
-            - tiempo_completada
-        )
-
-
-        if tiempo_transcurrido >= 4000:
-
+            tiempo_completada = pygame.time.get_ticks()
+            mision.tiempo_completada = tiempo_completada
+        if pygame.time.get_ticks() - tiempo_completada >= 4000:
             return
-
-
-    if mision.activa:
-
-        color = AMARILLO_NEON
-        titulo_mision = "MISION ACTUAL"
-
-    else:
-
-        color = VERDE_NEON
-        titulo_mision = "MISION COMPLETADA"
-
-
-    fondo = pygame.Rect(
-        325,
-        72,
-        350,
-        76
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        color,
-        2,
-        8
-    )
-
-
-    fuente_titulo = _fuente(15, True)
-
-    titulo = fuente_titulo.render(
-        titulo_mision,
-        True,
-        color
-    )
-
-
-    ventana.blit(
-        titulo,
-        (345, 84)
-    )
-
-
-    pygame.draw.line(
-        ventana,
-        color,
-        (345, 108),
-        (655, 108),
-        1
-    )
-
-
-    fuente = _fuente(12)
-
-    descripcion = _texto_limitado(
-        fuente,
-        mision.descripcion,
-        305
-    )
-
-
-    texto = fuente.render(
-        descripcion,
-        True,
-        BLANCO
-    )
-
-
-    ventana.blit(
-        texto,
-        (345, 119)
-    )
+    # Diego: la misión ocupa la parte inferior de la columna lateral.
+    color = AMARILLO_NEON if mision.activa else VERDE_NEON
+    titulo = "MISION ACTUAL" if mision.activa else "MISION COMPLETADA"
+    _panel(ventana, pygame.Rect(10, 425, 230, 140), color, 2, 8)
+    ventana.blit(_fuente(14, True).render(titulo, True, color), (23, 440))
+    pygame.draw.line(ventana, color, (23, 466), (227, 466), 1)
+    _texto_en_lineas(ventana, mision.descripcion, 23, 477, 204, 4, _fuente(12))
 
 
 # ===================================
 # MOSTRAR INVENTARIO
 # ===================================
 
-def mostrar_inventario(
-    ventana,
-    inventario
-):
-
-    fondo = pygame.Rect(
-        15,
-        72,
-        215,
-        115
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        VERDE_SUAVE,
-        2,
-        8
-    )
-
-
-    _icono_mochila(
-        ventana,
-        28,
-        81
-    )
-
-
-    fuente_titulo = _fuente(14, True)
-
-    titulo = fuente_titulo.render(
-        "INVENTARIO",
-        True,
-        BLANCO
-    )
-
-
-    ventana.blit(
-        titulo,
-        (60, 87)
-    )
-
-
-    pygame.draw.line(
-        ventana,
-        VERDE_NEON,
-        (28, 115),
-        (217, 115),
-        2
-    )
-
-
-    contenido = pygame.Rect(
-        28,
-        123,
-        189,
-        56
-    )
-
-
-    _caja_interna(
-        ventana,
-        contenido
-    )
-
-
+def mostrar_inventario(ventana, inventario):
+    # Diego: el inventario se dibuja exclusivamente en la columna lateral.
+    _panel(ventana, pygame.Rect(10, 10, 230, 125), VERDE_SUAVE, 2, 8)
+    _icono_mochila(ventana, 23, 20)
+    ventana.blit(_fuente(14, True).render("INVENTARIO", True, BLANCO), (55, 26))
+    pygame.draw.line(ventana, VERDE_NEON, (23, 55), (227, 55), 2)
+    contenido = pygame.Rect(23, 63, 204, 64)
+    _caja_interna(ventana, contenido)
     fuente = _fuente(12)
-
-
-    if len(inventario.objetos) == 0:
-
-        texto = fuente.render(
-            "Vacio",
-            True,
-            GRIS_TEXTO
-        )
-
-
-        ventana.blit(
-            texto,
-            texto.get_rect(center=contenido.center)
-        )
-
+    if not inventario.objetos:
+        texto = fuente.render("Vacio", True, GRIS_TEXTO)
+        ventana.blit(texto, texto.get_rect(center=contenido.center))
     else:
-
-        posicion_y = 126
-
-
-        for nombre in inventario.objetos:
-
-            cantidad = inventario.objetos[nombre]
-
-            texto = fuente.render(
-                "- "
-                + nombre
-                + " x"
-                + str(cantidad),
-                True,
-                BLANCO
-            )
-
-
-            ventana.blit(
-                texto,
-                (36, posicion_y)
-            )
-
-
-            posicion_y += 16
+        for fila, (nombre, cantidad) in enumerate(inventario.objetos.items()):
+            texto = fuente.render(f"- {nombre} x{cantidad}", True, BLANCO)
+            ventana.blit(texto, (30, 68 + fila * 18))
 
 
 # ===================================
 # MOSTRAR PILA
 # ===================================
 
-def mostrar_pila_mundo(
-    ventana,
-    pila_mundo
-):
-
-    fondo = pygame.Rect(
-        760,
-        72,
-        225,
-        185
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        AMARILLO_NEON,
-        2,
-        10
-    )
-
-
-    _icono_pila(
-        ventana,
-        775,
-        83
-    )
-
-
-    fuente_titulo = _fuente(14, True)
-
-    titulo = fuente_titulo.render(
-        "PILA DEL MUNDO",
-        True,
-        AMARILLO_NEON
-    )
-
-
-    ventana.blit(
-        titulo,
-        (808, 86)
-    )
-
-
-    pygame.draw.line(
-        ventana,
-        AMARILLO_NEON,
-        (775, 114),
-        (970, 114),
-        2
-    )
-
-
-    fuente_operacion = _fuente(11)
-
-    operacion = _texto_limitado(
-        fuente_operacion,
-        "Operacion: " + pila_mundo.ultima_operacion,
-        190
-    )
-
-
-    texto_operacion = fuente_operacion.render(
-        operacion,
-        True,
-        BLANCO
-    )
-
-
-    ventana.blit(
-        texto_operacion,
-        (775, 125)
-    )
-
-
-    contenido = pygame.Rect(
-        775,
-        150,
-        195,
-        88
-    )
-
-
-    _caja_interna(
-        ventana,
-        contenido
-    )
-
-
-    if len(pila_mundo.elementos) == 0:
-
-        fuente = _fuente(12)
-
-        texto = fuente.render(
-            "Pila vacia",
-            True,
-            GRIS_TEXTO
-        )
-
-
-        ventana.blit(
-            texto,
-            texto.get_rect(center=contenido.center)
-        )
-
+def mostrar_pila_mundo(ventana, pila_mundo):
+    # Diego: mismo contenido LIFO, reubicado sin cubrir habitaciones ni puertas.
+    _panel(ventana, pygame.Rect(10, 235, 230, 180), AMARILLO_NEON, 2, 10)
+    _icono_pila(ventana, 23, 246)
+    ventana.blit(_fuente(14, True).render("PILA DEL MUNDO", True, AMARILLO_NEON), (55, 250))
+    pygame.draw.line(ventana, AMARILLO_NEON, (23, 278), (227, 278), 2)
+    fuente = _fuente(11)
+    operacion = _texto_limitado(fuente, "Operacion: " + pila_mundo.ultima_operacion, 204)
+    ventana.blit(fuente.render(operacion, True, BLANCO), (23, 287))
+    contenido = pygame.Rect(23, 312, 204, 90)
+    _caja_interna(ventana, contenido)
+    if not pila_mundo.elementos:
+        texto = _fuente(12).render("Pila vacia", True, GRIS_TEXTO)
+        ventana.blit(texto, texto.get_rect(center=contenido.center))
     else:
-
-        fuente_tope = _fuente(12, True)
-
-        texto_tope = fuente_tope.render(
-            "TOPE",
-            True,
-            VERDE_NEON
-        )
-
-
-        ventana.blit(
-            texto_tope,
-            (785, 157)
-        )
-
-
-        posicion_y = 178
-
-
-        for lugar in reversed(
-            pila_mundo.elementos[-2:]
-        ):
-
-            caja = pygame.Rect(
-                790,
-                posicion_y,
-                165,
-                25
-            )
-
-
-            pygame.draw.rect(
-                ventana,
-                (56, 65, 65),
-                caja
-            )
-
-
-            pygame.draw.rect(
-                ventana,
-                BLANCO,
-                caja,
-                1
-            )
-
-
-            fuente = _fuente(11, True)
-
-            texto = fuente.render(
-                lugar,
-                True,
-                BLANCO
-            )
-
-
-            ventana.blit(
-                texto,
-                texto.get_rect(center=caja.center)
-            )
-
-
-            posicion_y += 28
+        ventana.blit(_fuente(12, True).render("TOPE", True, VERDE_NEON), (33, 317))
+        for fila, lugar in enumerate(reversed(pila_mundo.elementos[-2:])):
+            caja = pygame.Rect(33, 338 + fila * 28, 184, 25)
+            pygame.draw.rect(ventana, (56, 65, 65), caja)
+            pygame.draw.rect(ventana, BLANCO, caja, 1)
+            texto = _fuente(11, True).render(lugar, True, BLANCO)
+            ventana.blit(texto, texto.get_rect(center=caja.center))
 
 
 # ===================================
 # MOSTRAR COMBATE
 # ===================================
 
-def mostrar_combate(
-    ventana,
-    combate,
-    jugador,
-    inventario
-):
-
-    fondo = pygame.Rect(
-        120,
-        82,
-        760,
-        470
-    )
-
-
-    _panel(
-        ventana,
-        fondo,
-        ROJO_COMBATE,
-        3,
-        14
-    )
-
-
-    fuente_titulo = _fuente(26, True)
-
-    titulo = fuente_titulo.render(
-        "PROTOCOLO DE COMBATE",
-        True,
-        ROJO_COMBATE
-    )
-
-
-    ventana.blit(
-        titulo,
-        titulo.get_rect(center=(500, 120))
-    )
-
-
-    pygame.draw.line(
-        ventana,
-        ROJO_COMBATE,
-        (155, 148),
-        (845, 148),
-        2
-    )
-
-
-    enemigo = combate.enemigo
-    fuente = _fuente(16, True)
-
-    texto_enemigo = fuente.render(
-        enemigo.nombre
-        + "  VIDA "
-        + str(enemigo.vida)
-        + "/"
-        + str(enemigo.vida_maxima),
-        True,
-        ROJO_COMBATE
-    )
-
-
-    ventana.blit(
-        texto_enemigo,
-        (165, 170)
-    )
-
-
-    texto_jugador = fuente.render(
-        "JUGADOR  VIDA "
-        + str(jugador.vida)
-        + "/"
-        + str(jugador.vida_maxima),
-        True,
-        VERDE_NEON
-    )
-
-
-    ventana.blit(
-        texto_jugador,
-        (165, 208)
-    )
-
-
-    balas = inventario.obtener_cantidad(
-        "Balas"
-    )
-
-    texto_balas = fuente.render(
-        "BALAS: " + str(balas),
-        True,
-        AMARILLO_NEON
-    )
-
-
-    ventana.blit(
-        texto_balas,
-        (680, 208)
-    )
-
-
-    estado = _fuente(14, True).render(
-        "ESTADO: " + combate.estado,
-        True,
-        AMARILLO_NEON
-    )
-
-
-    ventana.blit(
-        estado,
-        (165, 258)
-    )
-
-
-    caja_mensaje = pygame.Rect(
-        155,
-        288,
-        690,
-        72
-    )
-
-
-    _caja_interna(
-        ventana,
-        caja_mensaje
-    )
-
-
-    fuente_mensaje = _fuente(14)
-    mensaje = _texto_limitado(
-        fuente_mensaje,
-        combate.mensaje,
-        650
-    )
-
-
-    ventana.blit(
-        fuente_mensaje.render(
-            mensaje,
-            True,
-            BLANCO
-        ),
-        (175, 305)
-    )
-
-
-    fuente_transicion = _fuente(12)
-    transicion = _texto_limitado(
-        fuente_transicion,
-        "Transicion: " + combate.transicion,
-        650
-    )
-
-
-    ventana.blit(
-        fuente_transicion.render(
-            transicion,
-            True,
-            VERDE_NEON
-        ),
-        (175, 334)
-    )
-
-
-    if combate.estado == "ELEGIR_ACCION":
-
-        opciones = [
-            ("1", "GOLPEAR", BLANCO),
-            (
-                "2",
-                "DISPARAR",
-                BLANCO
-                if inventario.tiene("Pistola")
-                and inventario.tiene("Balas")
-                else ROJO_COMBATE
-            ),
-            ("3", "DEFENDER", BLANCO)
-        ]
-
-
-        posicion_x = 175
-
-
-        for tecla, accion, color in opciones:
-
-            _tecla(
-                ventana,
-                tecla,
-                posicion_x,
-                405,
-                VERDE_NEON
-            )
-
-
-            ventana.blit(
-                _fuente(14, True).render(
-                    accion,
-                    True,
-                    color
-                ),
-                (posicion_x + 55, 418)
-            )
-
-
-            posicion_x += 220
-
-    else:
-
-        if combate.estado == "VICTORIA":
-
-            mensaje_final = "ENTER - CONTINUAR"
-            color_final = VERDE_NEON
-
-        else:
-
-            mensaje_final = "ENTER - REINICIAR"
-            color_final = ROJO_COMBATE
-
-
-        texto_final = _fuente(17, True).render(
-            mensaje_final,
-            True,
-            color_final
-        )
-
-
-        ventana.blit(
-            texto_final,
-            texto_final.get_rect(center=(500, 445))
-        )
+def mostrar_combate(ventana, combate, jugador, inventario):
+    # Diego: la vista de batalla está separada del autómata que calcula los turnos.
+    dibujar_batalla(ventana, combate, jugador, inventario)
 
 
 # ===================================
@@ -1523,3 +770,91 @@ def mostrar_gramatica(
         cerrar,
         (815, 575)
     )
+
+
+def _texto_en_lineas(ventana, mensaje, x, y, ancho, max_lineas, fuente):
+    # Diego: ajustar el texto al ancho evita que los mensajes invadan otro panel.
+    pendientes = mensaje.split()
+    for fila in range(max_lineas):
+        if not pendientes:
+            break
+        if fila == max_lineas - 1:
+            linea = _texto_limitado(fuente, " ".join(pendientes), ancho)
+            pendientes.clear()
+        else:
+            linea = pendientes.pop(0)
+            while pendientes and fuente.size(linea + " " + pendientes[0])[0] <= ancho:
+                linea += " " + pendientes.pop(0)
+            linea = _texto_limitado(fuente, linea, ancho)
+        ventana.blit(fuente.render(linea, True, BLANCO), (x, y + fila * fuente.get_linesize()))
+
+
+def mostrar_controles(ventana):
+    # Diego: el nuevo diario es accesible con J; ESC cierra los paneles de consulta.
+    fuente = _fuente(12)
+    for fila, texto in enumerate(("W A S D  Moverse", "E  Interactuar", "J  Misiones y progreso", "G  Gramática / BNF", "X  Explorar en la calle")):
+        ventana.blit(fuente.render(texto, True, GRIS_TEXTO), (23, 563 + fila * 16))
+
+
+def _marca_objetivo(ventana, centro, hecho):
+    color = VERDE_NEON if hecho else GRIS_BORDE
+    pygame.draw.circle(ventana, color, centro, 7, 2)
+    if hecho:
+        x, y = centro
+        pygame.draw.lines(ventana, VERDE_NEON, False, [(x-3, y), (x-1, y+3), (x+4, y-3)], 2)
+
+
+def mostrar_resumen_misiones(ventana, diario, mision):
+    # Diego: resumen permanente; la misión no desaparece del diario cuando se
+    # termina. Solo el aviso de celebración conserva su duración de cuatro segundos.
+    _panel(ventana, pygame.Rect(10, 425, 230, 128), AMARILLO_NEON, 2, 8)
+    aviso = mision.completada and pygame.time.get_ticks() - mision.tiempo_completada < 4000
+    titulo = "¡MISIÓN COMPLETADA!" if aviso else "OBJETIVOS  " + str(diario.completadas) + "/3"
+    ventana.blit(_fuente(13, True).render(titulo, True, VERDE_NEON if aviso else AMARILLO_NEON), (23, 437))
+    abreviados = ("Ayudar a Elena", "Despejar comisaría", "Despejar el sótano")
+    for i, (nombre, m) in enumerate(zip(abreviados, diario.misiones)):
+        y = 470 + i*21
+        _marca_objetivo(ventana, (30, y), m["completa"])
+        color = VERDE_NEON if m["completa"] else BLANCO
+        ventana.blit(_fuente(12).render(nombre, True, color), (44, y-9))
+    barra = pygame.Rect(23, 538, 204, 4)
+    pygame.draw.rect(ventana, GRIS_BORDE, barra, border_radius=2)
+    if diario.porcentaje:
+        pygame.draw.rect(ventana, VERDE_NEON, (barra.x, barra.y, round(barra.width*diario.porcentaje/100), 4), border_radius=2)
+
+
+def mostrar_diario(ventana, diario):
+    # Diego: el progreso se calcula a partir del mundo; abrir este panel nunca
+    # cambia el inventario, concede una misión ni consume un turno de combate.
+    ventana.fill((12, 22, 31))
+    _panel(ventana, pygame.Rect(25, 25, 950, 598), VERDE_SUAVE, 2, 12)
+    ventana.blit(_fuente(12, True).render("ZONA CERO / REGISTRO DEL SUPERVIVIENTE", True, AMARILLO_NEON), (48, 44))
+    ventana.blit(_fuente(30, True).render("Diario de misiones", True, BLANCO), (48, 67))
+    ventana.blit(_fuente(14).render("Tu camino hacia el último refugio.", True, GRIS_TEXTO), (49, 111))
+    ventana.blit(_fuente(26, True).render(f"{diario.porcentaje}%", True, VERDE_NEON), (864, 68))
+    ventana.blit(_fuente(12).render(f"{diario.pasos_completados}/{diario.total_pasos} pasos", True, GRIS_TEXTO), (864, 109))
+    pygame.draw.rect(ventana, GRIS_BORDE, (48, 139, 900, 5), border_radius=2)
+    if diario.porcentaje:
+        pygame.draw.rect(ventana, VERDE_NEON, (48, 139, round(900*diario.porcentaje/100), 5), border_radius=2)
+
+    for indice, m in enumerate(diario.misiones):
+        y = (163, 335, 445)[indice]
+        alto = 158 if indice == 0 else 98
+        rect = pygame.Rect(48, y, 900, alto)
+        color = VERDE_NEON if m["completa"] else GRIS_BORDE
+        _caja_interna(ventana, rect, color)
+        _marca_objetivo(ventana, (72, y+25), m["completa"])
+        ventana.blit(_fuente(19, True).render(m["nombre"], True, BLANCO), (91, y+10))
+        estado = "COMPLETADA" if m["completa"] else "EN CURSO" if any(h for _, h in m["pasos"]) else "PENDIENTE"
+        texto_estado = _fuente(11, True).render(estado + "  /  " + m["zona"], True, color if m["completa"] else AMARILLO_NEON)
+        ventana.blit(texto_estado, (rect.right-18-texto_estado.get_width(), y+17))
+        ventana.blit(_fuente(12).render(m["descripcion"], True, GRIS_TEXTO), (72, y+43))
+        for paso, (nombre, hecho) in enumerate(m["pasos"]):
+            py = y+77+paso*26
+            _marca_objetivo(ventana, (79, py), hecho)
+            ventana.blit(_fuente(13).render(nombre, True, VERDE_NEON if hecho else BLANCO), (98, py-11))
+
+    ventana.blit(_fuente(11, True).render("SIGUIENTE PASO", True, AMARILLO_NEON), (48, 559))
+    ventana.blit(_fuente(14).render(diario.siguiente, True, BLANCO), (48, 579))
+    cerrar = _fuente(12, True).render("J / ESC  ·  Volver al juego", True, GRIS_TEXTO)
+    ventana.blit(cerrar, (948-cerrar.get_width(), 592))

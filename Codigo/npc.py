@@ -1,3 +1,4 @@
+from arte import personaje, etiqueta, MENTA
 # Importamos pygame
 import pygame
 
@@ -49,39 +50,10 @@ class NPC:
     # DIBUJAR NPC
     # -----------------------------------
 
-    def dibujar(
-        self,
-        ventana
-    ):
-
-        pygame.draw.rect(
-            ventana,
-            BLANCO,
-            self.rectangulo
-        )
-
-
-        fuente = pygame.font.SysFont(
-            "Consolas",
-            18,
-            bold=True
-        )
-
-
-        texto = fuente.render(
-            self.nombre,
-            True,
-            VERDE
-        )
-
-
-        ventana.blit(
-            texto,
-            (
-                self.rectangulo.x - 5,
-                self.rectangulo.y - 25
-            )
-        )
+    def dibujar(self, ventana):
+        # Diego: Elena tiene un sprite de médica y un nombre legible.
+        personaje(ventana, self.rectangulo, "elena")
+        etiqueta(ventana, self.nombre, (self.rectangulo.centerx, self.rectangulo.top - 30), MENTA)
 
 
 # ===================================

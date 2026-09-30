@@ -2,12 +2,19 @@
 # CONFIGURACIÓN GENERAL DEL JUEGO
 # -----------------------------------
 
-# Tamaño de la ventana
+# Tamaño lógico del mapa: también lo utilizan el movimiento y las colisiones.
 ANCHO = 1000
 ALTO = 650
 
-# La lógica del juego conserva 1000 x 650,
-# pero la ventana se muestra un poco más grande.
+# Diego: reservamos espacio fuera del mapa para que los paneles no oculten
+# al jugador. Estas medidas solo organizan la interfaz, no las colisiones.
+ANCHO_LATERAL = 250
+ALTO_CABECERA = 70
+ALTO_MENSAJES = 80
+ANCHO_INTERFAZ = ANCHO + ANCHO_LATERAL
+ALTO_INTERFAZ = ALTO + ALTO_CABECERA + ALTO_MENSAJES
+
+# La composición completa se ajusta a esta ventana conservando su proporción.
 ANCHO_VENTANA = 1200
 ALTO_VENTANA = 780
 

@@ -1,4 +1,65 @@
-Resumen de cambios de Zona Cero Ultimo Refugio   29/09/2026
+# Zona Cero: Último Refugio
+
+## Versión de trabajo: pruebas-diego
+
+RPG en Python y Pygame con AFN narrativo, pila del mundo, gramática y combate.
+Esta rama continúa el trabajo de `pruebas-darvin`.
+
+### Novedades de esta rama
+
+- El mapa tiene su propio espacio, separado de los paneles y mensajes.
+- Personajes originales con sprites, objetos reconocibles y escenarios con texturas.
+- Batallas por turnos con dos personajes enfrentados, barras de vida animadas,
+  menú de acciones y respuesta del enemigo visible por separado.
+- Diario con **J**: tres misiones, cinco pasos, porcentaje de avance y siguiente objetivo.
+- Progreso visible en la columna lateral, incluso después de completar misiones.
+
+### Ejecutar en Windows
+
+Requiere Python 3.12 y Pygame 2.6.1. Desde la carpeta del repositorio:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe .\Codigo\main.py
+```
+
+Si ya existe `.venv` y Pygame está instalado, solo hace falta el último comando.
+En VS Code, seleccionar el intérprete `.venv`, abrir `Codigo/main.py` y pulsar ▶.
+
+### Controles
+
+| Acción | Teclas |
+| --- | --- |
+| Moverse | W, A, S, D |
+| Interactuar | E |
+| Diario de misiones | J; cerrar con J o Esc |
+| Gramática y derivación | G; cerrar con G o Esc |
+| Explorar desde la calle | X |
+| Combate | 1: golpear; 2: disparar; 3: defender |
+| Seleccionar acción de combate | Flechas y Enter, o clic sobre la acción |
+| Continuar tras victoria o derrota | Enter |
+| Elegir final | 1, 2 o 3 |
+| Probar otro final | R |
+
+El diario pausa el movimiento y las interacciones. Durante una animación de
+combate se espera al siguiente turno antes de aceptar otra acción.
+El progreso pertenece a la partida actual; todavía no se guarda al cerrar el juego.
+
+### Pruebas y documentación
+
+```powershell
+.\.venv\Scripts\python.exe .\Codigo\pruebas_alcanzabilidad.py
+.\.venv\Scripts\python.exe .\Codigo\pruebas_juego.py
+```
+
+- [Registro de cambios de Diego](CAMBIOS_DIEGO.md)
+- [AFN narrativo](Codigo/DIAGRAMA_AFN.md)
+- [Autómata de combate y progreso de misiones](Codigo/COMBATE_Y_MISIONES.md)
+
+---
+
+## Historial: cambios de Darvin del 29/09/2026
 
 **Rama de trabajo:** `pruebas-darvin`
 

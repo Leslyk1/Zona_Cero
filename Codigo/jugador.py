@@ -1,3 +1,4 @@
+from arte import personaje
 # Importamos pygame
 import pygame
 
@@ -28,6 +29,8 @@ class Jugador:
 
         # Velocidad del jugador
         self.velocidad = 5
+        self.espalda = False
+        self.moviendo = False
 
         # Vida máxima del jugador
         self.vida_maxima = 100
@@ -52,6 +55,8 @@ class Jugador:
         movimiento_y = 0
 
 
+        self.moviendo = False
+
         # W = arriba
         if teclas[pygame.K_w]:
             movimiento_y = -self.velocidad
@@ -75,6 +80,10 @@ class Jugador:
         # -----------------------------------
         # MOVIMIENTO HORIZONTAL
         # -----------------------------------
+
+        self.moviendo = bool(movimiento_x or movimiento_y)
+        if movimiento_y:
+            self.espalda = movimiento_y < 0
 
         self.rectangulo.x = (
             self.rectangulo.x + movimiento_x
@@ -203,9 +212,5 @@ class Jugador:
     # -----------------------------------
 
     def dibujar(self, ventana):
-
-        pygame.draw.rect(
-            ventana,
-            VERDE,
-            self.rectangulo
-        )
+        # Diego: dibujo del superviviente, conservando el rectángulo de colisión.
+        personaje(ventana, self.rectangulo, "superviviente", self.espalda, self.moviendo)

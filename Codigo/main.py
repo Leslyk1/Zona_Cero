@@ -11,6 +11,11 @@ from configuracion import (
     ALTO,
     ANCHO_VENTANA,
     ALTO_VENTANA,
+    ANCHO_LATERAL,
+    ALTO_CABECERA,
+    ALTO_MENSAJES,
+    ANCHO_INTERFAZ,
+    ALTO_INTERFAZ,
     FPS
 )
 
@@ -61,7 +66,7 @@ from npc import Elena
 # MISIÓN
 # ===================================
 
-from mision import Mision
+from mision import Mision, DiarioMisiones
 
 
 # ===================================
@@ -147,6 +152,10 @@ from interfaz import (
     mostrar_inventario,
     mostrar_vida,
     mostrar_pila_mundo,
+    mostrar_controles,
+    mostrar_resumen_misiones,
+    mostrar_diario,
+    BOTONES_COMBATE,
     mostrar_combate,
     mostrar_gramatica
 )
@@ -178,6 +187,25 @@ ventana = pygame.Surface(
         ANCHO,
         ALTO
     )
+)
+
+# Diego: el mapa conserva su superficie original. La cabecera, la columna
+# lateral y los mensajes tienen superficies separadas para no cubrirlo.
+composicion = pygame.Surface((ANCHO_INTERFAZ, ALTO_INTERFAZ))
+cabecera = composicion.subsurface((0, 0, ANCHO_INTERFAZ, ALTO_CABECERA))
+lateral = composicion.subsurface((ANCHO, ALTO_CABECERA, ANCHO_LATERAL, ALTO))
+mensajes = composicion.subsurface((0, ALTO_CABECERA + ALTO, ANCHO, ALTO_MENSAJES))
+
+# Una sola escala para ambos ejes evita deformar el mapa al añadir la columna.
+escala_interfaz = min(ANCHO_VENTANA / ANCHO_INTERFAZ, ALTO_VENTANA / ALTO_INTERFAZ)
+tamano_interfaz = (
+    round(ANCHO_INTERFAZ * escala_interfaz),
+    round(ALTO_INTERFAZ * escala_interfaz)
+)
+interfaz_escalada = pygame.Surface(tamano_interfaz)
+posicion_interfaz = (
+    (ANCHO_VENTANA - tamano_interfaz[0]) // 2,
+    (ALTO_VENTANA - tamano_interfaz[1]) // 2
 )
 
 
@@ -295,6 +323,8 @@ dialogo_actual = ""
 # ===================================
 
 mostrar_gramatica_activa = False
+mostrar_diario_activo = False
+diario = DiarioMisiones()
 
 
 # ===================================
@@ -387,6 +417,9 @@ juego_activo = True
 
 while juego_activo:
 
+    # Diego: limpiar también los mensajes evita que un aviso antiguo se quede
+    # visible cuando el jugador deja de estar junto a un objeto o una puerta.
+    composicion.fill((10, 18, 26))
 
     # ===================================
     # EVENTOS
@@ -402,6 +435,20 @@ while juego_activo:
         if evento.type == pygame.QUIT:
 
             juego_activo = False
+
+
+        # Diego: el clic se traduce de la ventana ampliada al mapa lógico.
+        # Los mismos rectángulos dibujan las acciones y detectan su selección.
+        if (evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1
+                and combate.activo and combate.estado == "ELEGIR_ACCION"):
+            punto = (
+                (evento.pos[0] - posicion_interfaz[0]) / escala_interfaz,
+                (evento.pos[1] - posicion_interfaz[1]) / escala_interfaz - ALTO_CABECERA
+            )
+            for indice, rect in enumerate(BOTONES_COMBATE):
+                if rect.collidepoint(punto):
+                    combate.elegir_accion(indice, jugador, inventario)
+                    break
 
 
         # -----------------------------------
@@ -425,29 +472,15 @@ while juego_activo:
                 if combate.estado == "ELEGIR_ACCION":
 
 
-                    # 1 = Golpear
-                    if evento.key == pygame.K_1:
-
-                        combate.golpear(
-                            jugador
-                        )
-
-
-                    # 2 = Disparar
-                    elif evento.key == pygame.K_2:
-
-                        combate.disparar(
-                            jugador,
-                            inventario
-                        )
-
-
-                    # 3 = Defender
-                    elif evento.key == pygame.K_3:
-
-                        combate.defender(
-                            jugador
-                        )
+                    # Diego: selección de menú con flechas/Enter o atajos 1, 2 y 3.
+                    if evento.key in (pygame.K_LEFT, pygame.K_UP):
+                        combate.opcion = (combate.opcion - 1) % 3
+                    elif evento.key in (pygame.K_RIGHT, pygame.K_DOWN):
+                        combate.opcion = (combate.opcion + 1) % 3
+                    elif evento.key == pygame.K_RETURN:
+                        combate.elegir_accion(combate.opcion, jugador, inventario)
+                    elif evento.key in (pygame.K_1, pygame.K_2, pygame.K_3):
+                        combate.elegir_accion(evento.key - pygame.K_1, jugador, inventario)
 
 
                 # -----------------------------------
@@ -611,8 +644,17 @@ while juego_activo:
                 # MOSTRAR / CERRAR GLC
                 # ===================================
 
-                elif evento.key == pygame.K_g:
+                elif evento.key == pygame.K_j:
+                    # Diego: el diario pausa movimiento e interacciones del mundo.
+                    mostrar_diario_activo = not mostrar_diario_activo
+                    mostrar_gramatica_activa = False
 
+                elif evento.key == pygame.K_ESCAPE:
+                    mostrar_diario_activo = False
+                    mostrar_gramatica_activa = False
+
+                elif evento.key == pygame.K_g:
+                    mostrar_diario_activo = False
                     mostrar_gramatica_activa = (
                         not mostrar_gramatica_activa
                     )
@@ -627,7 +669,7 @@ while juego_activo:
                     and
                     automata.estado_actual == "CALLE"
                     and
-                    mostrar_gramatica_activa == False
+                    mostrar_gramatica_activa == False and not mostrar_diario_activo
                 ):
 
                     automata.cambiar_estado(
@@ -673,7 +715,7 @@ while juego_activo:
                 elif (
                     evento.key == pygame.K_e
                     and
-                    mostrar_gramatica_activa == False
+                    mostrar_gramatica_activa == False and not mostrar_diario_activo
                 ):
 
 
@@ -941,7 +983,7 @@ while juego_activo:
                         ):
 
                             combate.iniciar(
-                                zombi_sotano
+                                zombi_sotano, jugador
                             )
 
 
@@ -1002,7 +1044,7 @@ while juego_activo:
                         ):
 
                             combate.iniciar(
-                                zombi_comisaria
+                                zombi_comisaria, jugador
                             )
 
 
@@ -1080,10 +1122,15 @@ while juego_activo:
     # DIBUJAR REFUGIO
     # ===================================
 
+    # Diego: avanzar fases del combate y leer progreso antes de dibujar el HUD.
+    combate.actualizar(jugador)
+    diario.actualizar(mision_medicamentos, inventario, zombi_comisaria, zombi_sotano)
+    jugador.moviendo = False
+
     if automata.estado_actual == "REFUGIO":
 
 
-        if mostrar_gramatica_activa == False:
+        if mostrar_gramatica_activa == False and not mostrar_diario_activo:
 
             jugador.mover(
                 paredes_refugio
@@ -1106,7 +1153,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Salir del refugio"
             )
 
@@ -1118,7 +1165,7 @@ while juego_activo:
     elif automata.estado_actual == "CALLE":
 
 
-        if mostrar_gramatica_activa == False:
+        if mostrar_gramatica_activa == False and not mostrar_diario_activo:
 
             jugador.mover(
                 paredes_calle
@@ -1171,7 +1218,7 @@ while juego_activo:
             if desbloqueado == True:
 
                 mostrar_interaccion(
-                    ventana,
+                    mensajes,
                     "E - Ir al punto de evacuacion"
                 )
 
@@ -1179,7 +1226,7 @@ while juego_activo:
             else:
 
                 mostrar_interaccion(
-                    ventana,
+                    mensajes,
                     "Completa los objetivos principales"
                 )
 
@@ -1193,7 +1240,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Entrar al refugio"
             )
 
@@ -1207,7 +1254,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Entrar al hospital"
             )
 
@@ -1221,7 +1268,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Entrar a la comisaria"
             )
 
@@ -1242,7 +1289,7 @@ while juego_activo:
         )
 
 
-        if mostrar_gramatica_activa == False:
+        if mostrar_gramatica_activa == False and not mostrar_diario_activo:
 
             jugador.mover(
                 paredes_hospital_actuales
@@ -1282,7 +1329,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Hablar con Elena"
             )
 
@@ -1300,7 +1347,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Recoger medicamento"
             )
 
@@ -1314,7 +1361,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Bajar al sotano"
             )
 
@@ -1328,7 +1375,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Salir del hospital"
             )
 
@@ -1340,7 +1387,7 @@ while juego_activo:
         if dialogo_actual != "":
 
             mostrar_dialogo(
-                ventana,
+                mensajes,
                 dialogo_actual
             )
 
@@ -1376,7 +1423,7 @@ while juego_activo:
         if (
             combate.activo == False
             and
-            mostrar_gramatica_activa == False
+            mostrar_gramatica_activa == False and not mostrar_diario_activo
         ):
 
             jugador.mover(
@@ -1418,7 +1465,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Enfrentar zombi corredor"
             )
 
@@ -1436,7 +1483,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Subir al hospital"
             )
 
@@ -1452,7 +1499,7 @@ while juego_activo:
         ):
 
             mostrar_dialogo(
-                ventana,
+                mensajes,
                 dialogo_actual
             )
 
@@ -1485,7 +1532,7 @@ while juego_activo:
         if (
             combate.activo == False
             and
-            mostrar_gramatica_activa == False
+            mostrar_gramatica_activa == False and not mostrar_diario_activo
         ):
 
             jugador.mover(
@@ -1543,7 +1590,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Enfrentar zombi"
             )
 
@@ -1565,7 +1612,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Recoger pistola"
             )
 
@@ -1587,7 +1634,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Recoger 12 balas"
             )
 
@@ -1605,7 +1652,7 @@ while juego_activo:
         ):
 
             mostrar_interaccion(
-                ventana,
+                mensajes,
                 "E - Salir de la comisaria"
             )
 
@@ -1621,7 +1668,7 @@ while juego_activo:
         ):
 
             mostrar_dialogo(
-                ventana,
+                mensajes,
                 dialogo_actual
             )
 
@@ -1643,35 +1690,32 @@ while juego_activo:
 
         # Estado AFN.
         mostrar_estado_afn(
-            ventana,
+            cabecera,
             automata
         )
 
 
         # Inventario.
         mostrar_inventario(
-            ventana,
+            lateral,
             inventario
         )
 
 
         # Vida.
         mostrar_vida(
-            ventana,
+            lateral,
             jugador
         )
 
 
         # Misión.
-        mostrar_mision(
-            ventana,
-            mision_medicamentos
-        )
+        mostrar_resumen_misiones(lateral, diario, mision_medicamentos)
 
 
         # Pila.
         mostrar_pila_mundo(
-            ventana,
+            lateral,
             pila_mundo
         )
 
@@ -1700,6 +1744,10 @@ while juego_activo:
             ventana,
             gramatica
         )
+
+
+    if mostrar_diario_activo and not combate.activo:
+        mostrar_diario(ventana, diario)
 
 
     # ===================================
@@ -1732,16 +1780,16 @@ while juego_activo:
     # ACTUALIZAR PANTALLA
     # ===================================
 
-    # Ampliamos la imagen completa sin cambiar
-    # las colisiones ni las coordenadas del juego.
-    pygame.transform.smoothscale(
-        ventana,
-        (
-            ANCHO_VENTANA,
-            ALTO_VENTANA
-        ),
-        pantalla
-    )
+    # Diego: durante la partida colocamos el mapa entre cabecera y mensajes.
+    # Los finales conservan su presentación de pantalla completa.
+    if automata.estado_actual == "PUNTO_EVACUACION" or automata.es_estado_aceptacion():
+        pygame.transform.smoothscale(ventana, (ANCHO_VENTANA, ALTO_VENTANA), pantalla)
+    else:
+        mostrar_controles(lateral)
+        composicion.blit(ventana, (0, ALTO_CABECERA))
+        pygame.transform.smoothscale(composicion, tamano_interfaz, interfaz_escalada)
+        pantalla.fill((10, 18, 26))
+        pantalla.blit(interfaz_escalada, posicion_interfaz)
 
 
     pygame.display.update()

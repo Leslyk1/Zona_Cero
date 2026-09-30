@@ -1,5 +1,9 @@
 # Zona Cero: Último Refugio
 
+El AFN narrativo mantiene sus estados y transiciones en `pruebas-diego`.
+El autómata independiente de batalla y el diario están documentados en
+[Combate y misiones](COMBATE_Y_MISIONES.md).
+
 ## Autómata Finito No Determinista Narrativo
 
 El autómata narrativo controla los escenarios principales y los finales del juego.
