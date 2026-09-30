@@ -429,6 +429,13 @@ implementa las transiciones del autómata.
 
 Cuando una acción tiene varios destinos, `cambiar_estado()` utiliza `random.choice()` para representar una ejecución posible del AFN. Para probarlo dentro del juego, se presiona `X` desde `CALLE`.
 
+La barra superior también conserva y muestra la última transición ejecutada. Cuando la acción es `EXPLORAR`, presenta tanto el destino elegido como el conjunto completo de destinos posibles, por ejemplo:
+
+```text
+CALLE --EXPLORAR--> HOSPITAL
+POSIBLES: {HOSPITAL, COMISARIA}
+```
+
 Las pruebas automáticas de alcanzabilidad están en:
 
 ```text

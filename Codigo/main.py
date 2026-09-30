@@ -493,8 +493,9 @@ while juego_activo:
 
 
                         # Regresamos al refugio.
-                        automata.estado_actual = (
-                            "REFUGIO"
+                        automata.forzar_estado(
+                            "REFUGIO",
+                            "REINICIAR_DERROTA"
                         )
 
 
@@ -594,8 +595,9 @@ while juego_activo:
                     # los otros finales.
                     if evento.key == pygame.K_r:
 
-                        automata.estado_actual = (
-                            "CALLE"
+                        automata.forzar_estado(
+                            "CALLE",
+                            "REGRESAR_PRUEBA"
                         )
 
 
@@ -1642,7 +1644,7 @@ while juego_activo:
         # Estado AFN.
         mostrar_estado_afn(
             ventana,
-            automata.estado_actual
+            automata
         )
 
 

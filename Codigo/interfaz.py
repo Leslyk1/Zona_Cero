@@ -395,8 +395,10 @@ def mostrar_interaccion(
 
 def mostrar_estado_afn(
     ventana,
-    estado
+    automata
 ):
+
+    estado = automata.estado_actual
 
     fondo = pygame.Rect(
         10,
@@ -492,9 +494,71 @@ def mostrar_estado_afn(
     )
 
 
+    # Mostramos la última transición realizada.
+    if automata.estado_anterior is not None:
+
+        fuente_historial = _fuente(9, True)
+
+        transicion = (
+            automata.estado_anterior
+            + " --"
+            + automata.ultima_accion
+            + "--> "
+            + automata.estado_actual
+        )
+
+
+        transicion = _texto_limitado(
+            fuente_historial,
+            transicion,
+            365
+        )
+
+
+        texto_transicion = fuente_historial.render(
+            transicion,
+            True,
+            VERDE_NEON
+        )
+
+
+        ventana.blit(
+            texto_transicion,
+            (615, 17)
+        )
+
+
+        # En una transición no determinista
+        # mostramos todos los destinos posibles.
+        if len(automata.ultimos_posibles) > 1:
+
+            posibles = (
+                "POSIBLES: {"
+                + ", ".join(
+                    automata.ultimos_posibles
+                )
+                + "}"
+            )
+
+
+            texto_posibles = fuente_historial.render(
+                posibles,
+                True,
+                AMARILLO_NEON
+            )
+
+
+            ventana.blit(
+                texto_posibles,
+                (615, 38)
+            )
+
+
     if estado == "CALLE":
 
-        texto_explorar = fuente_ayuda.render(
+        fuente_explorar = _fuente(10, True)
+
+        texto_explorar = fuente_explorar.render(
             "X = EXPLORAR",
             True,
             AMARILLO_NEON
@@ -503,7 +567,7 @@ def mostrar_estado_afn(
 
         ventana.blit(
             texto_explorar,
-            (795, 27)
+            (850, 38)
         )
 
 

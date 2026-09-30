@@ -55,6 +55,30 @@ def probar_no_determinismo(
             "RESULTADO: TRANSICION NO DETERMINISTA VALIDA"
         )
 
+
+        # Ejecutamos EXPLORAR y comprobamos
+        # que el historial guarde la acción,
+        # el origen y todos los destinos.
+        automata.estado_actual = "CALLE"
+
+        automata.cambiar_estado(
+            "EXPLORAR"
+        )
+
+
+        assert automata.estado_anterior == "CALLE"
+
+        assert automata.ultima_accion == "EXPLORAR"
+
+        assert set(
+            automata.ultimos_posibles
+        ) == destinos_esperados
+
+
+        print(
+            "RESULTADO: HISTORIAL DE TRANSICION VALIDO"
+        )
+
     else:
 
         raise AssertionError(

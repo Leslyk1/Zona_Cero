@@ -11,6 +11,15 @@ class AutomataNarrativo:
         # Estado inicial.
         self.estado_actual = "REFUGIO"
 
+        # Datos de la última transición.
+        # Se muestran en la interfaz para
+        # poder explicar el recorrido del AFN.
+        self.estado_anterior = None
+
+        self.ultima_accion = ""
+
+        self.ultimos_posibles = []
+
 
         # -----------------------------------
         # ESTADOS DE ACEPTACIÓN
@@ -186,6 +195,19 @@ class AutomataNarrativo:
                 )
 
 
+                self.estado_anterior = (
+                    self.estado_actual
+                )
+
+
+                self.ultima_accion = accion
+
+
+                self.ultimos_posibles = list(
+                    posibles_estados
+                )
+
+
                 self.estado_actual = (
                     nuevo_estado
                 )
@@ -195,6 +217,31 @@ class AutomataNarrativo:
 
 
         return False
+
+
+    # ===================================
+    # CAMBIO DIRECTO DEL JUEGO
+    # ===================================
+
+    def forzar_estado(
+        self,
+        nuevo_estado,
+        accion
+    ):
+
+        # Se utiliza al reiniciar después
+        # de una derrota o desde un final.
+        self.estado_anterior = (
+            self.estado_actual
+        )
+
+        self.ultima_accion = accion
+
+        self.ultimos_posibles = [
+            nuevo_estado
+        ]
+
+        self.estado_actual = nuevo_estado
 
 
     # ===================================
