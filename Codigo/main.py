@@ -9,6 +9,8 @@ import pygame
 from configuracion import (
     ANCHO,
     ALTO,
+    ANCHO_VENTANA,
+    ALTO_VENTANA,
     FPS
 )
 
@@ -161,8 +163,21 @@ pygame.init()
 # VENTANA
 # ===================================
 
-ventana = pygame.display.set_mode(
-    (ANCHO, ALTO)
+pantalla = pygame.display.set_mode(
+    (
+        ANCHO_VENTANA,
+        ALTO_VENTANA
+    )
+)
+
+
+# Dibujamos siempre sobre una superficie lógica
+# de 1000 x 650 para conservar todas las posiciones.
+ventana = pygame.Surface(
+    (
+        ANCHO,
+        ALTO
+    )
 )
 
 
@@ -598,6 +613,54 @@ while juego_activo:
 
                     mostrar_gramatica_activa = (
                         not mostrar_gramatica_activa
+                    )
+
+
+                # ===================================
+                # EXPLORAR CON EL AFN
+                # ===================================
+
+                elif (
+                    evento.key == pygame.K_x
+                    and
+                    automata.estado_actual == "CALLE"
+                    and
+                    mostrar_gramatica_activa == False
+                ):
+
+                    automata.cambiar_estado(
+                        "EXPLORAR"
+                    )
+
+
+                    destino_elegido = (
+                        automata.estado_actual
+                    )
+
+
+                    # Ambos escenarios utilizan
+                    # esta posición de entrada.
+                    jugador.cambiar_posicion(
+                        480,
+                        500
+                    )
+
+
+                    dialogo_actual = (
+                        "EXPLORAR eligio "
+                        + destino_elegido
+                        + " entre 2 destinos."
+                    )
+
+
+                    print()
+                    print(
+                        "AFN: EXPLORAR desde CALLE "
+                        "puede ir a HOSPITAL o COMISARIA."
+                    )
+                    print(
+                        "Destino elegido:",
+                        destino_elegido
                     )
 
 
@@ -1666,6 +1729,18 @@ while juego_activo:
     # ===================================
     # ACTUALIZAR PANTALLA
     # ===================================
+
+    # Ampliamos la imagen completa sin cambiar
+    # las colisiones ni las coordenadas del juego.
+    pygame.transform.smoothscale(
+        ventana,
+        (
+            ANCHO_VENTANA,
+            ALTO_VENTANA
+        ),
+        pantalla
+    )
+
 
     pygame.display.update()
 

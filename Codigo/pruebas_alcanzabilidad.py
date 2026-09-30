@@ -8,6 +8,62 @@ from automata import AutomataNarrativo
 
 
 # ==========================================
+# PROBAR NO DETERMINISMO
+# ==========================================
+
+def probar_no_determinismo(
+    automata
+):
+
+    destinos = (
+        automata.transiciones
+        .get("CALLE", {})
+        .get("EXPLORAR", [])
+    )
+
+
+    print()
+    print(
+        "=========================================="
+    )
+    print(
+        "PRUEBA DE NO DETERMINISMO"
+    )
+    print(
+        "=========================================="
+    )
+    print()
+    print(
+        "delta(CALLE, EXPLORAR) =",
+        destinos
+    )
+
+
+    destinos_esperados = {
+        "HOSPITAL",
+        "COMISARIA"
+    }
+
+
+    if (
+        len(destinos) > 1
+        and
+        set(destinos) == destinos_esperados
+    ):
+
+        print(
+            "RESULTADO: TRANSICION NO DETERMINISTA VALIDA"
+        )
+
+    else:
+
+        raise AssertionError(
+            "EXPLORAR debe tener HOSPITAL y COMISARIA "
+            "como destinos posibles."
+        )
+
+
+# ==========================================
 # BUSCAR RUTA MINIMA
 # ==========================================
 
@@ -318,6 +374,13 @@ def mostrar_prueba(
 
 # Creamos nuestro automata.
 automata = AutomataNarrativo()
+
+
+# Comprobamos que una misma entrada tenga
+# más de un estado siguiente posible.
+probar_no_determinismo(
+    automata
+)
 
 
 print()

@@ -14,6 +14,20 @@ from configuracion import (
 )
 
 
+from interfaz import (
+    AMARILLO_NEON,
+    BLANCO as BLANCO_UI,
+    FONDO_INTERNO,
+    GRIS_TEXTO,
+    ROJO_COMBATE,
+    VERDE_NEON,
+    _caja_interna,
+    _fuente,
+    _panel,
+    _tecla
+)
+
+
 # ===================================
 # SISTEMA DE FINALES
 # ===================================
@@ -142,9 +156,9 @@ class SistemaFinales:
 
 
         # Texto.
-        fuente = pygame.font.SysFont(
-            "Arial",
-            16
+        fuente = _fuente(
+            14,
+            True
         )
 
 
@@ -170,212 +184,173 @@ class SistemaFinales:
         ventana
     ):
 
-        # Limpiamos completamente
-        # la pantalla.
         ventana.fill(
-            NEGRO
+            (3, 11, 12)
         )
 
 
-        # -----------------------------------
-        # TÍTULO
-        # -----------------------------------
+        # Cuadrícula oscura de fondo.
+        for x in range(0, 1000, 40):
 
-        fuente_titulo = pygame.font.SysFont(
-            "Arial",
-            34
+            pygame.draw.line(
+                ventana,
+                (12, 31, 31),
+                (x, 0),
+                (x, 650)
+            )
+
+
+        for y in range(0, 650, 40):
+
+            pygame.draw.line(
+                ventana,
+                (12, 31, 31),
+                (0, y),
+                (1000, y)
+            )
+
+
+        panel_principal = pygame.Rect(
+            80,
+            40,
+            840,
+            560
         )
 
 
-        titulo = fuente_titulo.render(
+        _panel(
+            ventana,
+            panel_principal,
+            AMARILLO_NEON,
+            2,
+            14
+        )
+
+
+        titulo = _fuente(28, True).render(
             "PUNTO DE EVACUACION",
             True,
-            AMARILLO
+            AMARILLO_NEON
         )
 
 
         ventana.blit(
             titulo,
-            (315, 70)
+            titulo.get_rect(center=(500, 82))
         )
 
 
-        # -----------------------------------
-        # HISTORIA
-        # -----------------------------------
-
-        fuente = pygame.font.SysFont(
-            "Arial",
-            19
+        pygame.draw.line(
+            ventana,
+            AMARILLO_NEON,
+            (120, 112),
+            (880, 112),
+            2
         )
 
 
-        texto1 = fuente.render(
+        fuente_historia = _fuente(14)
+
+        historia1 = fuente_historia.render(
             "El helicoptero militar esta listo para partir.",
             True,
-            BLANCO
+            BLANCO_UI
+        )
+
+        historia2 = fuente_historia.render(
+            "La horda se aproxima. Debes elegir una ruta final.",
+            True,
+            GRIS_TEXTO
         )
 
 
         ventana.blit(
-            texto1,
-            (275, 145)
+            historia1,
+            historia1.get_rect(center=(500, 145))
         )
-
-
-        texto2 = fuente.render(
-            "Pero la horda se aproxima y debes tomar una decision.",
-            True,
-            BLANCO
-        )
-
 
         ventana.blit(
-            texto2,
-            (245, 180)
+            historia2,
+            historia2.get_rect(center=(500, 172))
         )
 
 
-        # -----------------------------------
-        # OPCIÓN 1
-        # -----------------------------------
-
-        caja1 = pygame.Rect(
-            180,
-            245,
-            640,
-            65
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            GRIS,
-            caja1
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            VERDE,
-            caja1,
-            2
-        )
+        opciones = [
+            (
+                "1",
+                "SUBIR AL HELICOPTERO Y ESCAPAR",
+                VERDE_NEON
+            ),
+            (
+                "2",
+                "QUEDARTE PARA DETENER A LA HORDA",
+                AMARILLO_NEON
+            ),
+            (
+                "3",
+                "UTILIZAR EL SUERO EXPERIMENTAL",
+                ROJO_COMBATE
+            )
+        ]
 
 
-        opcion1 = fuente.render(
-            "1 - Subir al helicoptero y escapar",
+        posicion_y = 220
+
+
+        for tecla, mensaje, color in opciones:
+
+            caja = pygame.Rect(
+                155,
+                posicion_y,
+                690,
+                72
+            )
+
+
+            _panel(
+                ventana,
+                caja,
+                color,
+                2,
+                9
+            )
+
+
+            _tecla(
+                ventana,
+                tecla,
+                180,
+                posicion_y + 16,
+                color
+            )
+
+
+            texto = _fuente(15, True).render(
+                mensaje,
+                True,
+                BLANCO_UI
+            )
+
+
+            ventana.blit(
+                texto,
+                (250, posicion_y + 27)
+            )
+
+
+            posicion_y += 88
+
+
+        regresar = _fuente(13, True).render(
+            "ESC = REGRESAR A LA CALLE",
             True,
-            BLANCO
-        )
-
-
-        ventana.blit(
-            opcion1,
-            (250, 267)
-        )
-
-
-        # -----------------------------------
-        # OPCIÓN 2
-        # -----------------------------------
-
-        caja2 = pygame.Rect(
-            180,
-            330,
-            640,
-            65
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            GRIS,
-            caja2
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            AMARILLO,
-            caja2,
-            2
-        )
-
-
-        opcion2 = fuente.render(
-            "2 - Quedarte para detener a la horda",
-            True,
-            BLANCO
-        )
-
-
-        ventana.blit(
-            opcion2,
-            (235, 352)
-        )
-
-
-        # -----------------------------------
-        # OPCIÓN 3
-        # -----------------------------------
-
-        caja3 = pygame.Rect(
-            180,
-            415,
-            640,
-            65
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            GRIS,
-            caja3
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            ROJO,
-            caja3,
-            2
-        )
-
-
-        opcion3 = fuente.render(
-            "3 - Utilizar el suero experimental",
-            True,
-            BLANCO
-        )
-
-
-        ventana.blit(
-            opcion3,
-            (250, 437)
-        )
-
-
-        # -----------------------------------
-        # REGRESAR
-        # -----------------------------------
-
-        fuente_pequena = pygame.font.SysFont(
-            "Arial",
-            16
-        )
-
-
-        regresar = fuente_pequena.render(
-            "ESC - Regresar a la calle",
-            True,
-            GRIS_CLARO
+            GRIS_TEXTO
         )
 
 
         ventana.blit(
             regresar,
-            (400, 525)
+            regresar.get_rect(center=(500, 560))
         )
 
 
@@ -389,27 +364,8 @@ class SistemaFinales:
         estado
     ):
 
-        # Limpiamos pantalla.
         ventana.fill(
-            NEGRO
-        )
-
-
-        fuente_titulo = pygame.font.SysFont(
-            "Arial",
-            36
-        )
-
-
-        fuente = pygame.font.SysFont(
-            "Arial",
-            20
-        )
-
-
-        fuente_pequena = pygame.font.SysFont(
-            "Arial",
-            16
+            (3, 11, 12)
         )
 
 
@@ -419,7 +375,7 @@ class SistemaFinales:
 
         if estado == "FINAL_EVACUACION":
 
-            color = VERDE
+            color = VERDE_NEON
 
             titulo_final = (
                 "FINAL: EVACUACION"
@@ -442,7 +398,7 @@ class SistemaFinales:
 
         elif estado == "FINAL_SACRIFICIO":
 
-            color = AMARILLO
+            color = AMARILLO_NEON
 
             titulo_final = (
                 "FINAL: SACRIFICIO"
@@ -465,7 +421,7 @@ class SistemaFinales:
 
         else:
 
-            color = ROJO
+            color = ROJO_COMBATE
 
             titulo_final = (
                 "FINAL: INFECTADO"
@@ -486,7 +442,24 @@ class SistemaFinales:
         # MOSTRAMOS FINAL
         # -----------------------------------
 
-        titulo = fuente_titulo.render(
+        panel_final = pygame.Rect(
+            100,
+            70,
+            800,
+            500
+        )
+
+
+        _panel(
+            ventana,
+            panel_final,
+            color,
+            3,
+            16
+        )
+
+
+        titulo = _fuente(30, True).render(
             titulo_final,
             True,
             color
@@ -495,33 +468,33 @@ class SistemaFinales:
 
         ventana.blit(
             titulo,
-            (330, 150)
+            titulo.get_rect(center=(500, 135))
         )
 
 
-        texto1 = fuente.render(
+        texto1 = _fuente(15).render(
             mensaje1,
             True,
-            BLANCO
+            BLANCO_UI
         )
 
 
         ventana.blit(
             texto1,
-            (190, 245)
+            texto1.get_rect(center=(500, 225))
         )
 
 
-        texto2 = fuente.render(
+        texto2 = _fuente(15).render(
             mensaje2,
             True,
-            BLANCO
+            BLANCO_UI
         )
 
 
         ventana.blit(
             texto2,
-            (170, 285)
+            texto2.get_rect(center=(500, 260))
         )
 
 
@@ -530,29 +503,21 @@ class SistemaFinales:
         # -----------------------------------
 
         caja = pygame.Rect(
-            300,
-            370,
-            400,
-            80
+            280,
+            330,
+            440,
+            90
         )
 
 
-        pygame.draw.rect(
+        _caja_interna(
             ventana,
-            GRIS,
-            caja
-        )
-
-
-        pygame.draw.rect(
-            ventana,
-            color,
             caja,
-            2
+            color
         )
 
 
-        texto_aceptacion = fuente.render(
+        texto_aceptacion = _fuente(18, True).render(
             "ESTADO DE ACEPTACION",
             True,
             color
@@ -561,7 +526,7 @@ class SistemaFinales:
 
         ventana.blit(
             texto_aceptacion,
-            (380, 395)
+            texto_aceptacion.get_rect(center=caja.center)
         )
 
 
@@ -569,14 +534,14 @@ class SistemaFinales:
         # PRUEBA
         # -----------------------------------
 
-        prueba = fuente_pequena.render(
-            "R - Regresar a la calle para probar otro final",
+        prueba = _fuente(13, True).render(
+            "R = REGRESAR A LA CALLE Y PROBAR OTRO FINAL",
             True,
-            GRIS_CLARO
+            GRIS_TEXTO
         )
 
 
         ventana.blit(
             prueba,
-            (335, 520)
+            prueba.get_rect(center=(500, 500))
         )

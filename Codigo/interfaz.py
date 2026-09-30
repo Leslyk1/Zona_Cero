@@ -1,17 +1,314 @@
-# Importamos pygame
 import pygame
 
 
-# Importamos colores
-from configuracion import (
-    NEGRO,
-    BLANCO,
-    VERDE,
-    AMARILLO,
-    ROJO,
-    GRIS,
-    GRIS_CLARO
-)
+# ===================================
+# TEMA VISUAL
+# ===================================
+
+FONDO_PANEL = (3, 13, 13)
+FONDO_INTERNO = (5, 17, 18)
+VERDE_NEON = (45, 255, 85)
+VERDE_SUAVE = (26, 145, 70)
+AMARILLO_NEON = (255, 214, 0)
+ROJO_VIDA = (190, 45, 55)
+ROJO_COMBATE = (255, 65, 65)
+BLANCO = (235, 240, 238)
+GRIS_TEXTO = (155, 165, 165)
+GRIS_BORDE = (70, 88, 88)
+
+
+def _fuente(tamano, negrita=False):
+
+    return pygame.font.SysFont(
+        "Consolas",
+        tamano + 2,
+        bold=negrita
+    )
+
+
+def _panel(
+    ventana,
+    rectangulo,
+    color_borde,
+    grosor=2,
+    recorte=10
+):
+
+    x = rectangulo.x
+    y = rectangulo.y
+    ancho = rectangulo.width
+    alto = rectangulo.height
+
+
+    puntos = [
+        (x + recorte, y),
+        (x + ancho - recorte, y),
+        (x + ancho, y + recorte),
+        (x + ancho, y + alto - recorte),
+        (x + ancho - recorte, y + alto),
+        (x + recorte, y + alto),
+        (x, y + alto - recorte),
+        (x, y + recorte)
+    ]
+
+
+    sombra = [
+        (punto_x + 3, punto_y + 3)
+        for punto_x, punto_y in puntos
+    ]
+
+
+    pygame.draw.polygon(
+        ventana,
+        (0, 5, 5),
+        sombra
+    )
+
+
+    pygame.draw.polygon(
+        ventana,
+        FONDO_PANEL,
+        puntos
+    )
+
+
+    pygame.draw.lines(
+        ventana,
+        color_borde,
+        True,
+        puntos,
+        grosor
+    )
+
+
+    # Detalles cortos de las esquinas.
+    pygame.draw.line(
+        ventana,
+        color_borde,
+        (x + 4, y + 16),
+        (x + 4, y + 35),
+        3
+    )
+
+
+    pygame.draw.line(
+        ventana,
+        color_borde,
+        (x + ancho - 28, y + alto - 5),
+        (x + ancho - 10, y + alto - 5),
+        3
+    )
+
+
+def _caja_interna(
+    ventana,
+    rectangulo,
+    color=GRIS_BORDE
+):
+
+    pygame.draw.rect(
+        ventana,
+        FONDO_INTERNO,
+        rectangulo,
+        border_radius=4
+    )
+
+
+    pygame.draw.rect(
+        ventana,
+        color,
+        rectangulo,
+        1,
+        border_radius=4
+    )
+
+
+def _texto_limitado(
+    fuente,
+    mensaje,
+    ancho_maximo
+):
+
+    if fuente.size(mensaje)[0] <= ancho_maximo:
+
+        return mensaje
+
+
+    mensaje_corto = mensaje
+
+
+    while (
+        len(mensaje_corto) > 3
+        and
+        fuente.size(mensaje_corto + "...")[0]
+        > ancho_maximo
+    ):
+
+        mensaje_corto = mensaje_corto[:-1]
+
+
+    return mensaje_corto.rstrip() + "..."
+
+
+def _icono_informacion(
+    ventana,
+    centro,
+    color
+):
+
+    pygame.draw.circle(
+        ventana,
+        color,
+        centro,
+        17,
+        2
+    )
+
+
+    fuente = _fuente(21, True)
+
+    texto = fuente.render(
+        "i",
+        True,
+        color
+    )
+
+
+    ventana.blit(
+        texto,
+        texto.get_rect(center=centro)
+    )
+
+
+def _icono_mochila(
+    ventana,
+    x,
+    y
+):
+
+    pygame.draw.rect(
+        ventana,
+        VERDE_NEON,
+        (x, y + 7, 22, 25),
+        2,
+        border_radius=4
+    )
+
+
+    pygame.draw.arc(
+        ventana,
+        VERDE_NEON,
+        (x + 5, y, 12, 15),
+        3.1,
+        6.3,
+        2
+    )
+
+
+    pygame.draw.line(
+        ventana,
+        VERDE_NEON,
+        (x + 5, y + 20),
+        (x + 17, y + 20),
+        2
+    )
+
+
+def _icono_corazon(
+    ventana,
+    x,
+    y
+):
+
+    pygame.draw.circle(
+        ventana,
+        VERDE_NEON,
+        (x + 7, y + 7),
+        7
+    )
+
+
+    pygame.draw.circle(
+        ventana,
+        VERDE_NEON,
+        (x + 18, y + 7),
+        7
+    )
+
+
+    pygame.draw.polygon(
+        ventana,
+        VERDE_NEON,
+        [
+            (x + 1, y + 8),
+            (x + 24, y + 8),
+            (x + 12, y + 23)
+        ]
+    )
+
+
+def _icono_pila(
+    ventana,
+    x,
+    y
+):
+
+    for desplazamiento in [0, 6, 12]:
+
+        pygame.draw.ellipse(
+            ventana,
+            AMARILLO_NEON,
+            (x, y + desplazamiento, 24, 9),
+            2
+        )
+
+
+def _tecla(
+    ventana,
+    letra,
+    x,
+    y,
+    color
+):
+
+    caja = pygame.Rect(
+        x,
+        y,
+        45,
+        40
+    )
+
+
+    pygame.draw.rect(
+        ventana,
+        FONDO_INTERNO,
+        caja,
+        border_radius=6
+    )
+
+
+    pygame.draw.rect(
+        ventana,
+        color,
+        caja,
+        2,
+        border_radius=6
+    )
+
+
+    fuente = _fuente(25, True)
+
+    texto = fuente.render(
+        letra,
+        True,
+        BLANCO
+    )
+
+
+    ventana.blit(
+        texto,
+        texto.get_rect(center=caja.center)
+    )
 
 
 # ===================================
@@ -23,37 +320,64 @@ def mostrar_interaccion(
     mensaje
 ):
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        22
-    )
-
-
     fondo = pygame.Rect(
         300,
-        570,
+        580,
         400,
-        55
+        58
     )
 
 
-    pygame.draw.rect(
+    _panel(
         ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        VERDE,
         fondo,
-        2
+        VERDE_NEON,
+        2,
+        9
+    )
+
+
+    tiene_tecla = mensaje.startswith("E -")
+
+
+    if tiene_tecla:
+
+        _tecla(
+            ventana,
+            "E",
+            325,
+            589,
+            VERDE_NEON
+        )
+
+
+        mensaje_visible = mensaje[3:].strip()
+        x_texto = 390
+
+    else:
+
+        _icono_informacion(
+            ventana,
+            (340, 609),
+            AMARILLO_NEON
+        )
+
+
+        mensaje_visible = mensaje
+        x_texto = 375
+
+
+    fuente = _fuente(17, True)
+
+    mensaje_visible = _texto_limitado(
+        fuente,
+        mensaje_visible,
+        290
     )
 
 
     texto = fuente.render(
-        mensaje,
+        mensaje_visible,
         True,
         BLANCO
     )
@@ -61,7 +385,7 @@ def mostrar_interaccion(
 
     ventana.blit(
         texto,
-        (330, 585)
+        (x_texto, 600)
     )
 
 
@@ -74,35 +398,88 @@ def mostrar_estado_afn(
     estado
 ):
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        18
+    fondo = pygame.Rect(
+        10,
+        8,
+        980,
+        52
     )
 
 
-    texto = fuente.render(
-        "Estado AFN: "
-        + estado,
+    _panel(
+        ventana,
+        fondo,
+        VERDE_SUAVE,
+        1,
+        7
+    )
+
+
+    pygame.draw.circle(
+        ventana,
+        VERDE_NEON,
+        (35, 34),
+        12,
+        2
+    )
+
+
+    pygame.draw.circle(
+        ventana,
+        VERDE_NEON,
+        (35, 34),
+        4
+    )
+
+
+    fuente_etiqueta = _fuente(15, True)
+
+    etiqueta = fuente_etiqueta.render(
+        "ESTADO AFN:",
         True,
-        VERDE
+        BLANCO
     )
 
 
     ventana.blit(
-        texto,
-        (20, 15)
+        etiqueta,
+        (55, 25)
     )
 
 
-    # Indicamos que podemos
-    # visualizar la gramática.
-    fuente_pequena = pygame.font.SysFont(
-        "Arial",
-        13
+    fuente_estado = _fuente(20, True)
+
+    texto_estado = fuente_estado.render(
+        estado,
+        True,
+        VERDE_NEON
     )
 
 
-    ayuda = fuente_pequena.render(
+    ventana.blit(
+        texto_estado,
+        (165, 21)
+    )
+
+
+    boton_gramatica = pygame.Rect(
+        405,
+        17,
+        190,
+        34
+    )
+
+
+    _caja_interna(
+        ventana,
+        boton_gramatica,
+        VERDE_SUAVE
+    )
+
+
+    fuente_ayuda = _fuente(14, True)
+
+    ayuda = fuente_ayuda.render(
         "G = Ver GLC / BNF",
         True,
         BLANCO
@@ -111,8 +488,23 @@ def mostrar_estado_afn(
 
     ventana.blit(
         ayuda,
-        (275, 18)
+        ayuda.get_rect(center=boton_gramatica.center)
     )
+
+
+    if estado == "CALLE":
+
+        texto_explorar = fuente_ayuda.render(
+            "X = EXPLORAR",
+            True,
+            AMARILLO_NEON
+        )
+
+
+        ventana.blit(
+            texto_explorar,
+            (795, 27)
+        )
 
 
 # ===================================
@@ -124,30 +516,31 @@ def mostrar_vida(
     jugador
 ):
 
-    x = 20
-    y = 190
-
-    ancho_barra = 200
-    alto_barra = 25
-
-
-    porcentaje = (
-        jugador.vida
-        /
-        jugador.vida_maxima
+    fondo = pygame.Rect(
+        15,
+        187,
+        215,
+        72
     )
 
 
-    ancho_vida = int(
-        ancho_barra * porcentaje
+    _panel(
+        ventana,
+        fondo,
+        VERDE_SUAVE,
+        2,
+        8
     )
 
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        16
+    _icono_corazon(
+        ventana,
+        28,
+        198
     )
 
+
+    fuente = _fuente(14, True)
 
     texto = fuente.render(
         "VIDA: "
@@ -161,44 +554,57 @@ def mostrar_vida(
 
     ventana.blit(
         texto,
-        (x, y - 25)
+        (58, 200)
+    )
+
+
+    porcentaje = max(
+        0,
+        min(
+            1,
+            jugador.vida / jugador.vida_maxima
+        )
+    )
+
+
+    barra = pygame.Rect(
+        28,
+        229,
+        189,
+        18
     )
 
 
     pygame.draw.rect(
         ventana,
-        NEGRO,
-        (
-            x,
-            y,
-            ancho_barra,
-            alto_barra
-        )
+        (30, 35, 35),
+        barra,
+        border_radius=3
+    )
+
+
+    barra_vida = pygame.Rect(
+        barra.x + 3,
+        barra.y + 3,
+        int((barra.width - 6) * porcentaje),
+        barra.height - 6
     )
 
 
     pygame.draw.rect(
         ventana,
-        ROJO,
-        (
-            x,
-            y,
-            ancho_vida,
-            alto_barra
-        )
+        ROJO_VIDA,
+        barra_vida,
+        border_radius=2
     )
 
 
     pygame.draw.rect(
         ventana,
         BLANCO,
-        (
-            x,
-            y,
-            ancho_barra,
-            alto_barra
-        ),
-        2
+        barra,
+        2,
+        border_radius=3
     )
 
 
@@ -212,36 +618,40 @@ def mostrar_dialogo(
 ):
 
     fondo = pygame.Rect(
-        120,
-        470,
-        760,
-        80
+        230,
+        510,
+        540,
+        58
     )
 
 
-    pygame.draw.rect(
+    _panel(
         ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        VERDE,
         fondo,
-        2
+        VERDE_NEON,
+        2,
+        8
     )
 
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        19
+    _icono_informacion(
+        ventana,
+        (265, 539),
+        VERDE_NEON
+    )
+
+
+    fuente = _fuente(15)
+
+    mensaje_visible = _texto_limitado(
+        fuente,
+        mensaje,
+        445
     )
 
 
     texto = fuente.render(
-        mensaje,
+        mensaje_visible,
         True,
         BLANCO
     )
@@ -249,7 +659,7 @@ def mostrar_dialogo(
 
     ventana.blit(
         texto,
-        (145, 500)
+        (295, 530)
     )
 
 
@@ -271,51 +681,68 @@ def mostrar_mision(
         return
 
 
-    fondo = pygame.Rect(
-        660,
-        15,
-        320,
-        80
-    )
+    # El mensaje de misión completada solo
+    # permanece visible durante 4 segundos.
+    if mision.completada == True:
 
-
-    pygame.draw.rect(
-        ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    if mision.activa == True:
-
-        color = AMARILLO
-
-        titulo_mision = (
-            "MISION ACTUAL"
+        tiempo_completada = getattr(
+            mision,
+            "tiempo_completada",
+            0
         )
+
+
+        if tiempo_completada == 0:
+
+            tiempo_completada = (
+                pygame.time.get_ticks()
+            )
+
+            mision.tiempo_completada = (
+                tiempo_completada
+            )
+
+
+        tiempo_transcurrido = (
+            pygame.time.get_ticks()
+            - tiempo_completada
+        )
+
+
+        if tiempo_transcurrido >= 4000:
+
+            return
+
+
+    if mision.activa:
+
+        color = AMARILLO_NEON
+        titulo_mision = "MISION ACTUAL"
 
     else:
 
-        color = VERDE
-
-        titulo_mision = (
-            "MISION COMPLETADA"
-        )
+        color = VERDE_NEON
+        titulo_mision = "MISION COMPLETADA"
 
 
-    pygame.draw.rect(
+    fondo = pygame.Rect(
+        325,
+        72,
+        350,
+        76
+    )
+
+
+    _panel(
         ventana,
-        color,
         fondo,
-        2
+        color,
+        2,
+        8
     )
 
 
-    fuente_titulo = pygame.font.SysFont(
-        "Arial",
-        16
-    )
-
+    fuente_titulo = _fuente(15, True)
 
     titulo = fuente_titulo.render(
         titulo_mision,
@@ -326,18 +753,30 @@ def mostrar_mision(
 
     ventana.blit(
         titulo,
-        (680, 25)
+        (345, 84)
     )
 
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        14
+    pygame.draw.line(
+        ventana,
+        color,
+        (345, 108),
+        (655, 108),
+        1
+    )
+
+
+    fuente = _fuente(12)
+
+    descripcion = _texto_limitado(
+        fuente,
+        mision.descripcion,
+        305
     )
 
 
     texto = fuente.render(
-        mision.descripcion,
+        descripcion,
         True,
         BLANCO
     )
@@ -345,7 +784,7 @@ def mostrar_mision(
 
     ventana.blit(
         texto,
-        (680, 55)
+        (345, 119)
     )
 
 
@@ -359,86 +798,96 @@ def mostrar_inventario(
 ):
 
     fondo = pygame.Rect(
-        20,
-        45,
-        240,
-        110
+        15,
+        72,
+        215,
+        115
     )
 
 
-    pygame.draw.rect(
+    _panel(
         ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        VERDE,
         fondo,
-        2
+        VERDE_SUAVE,
+        2,
+        8
     )
 
 
-    fuente_titulo = pygame.font.SysFont(
-        "Arial",
-        16
+    _icono_mochila(
+        ventana,
+        28,
+        81
     )
 
+
+    fuente_titulo = _fuente(14, True)
 
     titulo = fuente_titulo.render(
         "INVENTARIO",
         True,
-        VERDE
+        BLANCO
     )
 
 
     ventana.blit(
         titulo,
-        (35, 55)
+        (60, 87)
     )
 
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        15
+    pygame.draw.line(
+        ventana,
+        VERDE_NEON,
+        (28, 115),
+        (217, 115),
+        2
     )
 
 
-    posicion_y = 85
+    contenido = pygame.Rect(
+        28,
+        123,
+        189,
+        56
+    )
 
 
-    if len(
-        inventario.objetos
-    ) == 0:
+    _caja_interna(
+        ventana,
+        contenido
+    )
+
+
+    fuente = _fuente(12)
+
+
+    if len(inventario.objetos) == 0:
 
         texto = fuente.render(
             "Vacio",
             True,
-            BLANCO
+            GRIS_TEXTO
         )
 
 
         ventana.blit(
             texto,
-            (35, posicion_y)
+            texto.get_rect(center=contenido.center)
         )
-
 
     else:
 
+        posicion_y = 126
+
+
         for nombre in inventario.objetos:
 
-            cantidad = (
-                inventario.objetos[
-                    nombre
-                ]
-            )
-
+            cantidad = inventario.objetos[nombre]
 
             texto = fuente.render(
-                nombre
+                "- "
+                + nombre
                 + " x"
                 + str(cantidad),
                 True,
@@ -448,13 +897,11 @@ def mostrar_inventario(
 
             ventana.blit(
                 texto,
-                (35, posicion_y)
+                (36, posicion_y)
             )
 
 
-            posicion_y = (
-                posicion_y + 20
-            )
+            posicion_y += 16
 
 
 # ===================================
@@ -467,142 +914,140 @@ def mostrar_pila_mundo(
 ):
 
     fondo = pygame.Rect(
-        735,
-        110,
-        245,
-        190
+        760,
+        72,
+        225,
+        185
     )
 
 
-    pygame.draw.rect(
+    _panel(
         ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        AMARILLO,
         fondo,
-        2
+        AMARILLO_NEON,
+        2,
+        10
     )
 
 
-    fuente_titulo = pygame.font.SysFont(
-        "Arial",
-        16
+    _icono_pila(
+        ventana,
+        775,
+        83
     )
 
+
+    fuente_titulo = _fuente(14, True)
 
     titulo = fuente_titulo.render(
         "PILA DEL MUNDO",
         True,
-        AMARILLO
+        AMARILLO_NEON
     )
 
 
     ventana.blit(
         titulo,
-        (760, 120)
+        (808, 86)
     )
 
 
-    fuente_operacion = pygame.font.SysFont(
-        "Arial",
-        13
+    pygame.draw.line(
+        ventana,
+        AMARILLO_NEON,
+        (775, 114),
+        (970, 114),
+        2
     )
 
 
-    texto_operacion = (
-        fuente_operacion.render(
-            "Operacion: "
-            + pila_mundo.ultima_operacion,
-            True,
-            BLANCO
-        )
+    fuente_operacion = _fuente(11)
+
+    operacion = _texto_limitado(
+        fuente_operacion,
+        "Operacion: " + pila_mundo.ultima_operacion,
+        190
+    )
+
+
+    texto_operacion = fuente_operacion.render(
+        operacion,
+        True,
+        BLANCO
     )
 
 
     ventana.blit(
         texto_operacion,
-        (750, 145)
+        (775, 125)
     )
 
 
-    # Pila vacía.
-    if len(
-        pila_mundo.elementos
-    ) == 0:
+    contenido = pygame.Rect(
+        775,
+        150,
+        195,
+        88
+    )
 
-        fuente = pygame.font.SysFont(
-            "Arial",
-            16
-        )
 
+    _caja_interna(
+        ventana,
+        contenido
+    )
+
+
+    if len(pila_mundo.elementos) == 0:
+
+        fuente = _fuente(12)
 
         texto = fuente.render(
             "Pila vacia",
             True,
-            GRIS_CLARO
+            GRIS_TEXTO
         )
 
 
         ventana.blit(
             texto,
-            (815, 205)
+            texto.get_rect(center=contenido.center)
         )
 
-
-    # Pila con elementos.
     else:
 
-        fuente_tope = pygame.font.SysFont(
-            "Arial",
-            13
-        )
-
+        fuente_tope = _fuente(12, True)
 
         texto_tope = fuente_tope.render(
             "TOPE",
             True,
-            VERDE
+            VERDE_NEON
         )
 
 
         ventana.blit(
             texto_tope,
-            (755, 175)
+            (785, 157)
         )
 
 
-        posicion_y = 195
+        posicion_y = 178
 
 
-        for posicion in range(
-            len(pila_mundo.elementos) - 1,
-            -1,
-            -1
+        for lugar in reversed(
+            pila_mundo.elementos[-2:]
         ):
 
-            lugar = (
-                pila_mundo.elementos[
-                    posicion
-                ]
-            )
-
-
             caja = pygame.Rect(
-                770,
+                790,
                 posicion_y,
-                175,
-                32
+                165,
+                25
             )
 
 
             pygame.draw.rect(
                 ventana,
-                GRIS,
+                (56, 65, 65),
                 caja
             )
 
@@ -611,15 +1056,11 @@ def mostrar_pila_mundo(
                 ventana,
                 BLANCO,
                 caja,
-                2
+                1
             )
 
 
-            fuente = pygame.font.SysFont(
-                "Arial",
-                14
-            )
-
+            fuente = _fuente(11, True)
 
             texto = fuente.render(
                 lugar,
@@ -630,16 +1071,11 @@ def mostrar_pila_mundo(
 
             ventana.blit(
                 texto,
-                (
-                    790,
-                    posicion_y + 7
-                )
+                texto.get_rect(center=caja.center)
             )
 
 
-            posicion_y = (
-                posicion_y + 36
-            )
+            posicion_y += 28
 
 
 # ===================================
@@ -654,250 +1090,227 @@ def mostrar_combate(
 ):
 
     fondo = pygame.Rect(
-        130,
-        100,
-        740,
-        450
+        120,
+        82,
+        760,
+        470
     )
 
 
-    pygame.draw.rect(
+    _panel(
         ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        ROJO,
         fondo,
-        3
+        ROJO_COMBATE,
+        3,
+        14
     )
 
 
-    fuente_titulo = pygame.font.SysFont(
-        "Arial",
-        28
-    )
-
+    fuente_titulo = _fuente(26, True)
 
     titulo = fuente_titulo.render(
-        "COMBATE",
+        "PROTOCOLO DE COMBATE",
         True,
-        ROJO
+        ROJO_COMBATE
     )
 
 
     ventana.blit(
         titulo,
-        (430, 120)
+        titulo.get_rect(center=(500, 120))
     )
 
 
-    fuente = pygame.font.SysFont(
-        "Arial",
-        20
+    pygame.draw.line(
+        ventana,
+        ROJO_COMBATE,
+        (155, 148),
+        (845, 148),
+        2
     )
 
 
     enemigo = combate.enemigo
-
+    fuente = _fuente(16, True)
 
     texto_enemigo = fuente.render(
         enemigo.nombre
-        + " - VIDA: "
+        + "  VIDA "
         + str(enemigo.vida)
         + "/"
         + str(enemigo.vida_maxima),
         True,
-        BLANCO
+        ROJO_COMBATE
     )
 
 
     ventana.blit(
         texto_enemigo,
-        (190, 175)
+        (165, 170)
     )
 
 
     texto_jugador = fuente.render(
-        "Jugador - VIDA: "
+        "JUGADOR  VIDA "
         + str(jugador.vida)
         + "/"
         + str(jugador.vida_maxima),
         True,
-        VERDE
+        VERDE_NEON
     )
 
 
     ventana.blit(
         texto_jugador,
-        (190, 215)
+        (165, 208)
     )
 
 
-    cantidad_balas = (
-        inventario.obtener_cantidad(
-            "Balas"
-        )
+    balas = inventario.obtener_cantidad(
+        "Balas"
     )
-
 
     texto_balas = fuente.render(
-        "Balas: "
-        + str(cantidad_balas),
+        "BALAS: " + str(balas),
         True,
-        AMARILLO
+        AMARILLO_NEON
     )
 
 
     ventana.blit(
         texto_balas,
-        (580, 215)
+        (680, 208)
     )
 
 
-    texto_estado = fuente.render(
-        "Estado: "
-        + combate.estado,
+    estado = _fuente(14, True).render(
+        "ESTADO: " + combate.estado,
         True,
-        AMARILLO
+        AMARILLO_NEON
     )
 
 
     ventana.blit(
-        texto_estado,
-        (190, 265)
+        estado,
+        (165, 258)
     )
 
 
-    fuente_mensaje = pygame.font.SysFont(
-        "Arial",
-        17
+    caja_mensaje = pygame.Rect(
+        155,
+        288,
+        690,
+        72
     )
 
 
-    mensaje = fuente_mensaje.render(
+    _caja_interna(
+        ventana,
+        caja_mensaje
+    )
+
+
+    fuente_mensaje = _fuente(14)
+    mensaje = _texto_limitado(
+        fuente_mensaje,
         combate.mensaje,
-        True,
-        BLANCO
+        650
     )
 
 
     ventana.blit(
-        mensaje,
-        (190, 305)
-    )
-
-
-    fuente_pequena = pygame.font.SysFont(
-        "Arial",
-        13
-    )
-
-
-    texto_transicion = (
-        fuente_pequena.render(
-            "Transicion: "
-            + combate.transicion,
+        fuente_mensaje.render(
+            mensaje,
             True,
-            VERDE
-        )
+            BLANCO
+        ),
+        (175, 305)
+    )
+
+
+    fuente_transicion = _fuente(12)
+    transicion = _texto_limitado(
+        fuente_transicion,
+        "Transicion: " + combate.transicion,
+        650
     )
 
 
     ventana.blit(
-        texto_transicion,
-        (160, 350)
+        fuente_transicion.render(
+            transicion,
+            True,
+            VERDE_NEON
+        ),
+        (175, 334)
     )
 
 
     if combate.estado == "ELEGIR_ACCION":
 
-        opcion1 = fuente.render(
-            "1 - GOLPEAR",
-            True,
-            BLANCO
-        )
+        opciones = [
+            ("1", "GOLPEAR", BLANCO),
+            (
+                "2",
+                "DISPARAR",
+                BLANCO
+                if inventario.tiene("Pistola")
+                and inventario.tiene("Balas")
+                else ROJO_COMBATE
+            ),
+            ("3", "DEFENDER", BLANCO)
+        ]
 
 
-        ventana.blit(
-            opcion1,
-            (180, 410)
-        )
+        posicion_x = 175
 
 
-        if (
-            inventario.tiene(
-                "Pistola"
+        for tecla, accion, color in opciones:
+
+            _tecla(
+                ventana,
+                tecla,
+                posicion_x,
+                405,
+                VERDE_NEON
             )
-            and
-            inventario.tiene(
-                "Balas"
-            )
-        ):
 
-            color_disparo = BLANCO
+
+            ventana.blit(
+                _fuente(14, True).render(
+                    accion,
+                    True,
+                    color
+                ),
+                (posicion_x + 55, 418)
+            )
+
+
+            posicion_x += 220
+
+    else:
+
+        if combate.estado == "VICTORIA":
+
+            mensaje_final = "ENTER - CONTINUAR"
+            color_final = VERDE_NEON
 
         else:
 
-            color_disparo = ROJO
+            mensaje_final = "ENTER - REINICIAR"
+            color_final = ROJO_COMBATE
 
 
-        opcion2 = fuente.render(
-            "2 - DISPARAR",
+        texto_final = _fuente(17, True).render(
+            mensaje_final,
             True,
-            color_disparo
+            color_final
         )
 
 
         ventana.blit(
-            opcion2,
-            (390, 410)
-        )
-
-
-        opcion3 = fuente.render(
-            "3 - DEFENDER",
-            True,
-            BLANCO
-        )
-
-
-        ventana.blit(
-            opcion3,
-            (600, 410)
-        )
-
-
-    elif combate.estado == "VICTORIA":
-
-        texto = fuente.render(
-            "Presiona ENTER para continuar",
-            True,
-            VERDE
-        )
-
-
-        ventana.blit(
-            texto,
-            (335, 430)
-        )
-
-
-    elif combate.estado == "DERROTA":
-
-        texto = fuente.render(
-            "Presiona ENTER para reiniciar",
-            True,
-            ROJO
-        )
-
-
-        ventana.blit(
-            texto,
-            (335, 430)
+            texto_final,
+            texto_final.get_rect(center=(500, 445))
         )
 
 
@@ -910,195 +1323,139 @@ def mostrar_gramatica(
     gramatica
 ):
 
-    # -----------------------------------
-    # FONDO
-    # -----------------------------------
-
     fondo = pygame.Rect(
-        50,
-        45,
-        900,
-        560
+        40,
+        35,
+        920,
+        575
     )
 
 
-    pygame.draw.rect(
+    _panel(
         ventana,
-        NEGRO,
-        fondo
-    )
-
-
-    pygame.draw.rect(
-        ventana,
-        AMARILLO,
         fondo,
-        3
+        AMARILLO_NEON,
+        3,
+        14
     )
 
 
-    # -----------------------------------
-    # TÍTULO
-    # -----------------------------------
-
-    fuente_titulo = pygame.font.SysFont(
-        "Arial",
-        24
-    )
-
+    fuente_titulo = _fuente(22, True)
 
     titulo = fuente_titulo.render(
-        "GRAMATICA LIBRE DE CONTEXTO - BNF",
+        "GRAMATICA LIBRE DE CONTEXTO // BNF",
         True,
-        AMARILLO
+        AMARILLO_NEON
     )
 
 
     ventana.blit(
         titulo,
-        (260, 65)
+        titulo.get_rect(center=(500, 67))
     )
 
 
-    # ===================================
-    # REGLAS BNF
-    # ===================================
-
-    fuente_subtitulo = pygame.font.SysFont(
-        "Arial",
-        17
+    pygame.draw.line(
+        ventana,
+        AMARILLO_NEON,
+        (75, 92),
+        (925, 92),
+        2
     )
 
 
-    subtitulo = fuente_subtitulo.render(
-        "Reglas de produccion:",
-        True,
-        VERDE
-    )
-
+    fuente_subtitulo = _fuente(15, True)
 
     ventana.blit(
-        subtitulo,
-        (80, 105)
+        fuente_subtitulo.render(
+            "REGLAS DE PRODUCCION",
+            True,
+            VERDE_NEON
+        ),
+        (75, 108)
     )
 
 
-    fuente = pygame.font.SysFont(
-        "Consolas",
-        14
-    )
+    fuente = _fuente(12)
+    posicion_y = 137
 
 
-    reglas = (
-        gramatica.obtener_bnf()
-    )
+    for regla in gramatica.obtener_bnf():
 
-
-    posicion_y = 135
-
-
-    for regla in reglas:
-
-        texto = fuente.render(
+        regla_visible = _texto_limitado(
+            fuente,
             regla,
-            True,
-            BLANCO
+            820
         )
 
 
         ventana.blit(
-            texto,
-            (90, posicion_y)
+            fuente.render(
+                regla_visible,
+                True,
+                BLANCO
+            ),
+            (85, posicion_y)
         )
 
 
-        posicion_y = (
-            posicion_y + 20
-        )
+        posicion_y += 18
 
 
-    # ===================================
-    # DERIVACIÓN
-    # ===================================
-
-    posicion_y = (
-        posicion_y + 10
-    )
-
-
-    subtitulo = fuente_subtitulo.render(
-        "Derivacion por la izquierda:",
-        True,
-        VERDE
-    )
+    posicion_y += 10
 
 
     ventana.blit(
-        subtitulo,
-        (80, posicion_y)
-    )
-
-
-    posicion_y = (
-        posicion_y + 28
-    )
-
-
-    derivacion = (
-        gramatica.obtener_derivacion(
-            "<DIALOGO_INICIO>"
-        )
-    )
-
-
-    numero_paso = 1
-
-
-    for paso in derivacion:
-
-        texto = fuente.render(
-            str(numero_paso)
-            + ". "
-            + paso,
+        fuente_subtitulo.render(
+            "DERIVACION POR LA IZQUIERDA",
             True,
-            BLANCO
+            VERDE_NEON
+        ),
+        (75, posicion_y)
+    )
+
+
+    posicion_y += 28
+
+
+    derivacion = gramatica.obtener_derivacion(
+        "<DIALOGO_INICIO>"
+    )
+
+
+    for numero, paso in enumerate(
+        derivacion,
+        start=1
+    ):
+
+        paso_visible = _texto_limitado(
+            fuente,
+            str(numero) + ". " + paso,
+            820
         )
 
 
         ventana.blit(
-            texto,
-            (90, posicion_y)
+            fuente.render(
+                paso_visible,
+                True,
+                BLANCO
+            ),
+            (85, posicion_y)
         )
 
 
-        posicion_y = (
-            posicion_y + 18
-        )
+        posicion_y += 18
 
 
-        numero_paso = (
-            numero_paso + 1
-        )
-
-
-    # -----------------------------------
-    # CERRAR
-    # -----------------------------------
-
-    fuente_cerrar = pygame.font.SysFont(
-        "Arial",
-        15
-    )
-
-
-    texto_cerrar = fuente_cerrar.render(
-        "Presiona G nuevamente para cerrar",
+    cerrar = _fuente(13, True).render(
+        "G = CERRAR",
         True,
-        AMARILLO
+        AMARILLO_NEON
     )
 
 
     ventana.blit(
-        texto_cerrar,
-        (690, 575)
+        cerrar,
+        (815, 575)
     )

@@ -182,8 +182,9 @@ def dibujar_refugio(
 
 
     fuente = pygame.font.SysFont(
-        "Arial",
-        20
+        "Consolas",
+        22,
+        bold=True
     )
 
 
@@ -424,8 +425,9 @@ def dibujar_calle(
 
 
     fuente = pygame.font.SysFont(
-        "Arial",
-        20
+        "Consolas",
+        22,
+        bold=True
     )
 
 
@@ -676,8 +678,9 @@ def dibujar_hospital(
 
 
     fuente = pygame.font.SysFont(
-        "Arial",
-        20
+        "Consolas",
+        22,
+        bold=True
     )
 
 
@@ -933,8 +936,9 @@ def dibujar_sotano(
 
 
     fuente = pygame.font.SysFont(
-        "Arial",
-        20
+        "Consolas",
+        22,
+        bold=True
     )
 
 
@@ -1145,8 +1149,9 @@ def dibujar_comisaria(
 
 
     fuente = pygame.font.SysFont(
-        "Arial",
-        20
+        "Consolas",
+        22,
+        bold=True
     )
 
 

@@ -2,6 +2,8 @@
 # CLASE MISIÓN
 # -----------------------------------
 
+import pygame
+
 class Mision:
 
     # Esta función se ejecuta cuando
@@ -22,6 +24,11 @@ class Mision:
         # está completada.
         self.completada = False
 
+        # Momento en el que se completó.
+        # Se usa para ocultar el aviso
+        # después de unos segundos.
+        self.tiempo_completada = 0
+
 
     # -----------------------------------
     # ACTIVAR MISIÓN
@@ -31,6 +38,8 @@ class Mision:
 
         # Activamos la misión.
         self.activa = True
+
+        self.tiempo_completada = 0
 
 
     # -----------------------------------
@@ -44,3 +53,9 @@ class Mision:
 
         # La marcamos como completada.
         self.completada = True
+
+        # Guardamos el momento exacto para
+        # mostrar el aviso temporalmente.
+        self.tiempo_completada = (
+            pygame.time.get_ticks()
+        )

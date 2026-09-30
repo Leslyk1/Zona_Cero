@@ -58,6 +58,7 @@ Las entradas representan las decisiones o acciones que puede realizar el jugador
     ENTRAR_REFUGIO,
     ENTRAR_HOSPITAL,
     ENTRAR_COMISARIA,
+    EXPLORAR,
     SALIR_HOSPITAL,
     BAJAR_SOTANO,
     SUBIR_HOSPITAL,
@@ -89,8 +90,12 @@ Las entradas representan las decisiones o acciones que puede realizar el jugador
 
 δ(CALLE, ENTRAR_COMISARIA) = {COMISARIA}
 
+δ(CALLE, EXPLORAR) = {HOSPITAL, COMISARIA}
+
 δ(CALLE, ENTRAR_PUNTO_EVACUACION) = {PUNTO_EVACUACION}
 ```
+
+`EXPLORAR` demuestra el no determinismo real: la misma entrada posee dos estados siguientes posibles. En el videojuego, la tecla `X` simula una ejecución del AFN eligiendo al azar uno de esos destinos. Las entradas manuales al Hospital y a la Comisaría continúan disponibles con `E`.
 
 La transición hacia `PUNTO_EVACUACION` solamente se habilita en el videojuego cuando se cumplen estas condiciones:
 
@@ -198,6 +203,8 @@ stateDiagram-v2
     CALLE --> REFUGIO : ENTRAR_REFUGIO
     CALLE --> HOSPITAL : ENTRAR_HOSPITAL
     CALLE --> COMISARIA : ENTRAR_COMISARIA
+    CALLE --> HOSPITAL : EXPLORAR
+    CALLE --> COMISARIA : EXPLORAR
 
     HOSPITAL --> CALLE : SALIR_HOSPITAL
     HOSPITAL --> SOTANO_HOSPITAL : BAJAR_SOTANO / PUSH(HOSPITAL)
@@ -419,6 +426,8 @@ cambiar_estado()
 ```
 
 implementa las transiciones del autómata.
+
+Cuando una acción tiene varios destinos, `cambiar_estado()` utiliza `random.choice()` para representar una ejecución posible del AFN. Para probarlo dentro del juego, se presiona `X` desde `CALLE`.
 
 Las pruebas automáticas de alcanzabilidad están en:
 

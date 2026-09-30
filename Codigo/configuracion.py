@@ -6,6 +6,11 @@
 ANCHO = 1000
 ALTO = 650
 
+# La lógica del juego conserva 1000 x 650,
+# pero la ventana se muestra un poco más grande.
+ANCHO_VENTANA = 1200
+ALTO_VENTANA = 780
+
 # Cantidad de imágenes por segundo
 FPS = 60
 

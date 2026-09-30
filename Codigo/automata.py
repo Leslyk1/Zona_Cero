@@ -2,6 +2,8 @@
 # AUTÓMATA NARRATIVO DEL JUEGO
 # -----------------------------------
 
+import random
+
 class AutomataNarrativo:
 
     def __init__(self):
@@ -58,6 +60,13 @@ class AutomataNarrativo:
                 ],
 
                 "ENTRAR_COMISARIA": [
+                    "COMISARIA"
+                ],
+
+                # Una misma acción puede conducir
+                # a dos estados diferentes.
+                "EXPLORAR": [
+                    "HOSPITAL",
                     "COMISARIA"
                 ],
 
@@ -169,8 +178,11 @@ class AutomataNarrativo:
                 ]
 
 
-                nuevo_estado = (
-                    posibles_estados[0]
+                # Si existe más de un destino,
+                # simulamos una ejecución del AFN
+                # eligiendo uno de los posibles.
+                nuevo_estado = random.choice(
+                    posibles_estados
                 )
 
 

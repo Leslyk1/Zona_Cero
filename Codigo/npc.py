@@ -62,8 +62,9 @@ class NPC:
 
 
         fuente = pygame.font.SysFont(
-            "Arial",
-            16
+            "Consolas",
+            18,
+            bold=True
         )
 
 
