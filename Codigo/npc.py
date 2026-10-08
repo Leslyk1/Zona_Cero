@@ -1,18 +1,15 @@
-from arte import personaje, etiqueta, MENTA
-# Importamos pygame
+from arte import (
+    personaje,
+    etiqueta,
+    MENTA
+)
+
 import pygame
 
 
-# Importamos colores
-from configuracion import (
-    BLANCO,
-    VERDE
-)
-
-
-# -----------------------------------
+# ===================================
 # CLASE NPC
-# -----------------------------------
+# ===================================
 
 class NPC:
 
@@ -20,14 +17,14 @@ class NPC:
         self,
         nombre,
         x,
-        y
+        y,
+        tipo_sprite
     ):
 
-        # Nombre del NPC.
         self.nombre = nombre
 
+        self.tipo_sprite = tipo_sprite
 
-        # Rectángulo.
         self.rectangulo = pygame.Rect(
             x,
             y,
@@ -35,9 +32,6 @@ class NPC:
             40
         )
 
-
-        # Zona utilizada para
-        # interactuar.
         self.zona_interaccion = pygame.Rect(
             x - 35,
             y - 35,
@@ -46,14 +40,26 @@ class NPC:
         )
 
 
-    # -----------------------------------
-    # DIBUJAR NPC
-    # -----------------------------------
+    def dibujar(
+        self,
+        ventana
+    ):
 
-    def dibujar(self, ventana):
-        # Diego: Elena tiene un sprite de médica y un nombre legible.
-        personaje(ventana, self.rectangulo, "elena")
-        etiqueta(ventana, self.nombre, (self.rectangulo.centerx, self.rectangulo.top - 30), MENTA)
+        personaje(
+            ventana,
+            self.rectangulo,
+            self.tipo_sprite
+        )
+
+        etiqueta(
+            ventana,
+            self.nombre,
+            (
+                self.rectangulo.centerx,
+                self.rectangulo.top - 30
+            ),
+            MENTA
+        )
 
 
 # ===================================
@@ -67,12 +73,90 @@ class Elena(NPC):
         super().__init__(
             "Elena",
             680,
-            220
+            220,
+            "elena"
+        )
+
+
+    def hablar(
+        self,
+        mision,
+        inventario,
+        gramatica
+    ):
+
+        # Jugador ya tiene medicamento.
+        if inventario.tiene(
+            "Medicamento"
+        ):
+
+            if mision.completada == False:
+
+                if mision.activa == False:
+
+                    mision.activar()
+
+                mision.completar()
+
+            return gramatica.generar(
+                "<DIALOGO_FINAL>"
+            )
+
+
+        # Primera conversación.
+        if (
+            mision.activa == False
+            and
+            mision.completada == False
+        ):
+
+            mision.activar()
+
+            mision.descripcion = (
+                gramatica.generar(
+                    "<MISION>"
+                )
+            )
+
+            return gramatica.generar(
+                "<DIALOGO_INICIO>"
+            )
+
+
+        # Misión activa.
+        elif mision.activa == True:
+
+            return gramatica.generar(
+                "<DIALOGO_RECORDATORIO>"
+            )
+
+
+        # Misión completada.
+        else:
+
+            return gramatica.generar(
+                "<DIALOGO_FINAL>"
+            )
+
+
+# ===================================
+# MARCOS
+# ===================================
+
+class Marcos(NPC):
+
+    def __init__(self):
+
+        super().__init__(
+            "Marcos",
+            210,
+            220,
+            "marcos"
         )
 
 
     # ===================================
-    # HABLAR CON ELENA
+    # HABLAR CON MARCOS
     # ===================================
 
     def hablar(
@@ -83,63 +167,65 @@ class Elena(NPC):
     ):
 
         # -----------------------------------
-        # JUGADOR TIENE MEDICAMENTO
+        # MISIÓN YA COMPLETADA
+        # -----------------------------------
+
+        if mision.completada == True:
+
+            return gramatica.generar(
+                "<DIALOGO_MARCOS_FINAL>"
+            )
+
+
+        # -----------------------------------
+        # JUGADOR TIENE LA RADIO
         # -----------------------------------
 
         if inventario.tiene(
-            "Medicamento"
+            "Radio"
         ):
 
-            # Si todavía no se había
-            # completado la misión.
-            if mision.completada == False:
+            # Quitamos la radio
+            # del inventario.
+            inventario.usar(
+                "Radio",
+                1
+            )
 
-                # Si tampoco estaba activa,
-                # la activamos primero.
-                if mision.activa == False:
+            # Completamos la misión.
+            mision.completar()
 
-                    mision.activar()
+            # Recompensa.
+            if inventario.tiene(
+                "Tarjeta Militar"
+            ) == False:
 
-
-                # Completamos la misión.
-                mision.completar()
-
-
-            # -----------------------------------
-            # DIÁLOGO GENERADO POR LA GLC
-            # -----------------------------------
+                inventario.agregar(
+                    "Tarjeta Militar",
+                    1
+                )
 
             return gramatica.generar(
-                "<DIALOGO_FINAL>"
+                "<DIALOGO_MARCOS_FINAL>"
             )
 
 
         # -----------------------------------
-        # PRIMERA VEZ QUE HABLAMOS
+        # PRIMERA CONVERSACIÓN
         # -----------------------------------
 
-        if (
-            mision.activa == False
-            and
-            mision.completada == False
-        ):
+        if mision.activa == False:
 
-            # Activamos misión.
             mision.activar()
 
-
-            # La descripción de la misión
-            # también sale de la gramática.
             mision.descripcion = (
                 gramatica.generar(
-                    "<MISION>"
+                    "<MISION_MARCOS>"
                 )
             )
 
-
-            # Generamos diálogo inicial.
             return gramatica.generar(
-                "<DIALOGO_INICIO>"
+                "<DIALOGO_MARCOS_INICIO>"
             )
 
 
@@ -147,21 +233,6 @@ class Elena(NPC):
         # MISIÓN ACTIVA
         # -----------------------------------
 
-        elif mision.activa == True:
-
-            # Generamos un recordatorio
-            # mediante nuestra GLC.
-            return gramatica.generar(
-                "<DIALOGO_RECORDATORIO>"
-            )
-
-
-        # -----------------------------------
-        # MISIÓN COMPLETADA
-        # -----------------------------------
-
-        else:
-
-            return gramatica.generar(
-                "<DIALOGO_FINAL>"
-            )
+        return gramatica.generar(
+            "<DIALOGO_MARCOS_RECORDATORIO>"
+        )

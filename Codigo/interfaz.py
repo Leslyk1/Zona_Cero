@@ -823,38 +823,512 @@ def mostrar_resumen_misiones(ventana, diario, mision):
         pygame.draw.rect(ventana, VERDE_NEON, (barra.x, barra.y, round(barra.width*diario.porcentaje/100), 4), border_radius=2)
 
 
-def mostrar_diario(ventana, diario):
-    # Diego: el progreso se calcula a partir del mundo; abrir este panel nunca
-    # cambia el inventario, concede una misión ni consume un turno de combate.
-    ventana.fill((12, 22, 31))
-    _panel(ventana, pygame.Rect(25, 25, 950, 598), VERDE_SUAVE, 2, 12)
-    ventana.blit(_fuente(12, True).render("ZONA CERO / REGISTRO DEL SUPERVIVIENTE", True, AMARILLO_NEON), (48, 44))
-    ventana.blit(_fuente(30, True).render("Diario de misiones", True, BLANCO), (48, 67))
-    ventana.blit(_fuente(14).render("Tu camino hacia el último refugio.", True, GRIS_TEXTO), (49, 111))
-    ventana.blit(_fuente(26, True).render(f"{diario.porcentaje}%", True, VERDE_NEON), (864, 68))
-    ventana.blit(_fuente(12).render(f"{diario.pasos_completados}/{diario.total_pasos} pasos", True, GRIS_TEXTO), (864, 109))
-    pygame.draw.rect(ventana, GRIS_BORDE, (48, 139, 900, 5), border_radius=2)
+def mostrar_diario(
+    ventana,
+    diario
+):
+
+    # ===================================
+    # FONDO GENERAL
+    # ===================================
+
+    ventana.fill(
+        (12, 22, 31)
+    )
+
+
+    _panel(
+        ventana,
+        pygame.Rect(
+            25,
+            25,
+            950,
+            598
+        ),
+        VERDE_SUAVE,
+        2,
+        12
+    )
+
+
+    # ===================================
+    # ENCABEZADO
+    # ===================================
+
+    ventana.blit(
+        _fuente(
+            12,
+            True
+        ).render(
+            "ZONA CERO / REGISTRO DEL SUPERVIVIENTE",
+            True,
+            AMARILLO_NEON
+        ),
+        (
+            48,
+            44
+        )
+    )
+
+
+    ventana.blit(
+        _fuente(
+            30,
+            True
+        ).render(
+            "Diario de misiones",
+            True,
+            BLANCO
+        ),
+        (
+            48,
+            67
+        )
+    )
+
+
+    ventana.blit(
+        _fuente(
+            14
+        ).render(
+            "Tu camino hacia el último refugio.",
+            True,
+            GRIS_TEXTO
+        ),
+        (
+            49,
+            111
+        )
+    )
+
+
+    # ===================================
+    # PORCENTAJE
+    # ===================================
+
+    ventana.blit(
+        _fuente(
+            26,
+            True
+        ).render(
+            f"{diario.porcentaje}%",
+            True,
+            VERDE_NEON
+        ),
+        (
+            864,
+            68
+        )
+    )
+
+
+    ventana.blit(
+        _fuente(
+            12
+        ).render(
+            f"{diario.pasos_completados}/{diario.total_pasos} pasos",
+            True,
+            GRIS_TEXTO
+        ),
+        (
+            864,
+            109
+        )
+    )
+
+
+    # ===================================
+    # BARRA DE PROGRESO
+    # ===================================
+
+    pygame.draw.rect(
+        ventana,
+        GRIS_BORDE,
+        (
+            48,
+            139,
+            900,
+            5
+        ),
+        border_radius=2
+    )
+
+
     if diario.porcentaje:
-        pygame.draw.rect(ventana, VERDE_NEON, (48, 139, round(900*diario.porcentaje/100), 5), border_radius=2)
 
-    for indice, m in enumerate(diario.misiones):
-        y = (163, 335, 445)[indice]
-        alto = 158 if indice == 0 else 98
-        rect = pygame.Rect(48, y, 900, alto)
-        color = VERDE_NEON if m["completa"] else GRIS_BORDE
-        _caja_interna(ventana, rect, color)
-        _marca_objetivo(ventana, (72, y+25), m["completa"])
-        ventana.blit(_fuente(19, True).render(m["nombre"], True, BLANCO), (91, y+10))
-        estado = "COMPLETADA" if m["completa"] else "EN CURSO" if any(h for _, h in m["pasos"]) else "PENDIENTE"
-        texto_estado = _fuente(11, True).render(estado + "  /  " + m["zona"], True, color if m["completa"] else AMARILLO_NEON)
-        ventana.blit(texto_estado, (rect.right-18-texto_estado.get_width(), y+17))
-        ventana.blit(_fuente(12).render(m["descripcion"], True, GRIS_TEXTO), (72, y+43))
-        for paso, (nombre, hecho) in enumerate(m["pasos"]):
-            py = y+77+paso*26
-            _marca_objetivo(ventana, (79, py), hecho)
-            ventana.blit(_fuente(13).render(nombre, True, VERDE_NEON if hecho else BLANCO), (98, py-11))
+        pygame.draw.rect(
+            ventana,
+            VERDE_NEON,
+            (
+                48,
+                139,
+                round(
+                    900
+                    *
+                    diario.porcentaje
+                    /
+                    100
+                ),
+                5
+            ),
+            border_radius=2
+        )
 
-    ventana.blit(_fuente(11, True).render("SIGUIENTE PASO", True, AMARILLO_NEON), (48, 559))
-    ventana.blit(_fuente(14).render(diario.siguiente, True, BLANCO), (48, 579))
-    cerrar = _fuente(12, True).render("J / ESC  ·  Volver al juego", True, GRIS_TEXTO)
-    ventana.blit(cerrar, (948-cerrar.get_width(), 592))
+
+    # ===================================
+    # POSICIONES DE LAS 4 MISIONES
+    # ===================================
+
+    posiciones = [
+
+        # Arriba izquierda.
+        (
+            48,
+            155
+        ),
+
+        # Arriba derecha.
+        (
+            504,
+            155
+        ),
+
+        # Abajo izquierda.
+        (
+            48,
+            350
+        ),
+
+        # Abajo derecha.
+        (
+            504,
+            350
+        )
+    ]
+
+
+    # ===================================
+    # DIBUJAR MISIONES
+    # ===================================
+
+    for indice, mision in enumerate(
+        diario.misiones
+    ):
+
+        # Evitamos dibujar más de cuatro
+        # tarjetas en esta distribución.
+        if indice >= len(
+            posiciones
+        ):
+
+            break
+
+
+        x, y = posiciones[
+            indice
+        ]
+
+
+        rect = pygame.Rect(
+            x,
+            y,
+            444,
+            180
+        )
+
+
+        # -----------------------------------
+        # COLOR SEGÚN ESTADO
+        # -----------------------------------
+
+        color = (
+            VERDE_NEON
+            if mision["completa"]
+            else GRIS_BORDE
+        )
+
+
+        # -----------------------------------
+        # CAJA
+        # -----------------------------------
+
+        _caja_interna(
+            ventana,
+            rect,
+            color
+        )
+
+
+        # -----------------------------------
+        # MARCA PRINCIPAL
+        # -----------------------------------
+
+        _marca_objetivo(
+            ventana,
+            (
+                x + 22,
+                y + 24
+            ),
+            mision["completa"]
+        )
+
+
+        # -----------------------------------
+        # NOMBRE
+        # -----------------------------------
+
+        fuente_titulo = _fuente(
+            16,
+            True
+        )
+
+
+        titulo = _texto_limitado(
+            fuente_titulo,
+            mision["nombre"],
+            255
+        )
+
+
+        ventana.blit(
+            fuente_titulo.render(
+                titulo,
+                True,
+                BLANCO
+            ),
+            (
+                x + 43,
+                y + 10
+            )
+        )
+
+
+        # ===================================
+        # ESTADO
+        # ===================================
+
+        if mision["completa"]:
+
+            estado = "COMPLETADA"
+
+        elif any(
+            hecho
+            for _, hecho
+            in mision["pasos"]
+        ):
+
+            estado = "EN CURSO"
+
+        else:
+
+            estado = "PENDIENTE"
+
+
+        fuente_estado = _fuente(
+            9,
+            True
+        )
+
+
+        texto_estado = (
+            estado
+            +
+            " / "
+            +
+            mision["zona"]
+        )
+
+
+        texto_estado = _texto_limitado(
+            fuente_estado,
+            texto_estado,
+            390
+        )
+
+
+        color_estado = (
+            VERDE_NEON
+            if mision["completa"]
+            else AMARILLO_NEON
+        )
+
+
+        ventana.blit(
+            fuente_estado.render(
+                texto_estado,
+                True,
+                color_estado
+            ),
+            (
+                x + 43,
+                y + 37
+            )
+        )
+
+
+        # ===================================
+        # DESCRIPCIÓN
+        # ===================================
+
+        _texto_en_lineas(
+            ventana,
+            mision["descripcion"],
+            x + 20,
+            y + 61,
+            400,
+            2,
+            _fuente(10)
+        )
+
+
+        # ===================================
+        # PASOS
+        # ===================================
+
+        inicio_pasos = (
+            y + 103
+        )
+
+
+        for numero_paso, (
+            nombre,
+            hecho
+        ) in enumerate(
+            mision["pasos"]
+        ):
+
+            py = (
+                inicio_pasos
+                +
+                numero_paso * 22
+            )
+
+
+            # Marca del paso.
+            _marca_objetivo(
+                ventana,
+                (
+                    x + 25,
+                    py
+                ),
+                hecho
+            )
+
+
+            # Texto.
+            fuente_paso = _fuente(
+                10
+            )
+
+
+            nombre_visible = (
+                _texto_limitado(
+                    fuente_paso,
+                    nombre,
+                    375
+                )
+            )
+
+
+            color_paso = (
+                VERDE_NEON
+                if hecho
+                else BLANCO
+            )
+
+
+            ventana.blit(
+                fuente_paso.render(
+                    nombre_visible,
+                    True,
+                    color_paso
+                ),
+                (
+                    x + 42,
+                    py - 9
+                )
+            )
+
+
+    # ===================================
+    # SIGUIENTE PASO
+    # ===================================
+
+    pygame.draw.line(
+        ventana,
+        GRIS_BORDE,
+        (
+            48,
+            540
+        ),
+        (
+            948,
+            540
+        ),
+        1
+    )
+
+
+    ventana.blit(
+        _fuente(
+            11,
+            True
+        ).render(
+            "SIGUIENTE PASO",
+            True,
+            AMARILLO_NEON
+        ),
+        (
+            48,
+            550
+        )
+    )
+
+
+    siguiente_visible = (
+        _texto_limitado(
+            _fuente(13),
+            diario.siguiente,
+            600
+        )
+    )
+
+
+    ventana.blit(
+        _fuente(
+            13
+        ).render(
+            siguiente_visible,
+            True,
+            BLANCO
+        ),
+        (
+            48,
+            570
+        )
+    )
+
+
+    # ===================================
+    # CERRAR DIARIO
+    # ===================================
+
+    cerrar = _fuente(
+        11,
+        True
+    ).render(
+        "J / ESC  ·  Volver al juego",
+        True,
+        GRIS_TEXTO
+    )
+
+
+    ventana.blit(
+        cerrar,
+        (
+            948
+            -
+            cerrar.get_width(),
+            590
+        )
+    )

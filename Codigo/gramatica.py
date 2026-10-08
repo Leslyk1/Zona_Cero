@@ -1,101 +1,53 @@
-# -----------------------------------
+# ===================================
 # GRAMÁTICA LIBRE DE CONTEXTO
 # PARA DIÁLOGOS Y MISIONES
-# -----------------------------------
+# ===================================
 
 class GramaticaDialogos:
 
     def __init__(self):
 
-        # -----------------------------------
-        # REGLAS DE PRODUCCIÓN
-        # -----------------------------------
-        #
-        # Cada elemento representa
-        # una regla de nuestra GLC.
-        #
-        # Ejemplo:
-        #
-        # <MISION> ->
-        # <ACCION> <OBJETO> <LUGAR>
-        #
-        # Utilizamos listas porque
-        # algunos símbolos pueden tener
-        # varias producciones posibles.
-
         self.reglas = {
 
-
             # ===================================
-            # DIÁLOGO INICIAL
+            # ELENA
             # ===================================
 
             "<DIALOGO_INICIO>": [
-
                 [
                     "<NPC>",
                     "<PETICION>"
                 ]
             ],
 
-
-            # ===================================
-            # DIÁLOGO DE RECORDATORIO
-            # ===================================
-
             "<DIALOGO_RECORDATORIO>": [
-
                 [
                     "<NPC>",
                     "<RECORDATORIO>"
                 ]
             ],
 
-
-            # ===================================
-            # DIÁLOGO FINAL
-            # ===================================
-
             "<DIALOGO_FINAL>": [
-
                 [
                     "<NPC>",
                     "<AGRADECIMIENTO>"
                 ]
             ],
 
-
-            # ===================================
-            # NPC
-            # ===================================
-
             "<NPC>": [
-
                 [
                     "Elena:"
                 ]
             ],
 
-
-            # ===================================
-            # PETICIÓN
-            # ===================================
-
             "<PETICION>": [
-
                 [
                     "Necesito tu ayuda.",
                     "<MISION>"
                 ]
             ],
 
-
-            # ===================================
-            # MISIÓN
-            # ===================================
-
             "<MISION>": [
-
                 [
                     "<ACCION>",
                     "<OBJETO>",
@@ -103,127 +55,160 @@ class GramaticaDialogos:
                 ]
             ],
 
-
-            # ===================================
-            # ACCIONES POSIBLES
-            # ===================================
-
             "<ACCION>": [
-
                 [
                     "Busca"
                 ],
-
                 [
                     "Encuentra"
                 ]
             ],
 
-
-            # ===================================
-            # OBJETOS
-            # ===================================
-
             "<OBJETO>": [
-
                 [
                     "medicamentos"
                 ]
             ],
 
-
-            # ===================================
-            # LUGARES
-            # ===================================
-
             "<LUGAR>": [
-
                 [
                     "en la farmacia."
                 ],
-
                 [
                     "en el sotano."
                 ]
             ],
 
-
-            # ===================================
-            # RECORDATORIO
-            # ===================================
-
             "<RECORDATORIO>": [
-
                 [
                     "Todavia necesito los medicamentos."
                 ]
             ],
 
-
-            # ===================================
-            # AGRADECIMIENTO
-            # ===================================
-
             "<AGRADECIMIENTO>": [
-
                 [
                     "Gracias por traer los medicamentos."
+                ]
+            ],
+
+
+            # ===================================
+            # MARCOS
+            # ===================================
+
+            "<DIALOGO_MARCOS_INICIO>": [
+                [
+                    "<NPC_MARCOS>",
+                    "<PETICION_MARCOS>"
+                ]
+            ],
+
+            "<DIALOGO_MARCOS_RECORDATORIO>": [
+                [
+                    "<NPC_MARCOS>",
+                    "<RECORDATORIO_MARCOS>"
+                ]
+            ],
+
+            "<DIALOGO_MARCOS_FINAL>": [
+                [
+                    "<NPC_MARCOS>",
+                    "<AGRADECIMIENTO_MARCOS>"
+                ]
+            ],
+
+            "<NPC_MARCOS>": [
+                [
+                    "Marcos:"
+                ]
+            ],
+
+            "<PETICION_MARCOS>": [
+                [
+                    "Necesito una radio para contactar a los militares.",
+                    "<MISION_MARCOS>"
+                ]
+            ],
+
+            "<MISION_MARCOS>": [
+                [
+                    "<ACCION_MARCOS>",
+                    "<OBJETO_MARCOS>",
+                    "<LUGAR_MARCOS>"
+                ]
+            ],
+
+            "<ACCION_MARCOS>": [
+                [
+                    "Busca"
+                ],
+                [
+                    "Encuentra"
+                ]
+            ],
+
+            "<OBJETO_MARCOS>": [
+                [
+                    "la radio"
+                ]
+            ],
+
+            "<LUGAR_MARCOS>": [
+                [
+                    "en el archivo de la comisaria."
+                ]
+            ],
+
+            "<RECORDATORIO_MARCOS>": [
+                [
+                    "Todavia necesito la radio."
+                ]
+            ],
+
+            "<AGRADECIMIENTO_MARCOS>": [
+                [
+                    "Gracias por traer la radio. Toma esta tarjeta militar."
                 ]
             ]
         }
 
 
     # ===================================
-    # GENERAR UNA CADENA
+    # GENERAR CADENA
     # ===================================
 
-    def generar(self, simbolo):
+    def generar(
+        self,
+        simbolo
+    ):
 
-        # Si el símbolo NO pertenece
-        # a las reglas, significa que
-        # ya es un terminal.
+        # Si no está en las reglas,
+        # significa que es terminal.
         if simbolo not in self.reglas:
 
             return simbolo
 
 
-        # Por ahora utilizaremos
-        # la primera producción.
-        #
-        # Ejemplo:
-        #
-        # <ACCION> tiene:
-        #
-        # Busca
-        # Encuentra
-        #
-        # Nosotros usaremos "Busca".
+        # Elegimos la primera producción.
         produccion = self.reglas[
             simbolo
         ][0]
 
 
-        # Aquí guardaremos las
-        # palabras generadas.
         resultado = []
 
 
-        # Recorremos la producción.
         for parte in produccion:
 
-            # Generamos cada parte.
             texto = self.generar(
                 parte
             )
 
-
-            # La agregamos.
             resultado.append(
                 texto
             )
 
 
-        # Unimos todo utilizando espacios.
         return " ".join(
             resultado
         )
@@ -238,26 +223,16 @@ class GramaticaDialogos:
         simbolo_inicial
     ):
 
-        # Comenzamos solamente
-        # con el símbolo inicial.
         actual = [
             simbolo_inicial
         ]
 
-
-        # Aquí guardaremos todos
-        # los pasos realizados.
         pasos = []
 
-
-        # Guardamos el primer paso.
         pasos.append(
             " ".join(actual)
         )
 
-
-        # Seguimos mientras existan
-        # símbolos no terminales.
         continuar = True
 
 
@@ -265,8 +240,6 @@ class GramaticaDialogos:
 
             continuar = False
 
-
-            # Recorremos la cadena.
             for posicion in range(
                 len(actual)
             ):
@@ -276,21 +249,14 @@ class GramaticaDialogos:
                 ]
 
 
-                # Si pertenece a las reglas,
-                # es un no terminal.
                 if simbolo in self.reglas:
 
-                    # Elegimos la primera
-                    # producción.
                     produccion = (
                         self.reglas[
                             simbolo
                         ][0]
                     )
 
-
-                    # Reemplazamos el símbolo
-                    # por su producción.
                     actual = (
                         actual[:posicion]
                         +
@@ -299,21 +265,12 @@ class GramaticaDialogos:
                         actual[posicion + 1:]
                     )
 
-
-                    # Guardamos el nuevo paso.
                     pasos.append(
                         " ".join(actual)
                     )
 
-
                     continuar = True
 
-
-                    # Solo reemplazamos
-                    # un símbolo por vuelta.
-                    #
-                    # Esto produce una
-                    # derivación por la izquierda.
                     break
 
 
@@ -326,10 +283,9 @@ class GramaticaDialogos:
 
     def obtener_bnf(self):
 
-        # Estas son las reglas escritas
-        # formalmente utilizando BNF.
         reglas_bnf = [
 
+            # Elena.
             "<DIALOGO_INICIO> ::= <NPC> <PETICION>",
 
             "<DIALOGO_RECORDATORIO> ::= <NPC> <RECORDATORIO>",
@@ -350,7 +306,31 @@ class GramaticaDialogos:
 
             '<RECORDATORIO> ::= "Todavia necesito los medicamentos."',
 
-            '<AGRADECIMIENTO> ::= "Gracias por traer los medicamentos."'
+            '<AGRADECIMIENTO> ::= "Gracias por traer los medicamentos."',
+
+
+            # Marcos.
+            "<DIALOGO_MARCOS_INICIO> ::= <NPC_MARCOS> <PETICION_MARCOS>",
+
+            "<DIALOGO_MARCOS_RECORDATORIO> ::= <NPC_MARCOS> <RECORDATORIO_MARCOS>",
+
+            "<DIALOGO_MARCOS_FINAL> ::= <NPC_MARCOS> <AGRADECIMIENTO_MARCOS>",
+
+            '<NPC_MARCOS> ::= "Marcos:"',
+
+            '<PETICION_MARCOS> ::= "Necesito una radio para contactar a los militares." <MISION_MARCOS>',
+
+            "<MISION_MARCOS> ::= <ACCION_MARCOS> <OBJETO_MARCOS> <LUGAR_MARCOS>",
+
+            '<ACCION_MARCOS> ::= "Busca" | "Encuentra"',
+
+            '<OBJETO_MARCOS> ::= "la radio"',
+
+            '<LUGAR_MARCOS> ::= "en el archivo de la comisaria."',
+
+            '<RECORDATORIO_MARCOS> ::= "Todavia necesito la radio."',
+
+            '<AGRADECIMIENTO_MARCOS> ::= "Gracias por traer la radio. Toma esta tarjeta militar."'
         ]
 
 
