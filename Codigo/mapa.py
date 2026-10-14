@@ -22,7 +22,6 @@ def crear_paredes_refugio():
 
     paredes = []
 
-
     paredes.append(
         pygame.Rect(
             50,
@@ -31,7 +30,6 @@ def crear_paredes_refugio():
             25
         )
     )
-
 
     paredes.append(
         pygame.Rect(
@@ -42,7 +40,6 @@ def crear_paredes_refugio():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             50,
@@ -52,7 +49,6 @@ def crear_paredes_refugio():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             925,
@@ -62,7 +58,6 @@ def crear_paredes_refugio():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             925,
@@ -71,7 +66,6 @@ def crear_paredes_refugio():
             200
         )
     )
-
 
     paredes.append(
         pygame.Rect(
@@ -82,7 +76,6 @@ def crear_paredes_refugio():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             400,
@@ -91,7 +84,6 @@ def crear_paredes_refugio():
             220
         )
     )
-
 
     paredes.append(
         pygame.Rect(
@@ -102,7 +94,6 @@ def crear_paredes_refugio():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             550,
@@ -111,7 +102,6 @@ def crear_paredes_refugio():
             25
         )
     )
-
 
     return paredes
 
@@ -139,7 +129,6 @@ def crear_paredes_calle():
 
     paredes = []
 
-
     # Refugio.
     paredes.append(
         pygame.Rect(
@@ -149,7 +138,6 @@ def crear_paredes_calle():
             250
         )
     )
-
 
     # Hospital.
     paredes.append(
@@ -161,7 +149,6 @@ def crear_paredes_calle():
         )
     )
 
-
     # Comisaría.
     paredes.append(
         pygame.Rect(
@@ -171,7 +158,6 @@ def crear_paredes_calle():
             100
         )
     )
-
 
     # Auto.
     paredes.append(
@@ -183,7 +169,6 @@ def crear_paredes_calle():
         )
     )
 
-
     # Auto.
     paredes.append(
         pygame.Rect(
@@ -194,7 +179,6 @@ def crear_paredes_calle():
         )
     )
 
-
     # Barricada.
     paredes.append(
         pygame.Rect(
@@ -204,7 +188,6 @@ def crear_paredes_calle():
             40
         )
     )
-
 
     return paredes
 
@@ -252,7 +235,6 @@ def crear_paredes_hospital():
 
     paredes = []
 
-
     # Exterior.
     paredes.append(
         pygame.Rect(
@@ -263,7 +245,6 @@ def crear_paredes_hospital():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             50,
@@ -273,7 +254,6 @@ def crear_paredes_hospital():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             925,
@@ -282,7 +262,6 @@ def crear_paredes_hospital():
             500
         )
     )
-
 
     # Parte inferior con abertura.
     paredes.append(
@@ -294,7 +273,6 @@ def crear_paredes_hospital():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             560,
@@ -303,7 +281,6 @@ def crear_paredes_hospital():
             25
         )
     )
-
 
     # Divisiones.
     paredes.append(
@@ -315,7 +292,6 @@ def crear_paredes_hospital():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             400,
@@ -325,7 +301,6 @@ def crear_paredes_hospital():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             550,
@@ -334,7 +309,6 @@ def crear_paredes_hospital():
             25
         )
     )
-
 
     return paredes
 
@@ -376,7 +350,6 @@ def crear_paredes_sotano():
 
     paredes = []
 
-
     # Pared superior izquierda.
     paredes.append(
         pygame.Rect(
@@ -386,7 +359,6 @@ def crear_paredes_sotano():
             25
         )
     )
-
 
     # Pared superior derecha.
     paredes.append(
@@ -398,7 +370,6 @@ def crear_paredes_sotano():
         )
     )
 
-
     # Pared inferior.
     paredes.append(
         pygame.Rect(
@@ -408,7 +379,6 @@ def crear_paredes_sotano():
             25
         )
     )
-
 
     # Pared izquierda.
     paredes.append(
@@ -420,7 +390,6 @@ def crear_paredes_sotano():
         )
     )
 
-
     # Pared derecha.
     paredes.append(
         pygame.Rect(
@@ -430,7 +399,6 @@ def crear_paredes_sotano():
             500
         )
     )
-
 
     # División izquierda superior.
     paredes.append(
@@ -442,7 +410,6 @@ def crear_paredes_sotano():
         )
     )
 
-
     # División izquierda inferior.
     paredes.append(
         pygame.Rect(
@@ -453,7 +420,6 @@ def crear_paredes_sotano():
         )
     )
 
-
     # División derecha.
     paredes.append(
         pygame.Rect(
@@ -463,7 +429,6 @@ def crear_paredes_sotano():
             25
         )
     )
-
 
     return paredes
 
@@ -493,7 +458,6 @@ def crear_paredes_comisaria():
 
     paredes = []
 
-
     paredes.append(
         pygame.Rect(
             50,
@@ -503,7 +467,6 @@ def crear_paredes_comisaria():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             50,
@@ -512,7 +475,6 @@ def crear_paredes_comisaria():
             500
         )
     )
-
 
     paredes.append(
         pygame.Rect(
@@ -523,7 +485,6 @@ def crear_paredes_comisaria():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             50,
@@ -532,7 +493,6 @@ def crear_paredes_comisaria():
             25
         )
     )
-
 
     paredes.append(
         pygame.Rect(
@@ -543,7 +503,6 @@ def crear_paredes_comisaria():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             350,
@@ -553,7 +512,6 @@ def crear_paredes_comisaria():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             350,
@@ -563,7 +521,6 @@ def crear_paredes_comisaria():
         )
     )
 
-
     paredes.append(
         pygame.Rect(
             550,
@@ -572,7 +529,6 @@ def crear_paredes_comisaria():
             25
         )
     )
-
 
     return paredes
 
@@ -590,3 +546,57 @@ def crear_salida_comisaria():
 def dibujar_comisaria(ventana, paredes):
     # Diego: nueva capa de arte; las paredes y sus colisiones siguen intactas.
     escenario(ventana, paredes, "COMISARIA")
+
+
+# ===================================
+# BASE MILITAR
+# ===================================
+
+def crear_entrada_base_militar():
+
+    # Entrada colocada sobre el edificio gris
+    # de la calle para que no quede flotando.
+    return pygame.Rect(
+        375,
+        140,
+        120,
+        70
+    )
+
+
+def crear_paredes_base_militar():
+    return [
+        pygame.Rect(50, 50, 900, 25),
+        pygame.Rect(50, 75, 25, 500),
+        pygame.Rect(925, 75, 25, 500),
+        pygame.Rect(50, 575, 390, 25),
+        pygame.Rect(560, 575, 390, 25),
+
+        # Pasos entre control, comando y arsenal.
+        pygame.Rect(350, 75, 25, 200),
+        pygame.Rect(350, 375, 25, 200),
+        pygame.Rect(550, 300, 375, 25),
+
+        # Cajas militares: también bloquean el movimiento.
+        pygame.Rect(120, 170, 90, 60),
+        pygame.Rect(760, 170, 100, 60),
+        pygame.Rect(740, 420, 100, 65),
+        pygame.Rect(850, 420, 60, 65),
+    ]
+
+
+def crear_salida_base_militar():
+    return pygame.Rect(
+        440,
+        520,
+        120,
+        80
+    )
+
+
+def dibujar_base_militar(ventana, paredes):
+    escenario(
+        ventana,
+        paredes,
+        "BASE_MILITAR"
+    )

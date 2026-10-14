@@ -279,7 +279,11 @@ from mapa import (
 
     crear_salida_comisaria,
 
-    dibujar_comisaria
+    dibujar_comisaria,
+    crear_entrada_base_militar,
+    crear_paredes_base_militar,
+    crear_salida_base_militar,
+    dibujar_base_militar
 
 )
 
@@ -842,6 +846,10 @@ salida_comisaria = (
 # ===================================
 
 
+
+entrada_base_militar = crear_entrada_base_militar()
+paredes_base_militar = crear_paredes_base_militar()
+salida_base_militar = crear_salida_base_militar()
 
 juego_activo = True
 
@@ -1740,6 +1748,21 @@ while juego_activo:
                     # ===================================
 
 
+
+                        elif jugador.rectangulo.colliderect(entrada_base_militar):
+                            # La tarjeta es una condición del mundo, fuera del AFN.
+                            if inventario.tiene("Tarjeta Militar"):
+                                automata.cambiar_estado("ENTRAR_BASE_MILITAR")
+                                jugador.cambiar_posicion(480, 500)
+                                dialogo_actual = ""
+                            else:
+                                dialogo_actual = "Acceso bloqueado. Necesitas la Tarjeta Militar."
+
+                    elif automata.estado_actual == "BASE_MILITAR":
+                        if jugador.rectangulo.colliderect(salida_base_militar):
+                            automata.cambiar_estado("SALIR_BASE_MILITAR")
+                            jugador.cambiar_posicion(340, 150)
+                            dialogo_actual = ""
 
                     elif (
 
@@ -2652,6 +2675,19 @@ while juego_activo:
     # ===================================
 
 
+
+        elif jugador.rectangulo.colliderect(entrada_base_militar):
+            mostrar_interaccion(mensajes, "E - Entrar a la Base Militar")
+            if dialogo_actual:
+                mostrar_dialogo(mensajes, dialogo_actual)
+
+    elif automata.estado_actual == "BASE_MILITAR":
+        if not mostrar_gramatica_activa and not mostrar_diario_activo:
+            jugador.mover(paredes_base_militar)
+        dibujar_base_militar(ventana, paredes_base_militar)
+        jugador.dibujar(ventana)
+        if jugador.rectangulo.colliderect(salida_base_militar):
+            mostrar_interaccion(mensajes, "E - Salir a la calle")
 
     elif automata.estado_actual == "HOSPITAL":
 

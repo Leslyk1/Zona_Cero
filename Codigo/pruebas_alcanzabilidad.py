@@ -521,3 +521,19 @@ print(
 )
 
 print()
+
+
+# La tarjeta se comprueba en el mundo; la relación formal siempre existe.
+assert set(automata.transiciones["CALLE"]["ENTRAR_BASE_MILITAR"]) == {"BASE_MILITAR"}
+assert set(automata.transiciones["BASE_MILITAR"]["SALIR_BASE_MILITAR"]) == {"CALLE"}
+assert "BASE_MILITAR" not in automata.estados_aceptacion
+assert set(automata.estados_aceptacion) == {
+    "FINAL_EVACUACION", "FINAL_SACRIFICIO", "FINAL_INFECTADO"
+}
+assert buscar_ruta_minima(automata, "REFUGIO", "BASE_MILITAR") == (
+    ["REFUGIO", "CALLE", "BASE_MILITAR"],
+    ["SALIR", "ENTRAR_BASE_MILITAR"]
+)
+print("delta(CALLE, ENTRAR_BASE_MILITAR) = {BASE_MILITAR}")
+print("delta(BASE_MILITAR, SALIR_BASE_MILITAR) = {CALLE}")
+mostrar_prueba(automata, "BASE_MILITAR")

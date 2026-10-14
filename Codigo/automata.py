@@ -68,6 +68,10 @@ class AutomataNarrativo:
                     "HOSPITAL"
                 ],
 
+                "ENTRAR_BASE_MILITAR": [
+                    "BASE_MILITAR"
+                ],
+
                 "ENTRAR_COMISARIA": [
                     "COMISARIA"
                 ],
@@ -81,6 +85,17 @@ class AutomataNarrativo:
 
                 "ENTRAR_PUNTO_EVACUACION": [
                     "PUNTO_EVACUACION"
+                ]
+            },
+
+
+            # ===================================
+            # BASE MILITAR
+            # ===================================
+
+            "BASE_MILITAR": {
+                "SALIR_BASE_MILITAR": [
+                    "CALLE"
                 ]
             },
 
