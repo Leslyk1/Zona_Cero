@@ -1,447 +1,204 @@
-# Zona Cero: Último Refugio
+# DIAGRAMA DEL AFN NARRATIVO
+## Zona Cero: Último Refugio
 
-El AFN narrativo mantiene sus estados y transiciones en `pruebas-diego`.
-El autómata independiente de batalla y el diario están documentados en
-[Combate y misiones](COMBATE_Y_MISIONES.md).
-
-## Autómata Finito No Determinista Narrativo
-
-El autómata narrativo controla los escenarios principales y los finales del juego.
+Este documento representa formalmente el Autómata Finito No Determinista
+utilizado para controlar los estados narrativos principales del videojuego.
 
 ---
 
-## 1. Definición formal
+# 1. Estado inicial
 
-Se define el autómata como:
+El estado inicial del autómata es:
 
-**M = (Q, Σ, δ, q0, F)**
-
-Donde:
-
-### Conjunto de estados Q
-
-```text
-Q = {
-    REFUGIO,
-    CALLE,
-    HOSPITAL,
-    SOTANO_HOSPITAL,
-    COMISARIA,
-    PUNTO_EVACUACION,
-    FINAL_EVACUACION,
-    FINAL_SACRIFICIO,
-    FINAL_INFECTADO
-}
-```
-
-### Estado inicial
-
-```text
 q0 = REFUGIO
-```
 
-### Estados de aceptación
+---
 
-```text
+# 2. Conjunto de estados
+
+Q = {
+
+REFUGIO,
+
+CALLE,
+
+HOSPITAL,
+
+SOTANO_HOSPITAL,
+
+COMISARIA,
+
+BASE_MILITAR,
+
+PUNTO_EVACUACION,
+
+FINAL_EVACUACION,
+
+FINAL_SACRIFICIO,
+
+FINAL_INFECTADO
+
+}
+
+---
+
+# 3. Estados de aceptación
+
+Los estados de aceptación representan los posibles finales del videojuego.
+
 F = {
-    FINAL_EVACUACION,
-    FINAL_SACRIFICIO,
-    FINAL_INFECTADO
-}
-```
 
----
+FINAL_EVACUACION,
 
-## 2. Alfabeto de entradas
+FINAL_SACRIFICIO,
 
-Las entradas representan las decisiones o acciones que puede realizar el jugador.
-
-```text
-Σ = {
-    SALIR,
-    ENTRAR_REFUGIO,
-    ENTRAR_HOSPITAL,
-    ENTRAR_COMISARIA,
-    EXPLORAR,
-    SALIR_HOSPITAL,
-    BAJAR_SOTANO,
-    SUBIR_HOSPITAL,
-    SALIR_COMISARIA,
-    ENTRAR_PUNTO_EVACUACION,
-    ELEGIR_EVACUACION,
-    ELEGIR_SACRIFICIO,
-    ELEGIR_INFECTADO,
-    REGRESAR_CALLE
-}
-```
-
----
-
-## 3. Función de transición
-
-### Desde REFUGIO
-
-```text
-δ(REFUGIO, SALIR) = {CALLE}
-```
-
-### Desde CALLE
-
-```text
-δ(CALLE, ENTRAR_REFUGIO) = {REFUGIO}
-
-δ(CALLE, ENTRAR_HOSPITAL) = {HOSPITAL}
-
-δ(CALLE, ENTRAR_COMISARIA) = {COMISARIA}
-
-δ(CALLE, EXPLORAR) = {HOSPITAL, COMISARIA}
-
-δ(CALLE, ENTRAR_PUNTO_EVACUACION) = {PUNTO_EVACUACION}
-```
-
-`EXPLORAR` demuestra el no determinismo real: la misma entrada posee dos estados siguientes posibles. En el videojuego, la tecla `X` simula una ejecución del AFN eligiendo al azar uno de esos destinos. Las entradas manuales al Hospital y a la Comisaría continúan disponibles con `E`.
-
-La transición hacia `PUNTO_EVACUACION` solamente se habilita en el videojuego cuando se cumplen estas condiciones:
-
-```text
-Misión de Elena completada
-AND
-Zombi Policía derrotado
-AND
-Zombi Corredor derrotado
-```
-
-Estas condiciones pertenecen al estado del mundo del RPG.
-
----
-
-### Desde HOSPITAL
-
-```text
-δ(HOSPITAL, SALIR_HOSPITAL) = {CALLE}
-
-δ(HOSPITAL, BAJAR_SOTANO) = {SOTANO_HOSPITAL}
-```
-
-Al bajar al sótano también se realiza:
-
-```text
-PUSH(HOSPITAL)
-```
-
-en el autómata de pila.
-
----
-
-### Desde SOTANO_HOSPITAL
-
-```text
-δ(SOTANO_HOSPITAL, SUBIR_HOSPITAL) = {HOSPITAL}
-```
-
-Al subir también se realiza:
-
-```text
-POP(HOSPITAL)
-```
-
-en el autómata de pila.
-
----
-
-### Desde COMISARIA
-
-```text
-δ(COMISARIA, SALIR_COMISARIA) = {CALLE}
-```
-
----
-
-### Desde PUNTO_EVACUACION
-
-```text
-δ(PUNTO_EVACUACION, ELEGIR_EVACUACION)
-= {FINAL_EVACUACION}
-```
-
-```text
-δ(PUNTO_EVACUACION, ELEGIR_SACRIFICIO)
-= {FINAL_SACRIFICIO}
-```
-
-```text
-δ(PUNTO_EVACUACION, ELEGIR_INFECTADO)
-= {FINAL_INFECTADO}
-```
-
-```text
-δ(PUNTO_EVACUACION, REGRESAR_CALLE)
-= {CALLE}
-```
-
----
-
-## 4. Estados finales
-
-Los siguientes estados son estados de aceptación:
-
-```text
-FINAL_EVACUACION
-FINAL_SACRIFICIO
 FINAL_INFECTADO
-```
 
-Una vez alcanzado cualquiera de ellos, la historia ha llegado a uno de sus finales.
+}
 
----
-
-# 5. Diagrama del AFN
-
-```mermaid
-stateDiagram-v2
-
-    [*] --> REFUGIO
-
-    REFUGIO --> CALLE : SALIR
-
-    CALLE --> REFUGIO : ENTRAR_REFUGIO
-    CALLE --> HOSPITAL : ENTRAR_HOSPITAL
-    CALLE --> COMISARIA : ENTRAR_COMISARIA
-    CALLE --> HOSPITAL : EXPLORAR
-    CALLE --> COMISARIA : EXPLORAR
-
-    HOSPITAL --> CALLE : SALIR_HOSPITAL
-    HOSPITAL --> SOTANO_HOSPITAL : BAJAR_SOTANO / PUSH(HOSPITAL)
-
-    SOTANO_HOSPITAL --> HOSPITAL : SUBIR_HOSPITAL / POP(HOSPITAL)
-
-    COMISARIA --> CALLE : SALIR_COMISARIA
-
-    CALLE --> PUNTO_EVACUACION : ENTRAR_PUNTO_EVACUACION
-
-    PUNTO_EVACUACION --> CALLE : REGRESAR_CALLE
-
-    PUNTO_EVACUACION --> FINAL_EVACUACION : ELEGIR_EVACUACION
-
-    PUNTO_EVACUACION --> FINAL_SACRIFICIO : ELEGIR_SACRIFICIO
-
-    PUNTO_EVACUACION --> FINAL_INFECTADO : ELEGIR_INFECTADO
-
-    FINAL_EVACUACION --> [*]
-
-    FINAL_SACRIFICIO --> [*]
-
-    FINAL_INFECTADO --> [*]
-```
+BASE_MILITAR no pertenece al conjunto de estados de aceptación.
 
 ---
 
-# 6. Vista simplificada
+# 4. Transiciones del AFN
 
-```text
-                            ┌───────────────┐
-                            │   HOSPITAL    │
-                            └───────┬───────┘
-                                    │
-                          BAJAR_SOTANO
-                           PUSH(HOSPITAL)
-                                    │
-                                    ▼
-                            ┌───────────────┐
-                            │    SOTANO     │
-                            └───────┬───────┘
-                                    │
-                         SUBIR_HOSPITAL
-                          POP(HOSPITAL)
-                                    │
-                                    ▼
-                              HOSPITAL
+## REFUGIO
+
+REFUGIO --SALIR--> CALLE
 
 
-┌────────────┐
-│  REFUGIO   │
-└─────┬──────┘
-      │
-      │ SALIR
-      ▼
-┌─────────────────┐
-│      CALLE      │
-└───┬─────────┬───┘
-    │         │
-    │         │
-    ▼         ▼
-HOSPITAL   COMISARIA
-    │         │
-    └────┬────┘
-         │
-         ▼
-       CALLE
-         │
-         │ ENTRAR_PUNTO_EVACUACION
-         │
-         │ Condiciones:
-         │ - Misión Elena completada
-         │ - Zombi Policía derrotado
-         │ - Zombi Corredor derrotado
-         ▼
-┌──────────────────────┐
-│ PUNTO_EVACUACION     │
-└─────┬──────┬─────┬───┘
-      │      │     │
-      │      │     │
-      ▼      ▼     ▼
+## CALLE
 
- FINAL_    FINAL_    FINAL_
-EVACUACION SACRIFICIO INFECTADO
+CALLE --ENTRAR_REFUGIO--> REFUGIO
 
-    ✓          ✓          ✓
-```
+CALLE --ENTRAR_HOSPITAL--> HOSPITAL
 
----
+CALLE --ENTRAR_COMISARIA--> COMISARIA
 
-# 7. Pruebas de alcanzabilidad
+CALLE --ENTRAR_BASE_MILITAR--> BASE_MILITAR
 
-Los tres estados de aceptación son alcanzables desde el estado inicial.
+CALLE --ENTRAR_PUNTO_EVACUACION--> PUNTO_EVACUACION
 
-## Final de evacuación
 
-```text
-REFUGIO
---SALIR-->
-CALLE
---ENTRAR_PUNTO_EVACUACION-->
-PUNTO_EVACUACION
---ELEGIR_EVACUACION-->
-FINAL_EVACUACION
-```
+## Transición no determinista
 
-Número mínimo de transiciones del AFN:
+Desde CALLE existe la acción:
 
-```text
-3
-```
+EXPLORAR
 
----
+Esta misma entrada puede conducir a dos estados distintos:
 
-## Final de sacrificio
+δ(CALLE, EXPLORAR) = {
+    HOSPITAL,
+    COMISARIA
+}
 
-```text
-REFUGIO
---SALIR-->
-CALLE
---ENTRAR_PUNTO_EVACUACION-->
-PUNTO_EVACUACION
---ELEGIR_SACRIFICIO-->
-FINAL_SACRIFICIO
-```
+Por esta razón el autómata es no determinista.
 
-Número mínimo de transiciones del AFN:
+Formalmente:
 
-```text
-3
-```
-
----
-
-## Final infectado
-
-```text
-REFUGIO
---SALIR-->
-CALLE
---ENTRAR_PUNTO_EVACUACION-->
-PUNTO_EVACUACION
---ELEGIR_INFECTADO-->
-FINAL_INFECTADO
-```
-
-Número mínimo de transiciones del AFN:
-
-```text
-3
-```
-
----
-
-# 8. Condiciones del estado del mundo
-
-Aunque formalmente la ruta mínima del AFN contiene tres transiciones, el videojuego no permite ejecutar inmediatamente:
-
-```text
-CALLE
-→
-PUNTO_EVACUACION
-```
-
-La transición solamente se habilita después de:
-
-```text
-1. Completar la misión de Elena.
-
-2. Derrotar al Zombi Policía.
-
-3. Derrotar al Zombi Corredor.
-```
-
-Por lo tanto se distingue entre:
-
-```text
-AFN narrativo
-```
-
-que administra los estados de la historia, y:
-
-```text
-Estado del mundo
-```
-
-que almacena el progreso del jugador.
-
----
-
-# 9. Relación con el código
-
-La implementación principal del AFN se encuentra en:
-
-```text
-automata.py
-```
-
-El estado inicial se establece mediante:
-
-```python
-self.estado_actual = "REFUGIO"
-```
-
-Los estados de aceptación se encuentran en:
-
-```python
-self.estados_aceptacion = [
-    "FINAL_EVACUACION",
-    "FINAL_SACRIFICIO",
-    "FINAL_INFECTADO"
-]
-```
-
-La función:
-
-```python
-cambiar_estado()
-```
-
-implementa las transiciones del autómata.
-
-Cuando una acción tiene varios destinos, `cambiar_estado()` utiliza `random.choice()` para representar una ejecución posible del AFN. Para probarlo dentro del juego, se presiona `X` desde `CALLE`.
-
-La barra superior también conserva y muestra la última transición ejecutada. Cuando la acción es `EXPLORAR`, presenta tanto el destino elegido como el conjunto completo de destinos posibles, por ejemplo:
-
-```text
 CALLE --EXPLORAR--> HOSPITAL
-POSIBLES: {HOSPITAL, COMISARIA}
-```
 
-Las pruebas automáticas de alcanzabilidad están en:
+CALLE --EXPLORAR--> COMISARIA
+
+
+## HOSPITAL
+
+HOSPITAL --SALIR_HOSPITAL--> CALLE
+
+HOSPITAL --BAJAR_SOTANO--> SOTANO_HOSPITAL
+
+
+## SOTANO_HOSPITAL
+
+SOTANO_HOSPITAL --SUBIR_HOSPITAL--> HOSPITAL
+
+
+## COMISARIA
+
+COMISARIA --SALIR_COMISARIA--> CALLE
+
+
+## BASE_MILITAR
+
+BASE_MILITAR --SALIR_BASE_MILITAR--> CALLE
+
+
+## PUNTO DE EVACUACION
+
+PUNTO_EVACUACION --ELEGIR_EVACUACION--> FINAL_EVACUACION
+
+PUNTO_EVACUACION --ELEGIR_SACRIFICIO--> FINAL_SACRIFICIO
+
+PUNTO_EVACUACION --ELEGIR_INFECTADO--> FINAL_INFECTADO
+
+PUNTO_EVACUACION --REGRESAR_CALLE--> CALLE
+
+---
+
+# 5. Diagrama general
 
 ```text
-pruebas_alcanzabilidad.py
-```
+
+                              ┌───────────────┐
+                              │    REFUGIO    │
+                              └───────┬───────┘
+                                      │
+                                    SALIR
+                                      │
+                                      ▼
+                              ┌───────────────┐
+                    ┌─────────│     CALLE     │─────────┐
+                    │         └───────────────┘         │
+                    │                 │                 │
+                    │                 │                 │
+          ENTRAR_HOSPITAL     ENTRAR_COMISARIA   ENTRAR_BASE_MILITAR
+                    │                 │                 │
+                    ▼                 ▼                 ▼
+             ┌────────────┐    ┌────────────┐    ┌──────────────┐
+             │  HOSPITAL  │    │ COMISARIA  │    │ BASE_MILITAR │
+             └─────┬──────┘    └─────┬──────┘    └──────┬───────┘
+                   │                 │                   │
+             BAJAR_SOTANO       SALIR_COMISARIA    SALIR_BASE_MILITAR
+                   │                 │                   │
+                   ▼                 └──────► CALLE ◄────┘
+        ┌───────────────────┐
+        │ SOTANO_HOSPITAL   │
+        └─────────┬─────────┘
+                  │
+            SUBIR_HOSPITAL
+                  │
+                  ▼
+              HOSPITAL
+
+
+CALLE --ENTRAR_REFUGIO--> REFUGIO
+
+
+CALLE --EXPLORAR--> HOSPITAL
+       \
+        └---------> COMISARIA
+
+
+CALLE
+  │
+  │ ENTRAR_PUNTO_EVACUACION
+  ▼
+┌─────────────────────┐
+│ PUNTO_EVACUACION    │
+└─────────┬───────────┘
+          │
+          ├── ELEGIR_EVACUACION
+          │          │
+          │          ▼
+          │   FINAL_EVACUACION
+          │
+          ├── ELEGIR_SACRIFICIO
+          │          │
+          │          ▼
+          │   FINAL_SACRIFICIO
+          │
+          └── ELEGIR_INFECTADO
+                     │
+                     ▼
+              FINAL_INFECTADO

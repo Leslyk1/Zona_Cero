@@ -45,7 +45,14 @@ class Objeto:
         self.recogido = False
 
 
-    def dibujar(self, ventana):
+    # ===================================
+    # DIBUJAR OBJETO
+    # ===================================
+
+    def dibujar(
+        self,
+        ventana
+    ):
 
         if self.recogido == False:
 
@@ -55,6 +62,10 @@ class Objeto:
                 self.nombre
             )
 
+
+    # ===================================
+    # RECOGER OBJETO
+    # ===================================
 
     def recoger(
         self,
@@ -140,6 +151,26 @@ class Radio(Objeto):
             "Radio",
             700,
             200,
+            AMARILLO,
+            1
+        )
+
+
+# ===================================
+# ARCHIVO MILITAR
+# ===================================
+
+class ArchivoMilitar(Objeto):
+
+    def __init__(self):
+
+        # Documento confidencial ubicado
+        # dentro del Centro de Comando
+        # de la Base Militar.
+        super().__init__(
+            "Archivo Militar",
+            650,
+            190,
             AMARILLO,
             1
         )

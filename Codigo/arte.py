@@ -2060,6 +2060,200 @@ def objeto(
 
     # ===================================
 
+    # ARCHIVO MILITAR
+
+    # ===================================
+
+
+
+    elif nombre == "Archivo Militar":
+
+
+
+        # Resplandor de interacción.
+
+        pygame.draw.circle(
+
+            ventana,
+
+            MENTA,
+
+            (
+
+                x + 15,
+
+                y + 15
+
+            ),
+
+            23,
+
+            1
+
+        )
+
+
+
+        # Carpeta militar.
+
+        pygame.draw.rect(
+
+            ventana,
+
+            (85, 96, 67),
+
+            (
+
+                x + 2,
+
+                y + 8,
+
+                28,
+
+                20
+
+            ),
+
+            border_radius=3
+
+        )
+
+
+
+        # Pestaña de la carpeta.
+
+        pygame.draw.rect(
+
+            ventana,
+
+            (112, 124, 83),
+
+            (
+
+                x + 5,
+
+                y + 4,
+
+                12,
+
+                7
+
+            ),
+
+            border_radius=2
+
+        )
+
+
+
+        # Hoja confidencial.
+
+        pygame.draw.rect(
+
+            ventana,
+
+            (215, 218, 194),
+
+            (
+
+                x + 7,
+
+                y + 10,
+
+                18,
+
+                14
+
+            )
+
+        )
+
+
+
+        # Líneas del documento.
+
+        pygame.draw.line(
+
+            ventana,
+
+            (78, 87, 70),
+
+            (
+
+                x + 10,
+
+                y + 14
+
+            ),
+
+            (
+
+                x + 22,
+
+                y + 14
+
+            ),
+
+            2
+
+        )
+
+
+
+        pygame.draw.line(
+
+            ventana,
+
+            (78, 87, 70),
+
+            (
+
+                x + 10,
+
+                y + 18
+
+            ),
+
+            (
+
+                x + 19,
+
+                y + 18
+
+            ),
+
+            2
+
+        )
+
+
+
+        # Sello de documento clasificado.
+
+        pygame.draw.rect(
+
+            ventana,
+
+            (151, 60, 55),
+
+            (
+
+                x + 10,
+
+                y + 20,
+
+                12,
+
+                4
+
+            )
+
+        )
+
+
+
+    # ===================================
+
     # BALAS
 
     # ===================================
