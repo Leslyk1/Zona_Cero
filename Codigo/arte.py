@@ -2,11 +2,23 @@
 
 
 
+
+
+
+
 from functools import lru_cache
 
 
 
+
+
+
+
 import random
+
+
+
+
 
 
 
@@ -16,7 +28,17 @@ import pygame
 
 
 
+
+
+
+
+
+
 TINTA = (12, 20, 28)
+
+
+
+
 
 
 
@@ -24,7 +46,15 @@ MARFIL = (220, 232, 224)
 
 
 
+
+
+
+
 MENTA = (98, 225, 176)
+
+
+
+
 
 
 
@@ -34,33 +64,67 @@ ORO = (232, 190, 111)
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # FUENTES
 
+
+
 # ===================================
+
+
+
+
 
 
 
 @lru_cache(maxsize=32)
+
+
 
 def fuente(tamano, negrita=False):
 
 
 
+
+
+
+
     # Diego:
+
+
 
     # reutilizar las fuentes evita
 
+
+
     # buscarlas en Windows cada fotograma.
+
+
 
     return pygame.font.SysFont(
 
+
+
         "Segoe UI",
+
+
 
         tamano,
 
+
+
         bold=negrita
+
+
 
     )
 
@@ -68,47 +132,95 @@ def fuente(tamano, negrita=False):
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # SPRITES
 
+
+
 # ===================================
+
+
+
+
 
 
 
 @lru_cache(maxsize=32)
 
+
+
 def sprite(
+
+
 
     tipo,
 
+
+
     espalda=False,
 
+
+
     paso=0
+
+
 
 ):
 
 
 
+
+
+
+
     # Diego:
+
+
 
     # personajes originales en una cuadrícula pequeña;
 
+
+
     # el mismo dibujo sirve en el mapa y,
+
+
 
     # ampliado, en la batalla.
 
+
+
     #
+
+
 
     # El rectángulo físico no cambia.
 
 
 
+
+
+
+
     lienzo = pygame.Surface(
+
+
 
         (48, 64),
 
+
+
         pygame.SRCALPHA
+
+
 
     )
 
@@ -116,11 +228,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # -----------------------------------
+
+
 
     # COLORES BASE
 
+
+
     # -----------------------------------
+
+
+
+
 
 
 
@@ -128,11 +254,23 @@ def sprite(
 
 
 
+
+
+
+
     ropa = (39, 107, 105)
 
 
 
+
+
+
+
     luz = (69, 151, 135)
+
+
+
+
 
 
 
@@ -142,11 +280,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # ELENA
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -154,11 +306,23 @@ def sprite(
 
 
 
+
+
+
+
         ropa = (179, 202, 187)
 
 
 
+
+
+
+
         luz = (222, 233, 213)
+
+
+
+
 
 
 
@@ -168,11 +332,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # MARCOS
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -180,19 +358,39 @@ def sprite(
 
 
 
+
+
+
+
         # Lesly:
+
+
 
         # Marcos utiliza una apariencia
 
+
+
         # distinta a Elena y a los enemigos.
+
+
 
         #
 
+
+
         # Utilizamos tonos azul oscuro
+
+
 
         # para mantener el estilo
 
+
+
         # posapocalíptico del juego.
+
+
+
+
 
 
 
@@ -200,11 +398,23 @@ def sprite(
 
 
 
+
+
+
+
         ropa = (54, 74, 87)
 
 
 
+
+
+
+
         luz = (86, 113, 121)
+
+
+
+
 
 
 
@@ -214,11 +424,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # ZOMBI POLICÍA
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -226,11 +450,23 @@ def sprite(
 
 
 
+
+
+
+
         piel = (134, 164, 116)
 
 
 
+
+
+
+
         ropa = (44, 58, 80)
+
+
+
+
 
 
 
@@ -240,11 +476,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # ZOMBI CORREDOR
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -252,11 +502,23 @@ def sprite(
 
 
 
+
+
+
+
         piel = (152, 159, 111)
 
 
 
+
+
+
+
         ropa = (111, 64, 57)
+
+
+
+
 
 
 
@@ -266,35 +528,75 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # FUNCIÓN PARA DIBUJAR BLOQUES
 
+
+
     # ===================================
+
+
+
+
 
 
 
     def bloque(
 
+
+
         rect,
+
+
 
         color,
 
+
+
         borde=True
+
+
 
     ):
 
 
 
+
+
+
+
         pygame.draw.rect(
+
+
 
             lienzo,
 
+
+
             TINTA,
+
+
 
             rect
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -304,21 +606,43 @@ def sprite(
 
 
 
+
+
+
+
             interior = pygame.Rect(
+
+
 
                 rect
 
+
+
             ).inflate(
+
+
 
                 -2,
 
+
+
                 -2
+
+
 
             )
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -328,13 +652,27 @@ def sprite(
 
 
 
+
+
+
+
+
+
         pygame.draw.rect(
+
+
 
             lienzo,
 
+
+
             color,
 
+
+
             interior
+
+
 
         )
 
@@ -342,29 +680,63 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # CUERPO DEL PERSONAJE
 
+
+
     # ===================================
+
+
+
+
 
 
 
     # Botas, pantalones, brazos,
 
+
+
     # torso y cabeza.
+
+
+
+
 
 
 
     desplazamiento = (
 
+
+
         2
+
+
 
         if paso
 
+
+
         else 0
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -372,23 +744,47 @@ def sprite(
 
     # Piernas.
 
+
+
     bloque(
 
+
+
         (
+
+
 
             13,
 
+
+
             43,
+
+
 
             10,
 
+
+
             17 - desplazamiento
+
+
 
         ),
 
+
+
         (48, 53, 58)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -396,21 +792,43 @@ def sprite(
 
     bloque(
 
+
+
         (
+
+
 
             26,
 
+
+
             43,
+
+
 
             10,
 
+
+
             17
+
+
 
         ),
 
+
+
         (40, 48, 53)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -418,23 +836,47 @@ def sprite(
 
     # Botas.
 
+
+
     bloque(
 
+
+
         (
+
+
 
             10,
 
+
+
             56 - desplazamiento,
+
+
 
             14,
 
+
+
             7
+
+
 
         ),
 
+
+
         (25, 31, 38)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -442,21 +884,43 @@ def sprite(
 
     bloque(
 
+
+
         (
+
+
 
             25,
 
+
+
             57,
+
+
 
             15,
 
+
+
             6
+
+
 
         ),
 
+
+
         (25, 31, 38)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -464,23 +928,47 @@ def sprite(
 
     # Brazos.
 
+
+
     bloque(
 
+
+
         (
+
+
 
             5,
 
+
+
             28,
+
+
 
             9,
 
+
+
             19
+
+
 
         ),
 
+
+
         ropa
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -488,21 +976,43 @@ def sprite(
 
     bloque(
 
+
+
         (
+
+
 
             35,
 
+
+
             28,
+
+
 
             9,
 
+
+
             19
+
+
 
         ),
 
+
+
         ropa
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -510,23 +1020,47 @@ def sprite(
 
     # Manos.
 
+
+
     bloque(
 
+
+
         (
+
+
 
             6,
 
+
+
             44,
+
+
 
             8,
 
+
+
             7
+
+
 
         ),
 
+
+
         piel
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -534,21 +1068,43 @@ def sprite(
 
     bloque(
 
+
+
         (
+
+
 
             35,
 
+
+
             44,
+
+
 
             8,
 
+
+
             7
+
+
 
         ),
 
+
+
         piel
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -556,23 +1112,47 @@ def sprite(
 
     # Torso.
 
+
+
     bloque(
+
+
 
         (
 
+
+
             11,
+
+
 
             24,
 
+
+
             27,
+
+
 
             25
 
+
+
         ),
+
+
 
         ropa
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -580,25 +1160,51 @@ def sprite(
 
     # Parte clara de la ropa.
 
+
+
     bloque(
+
+
 
         (
 
+
+
             14,
+
+
 
             27,
 
+
+
             9,
+
+
 
             16
 
+
+
         ),
+
+
 
         luz,
 
+
+
         False
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -606,25 +1212,51 @@ def sprite(
 
     # Cinturón.
 
+
+
     bloque(
+
+
 
         (
 
+
+
             12,
+
+
 
             45,
 
+
+
             26,
+
+
 
             4
 
+
+
         ),
+
+
 
         (59, 47, 39),
 
+
+
         False
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -632,25 +1264,51 @@ def sprite(
 
     # Hebilla.
 
+
+
     bloque(
+
+
 
         (
 
+
+
             24,
+
+
 
             45,
 
+
+
             5,
+
+
 
             4
 
+
+
         ),
+
+
 
         ORO,
 
+
+
         False
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -658,21 +1316,39 @@ def sprite(
 
     # Pelo.
 
+
+
     bloque(
+
+
 
         (
 
+
+
             12,
+
+
 
             5,
 
+
+
             26,
+
+
 
             23
 
+
+
         ),
 
+
+
         pelo
+
+
 
     )
 
@@ -680,11 +1356,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # PERSONAJE DE ESPALDA
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -692,23 +1382,45 @@ def sprite(
 
 
 
+
+
+
+
         bloque(
+
+
 
             (
 
+
+
                 14,
+
+
 
                 9,
 
+
+
                 22,
+
+
 
                 16
 
+
+
             ),
+
+
 
             (48, 73, 72),
 
+
+
             False
+
+
 
         )
 
@@ -716,23 +1428,51 @@ def sprite(
 
 
 
+
+
+
+
+
+
         bloque(
 
+
+
             (
+
+
 
                 15,
 
+
+
                 29,
+
+
 
                 20,
 
+
+
                 20
 
+
+
             ),
+
+
 
             (115, 87, 55)
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -740,21 +1480,43 @@ def sprite(
 
         bloque(
 
+
+
             (
+
+
 
                 18,
 
+
+
                 33,
+
+
 
                 14,
 
+
+
                 6
+
+
 
             ),
 
+
+
             (153, 119, 72)
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -762,19 +1524,35 @@ def sprite(
 
         bloque(
 
+
+
             (
+
+
 
                 19,
 
+
+
                 42,
+
+
 
                 12,
 
+
+
                 5
+
+
 
             ),
 
+
+
             (85, 67, 45)
+
+
 
         )
 
@@ -782,11 +1560,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # PERSONAJE DE FRENTE
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -794,27 +1586,57 @@ def sprite(
 
 
 
+
+
+
+
         # Cara.
+
+
 
         bloque(
 
+
+
             (
+
+
 
                 16,
 
+
+
                 11,
+
+
 
                 19,
 
+
+
                 15
+
+
 
             ),
 
+
+
             piel,
+
+
 
             False
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -822,25 +1644,51 @@ def sprite(
 
         # Parte superior del pelo.
 
+
+
         bloque(
+
+
 
             (
 
+
+
                 12,
+
+
 
                 5,
 
+
+
                 26,
+
+
 
                 7
 
+
+
             ),
+
+
 
             pelo,
 
+
+
             False
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -848,25 +1696,51 @@ def sprite(
 
         # Ojo izquierdo.
 
+
+
         bloque(
+
+
 
             (
 
+
+
                 18,
+
+
 
                 16,
 
+
+
                 4,
+
+
 
                 3
 
+
+
             ),
+
+
 
             TINTA,
 
+
+
             False
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -874,25 +1748,51 @@ def sprite(
 
         # Ojo derecho.
 
+
+
         bloque(
+
+
 
             (
 
+
+
                 29,
+
+
 
                 16,
 
+
+
                 4,
+
+
 
                 3
 
+
+
             ),
+
+
 
             TINTA,
 
+
+
             False
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -900,23 +1800,43 @@ def sprite(
 
         # Boca.
 
+
+
         bloque(
+
+
 
             (
 
+
+
                 25,
+
+
 
                 22,
 
+
+
                 6,
+
+
 
                 2
 
+
+
             ),
+
+
 
             (122, 84, 70),
 
+
+
             False
+
+
 
         )
 
@@ -924,11 +1844,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
         # ===================================
+
+
 
         # SUPERVIVIENTE
 
+
+
         # ===================================
+
+
+
+
 
 
 
@@ -936,23 +1870,49 @@ def sprite(
 
 
 
+
+
+
+
             bloque(
 
+
+
                 (
+
+
 
                     10,
 
+
+
                     25,
 
+
+
                     29,
+
+
 
                     6
 
+
+
                 ),
+
+
 
                 (219, 151, 76)
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -960,23 +1920,47 @@ def sprite(
 
             bloque(
 
+
+
                 (
+
+
 
                     30,
 
+
+
                     29,
+
+
 
                     6,
 
+
+
                     12
+
+
 
                 ),
 
+
+
                 (176, 111, 58),
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -984,19 +1968,35 @@ def sprite(
 
             bloque(
 
+
+
                 (
+
+
 
                     8,
 
+
+
                     3,
+
+
 
                     32,
 
+
+
                     7
+
+
 
                 ),
 
+
+
                 (37, 89, 88)
+
+
 
             )
 
@@ -1004,11 +2004,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
         # ===================================
+
+
 
         # ELENA
 
+
+
         # ===================================
+
+
+
+
 
 
 
@@ -1016,27 +2030,57 @@ def sprite(
 
 
 
+
+
+
+
             # Cabello largo.
+
+
 
             bloque(
 
+
+
                 (
+
+
 
                     13,
 
+
+
                     7,
+
+
 
                     4,
 
+
+
                     23
+
+
 
                 ),
 
+
+
                 pelo,
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1044,23 +2088,47 @@ def sprite(
 
             bloque(
 
+
+
                 (
+
+
 
                     34,
 
+
+
                     7,
+
+
 
                     5,
 
+
+
                     24
+
+
 
                 ),
 
+
+
                 pelo,
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1068,25 +2136,51 @@ def sprite(
 
             # Cruz médica.
 
+
+
             bloque(
 
+
+
                 (
+
+
 
                     26,
 
+
+
                     31,
+
+
 
                     8,
 
+
+
                     3
+
+
 
                 ),
 
+
+
                 (165, 69, 60),
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1094,21 +2188,39 @@ def sprite(
 
             bloque(
 
+
+
                 (
+
+
 
                     29,
 
+
+
                     28,
+
+
 
                     3,
 
+
+
                     9
+
+
 
                 ),
 
+
+
                 (165, 69, 60),
 
+
+
                 False
+
+
 
             )
 
@@ -1116,11 +2228,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
         # ===================================
+
+
 
         # MARCOS
 
+
+
         # ===================================
+
+
+
+
 
 
 
@@ -1128,37 +2254,77 @@ def sprite(
 
 
 
+
+
+
+
             # Lesly:
+
+
 
             # agregamos algunos detalles
 
+
+
             # simples para distinguirlo
+
+
 
             # visualmente.
 
 
 
+
+
+
+
             # Franja de la chaqueta.
+
+
 
             bloque(
 
+
+
                 (
+
+
 
                     12,
 
+
+
                     28,
+
+
 
                     25,
 
+
+
                     4
+
+
 
                 ),
 
+
+
                 (104, 139, 145),
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1166,25 +2332,51 @@ def sprite(
 
             # Pequeño distintivo.
 
+
+
             bloque(
+
+
 
                 (
 
+
+
                     30,
+
+
 
                     34,
 
+
+
                     5,
+
+
 
                     6
 
+
+
                 ),
+
+
 
                 ORO,
 
+
+
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1192,23 +2384,43 @@ def sprite(
 
             # Cabello corto.
 
+
+
             bloque(
+
+
 
                 (
 
+
+
                     15,
+
+
 
                     4,
 
+
+
                     21,
+
+
 
                     6
 
+
+
                 ),
+
+
 
                 pelo,
 
+
+
                 False
+
+
 
             )
 
@@ -1216,11 +2428,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
         # ===================================
+
+
 
         # POLICÍA
 
+
+
         # ===================================
+
+
+
+
 
 
 
@@ -1228,25 +2454,53 @@ def sprite(
 
 
 
+
+
+
+
             # Gorra.
+
+
 
             bloque(
 
+
+
                 (
+
+
 
                     9,
 
+
+
                     3,
+
+
 
                     30,
 
+
+
                     10
+
+
 
                 ),
 
+
+
                 (48, 66, 92)
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1254,23 +2508,47 @@ def sprite(
 
             bloque(
 
+
+
                 (
+
+
 
                     8,
 
+
+
                     11,
+
+
 
                     33,
 
+
+
                     3
+
+
 
                 ),
 
+
+
                 (29, 37, 55),
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1278,25 +2556,51 @@ def sprite(
 
             # Insignias.
 
+
+
             bloque(
 
+
+
                 (
+
+
 
                     23,
 
+
+
                     6,
+
+
 
                     5,
 
+
+
                     5
+
+
 
                 ),
 
+
+
                 ORO,
+
+
 
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1304,21 +2608,39 @@ def sprite(
 
             bloque(
 
+
+
                 (
+
+
 
                     28,
 
+
+
                     30,
+
+
 
                     5,
 
+
+
                     6
+
+
 
                 ),
 
+
+
                 ORO,
 
+
+
                 False
+
+
 
             )
 
@@ -1326,11 +2648,25 @@ def sprite(
 
 
 
+
+
+
+
+
+
         # ===================================
+
+
 
         # CORREDOR
 
+
+
         # ===================================
+
+
+
+
 
 
 
@@ -1338,25 +2674,53 @@ def sprite(
 
 
 
+
+
+
+
             bloque(
+
+
 
                 (
 
+
+
                     14,
+
+
 
                     38,
 
+
+
                     8,
+
+
 
                     7
 
+
+
                 ),
+
+
 
                 piel,
 
+
+
                 False
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1364,19 +2728,39 @@ def sprite(
 
             # Marca / herida.
 
+
+
             pygame.draw.line(
+
+
 
                 lienzo,
 
+
+
                 (89, 44, 41),
+
+
 
                 (20, 21),
 
+
+
                 (26, 25),
+
+
 
                 2
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -1388,39 +2772,83 @@ def sprite(
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # DIBUJAR PERSONAJE
 
+
+
 # ===================================
+
+
+
+
 
 
 
 def personaje(
 
+
+
     ventana,
+
+
 
     rect,
 
+
+
     tipo="superviviente",
+
+
 
     espalda=False,
 
+
+
     moviendo=False
+
+
 
 ):
 
 
 
+
+
+
+
     fase = (
+
+
 
         (pygame.time.get_ticks() // 160) % 2
 
+
+
         if moviendo
+
+
 
         else 0
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1428,19 +2856,39 @@ def personaje(
 
     dibujo = pygame.transform.scale(
 
+
+
         sprite(
+
+
 
             tipo,
 
+
+
             espalda,
+
+
 
             fase
 
+
+
         ),
+
+
 
         (42, 56)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1448,25 +2896,51 @@ def personaje(
 
     # Sombra.
 
+
+
     pygame.draw.ellipse(
+
+
 
         ventana,
 
+
+
         (13, 20, 27),
+
+
 
         (
 
+
+
             rect.x - 4,
+
+
 
             rect.bottom - 8,
 
+
+
             48,
+
+
 
             14
 
+
+
         )
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1474,19 +2948,39 @@ def personaje(
 
     # Personaje.
 
+
+
     ventana.blit(
+
+
 
         dibujo,
 
+
+
         (
+
+
 
             rect.centerx - 21,
 
+
+
             rect.bottom - 52
+
+
 
         )
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1494,33 +2988,63 @@ def personaje(
 
     # Línea especial del jugador.
 
+
+
     if tipo == "superviviente":
+
+
+
+
 
 
 
         pygame.draw.line(
 
+
+
             ventana,
+
+
 
             MENTA,
 
+
+
             (
+
+
 
                 rect.x + 8,
 
+
+
                 rect.bottom + 6
 
+
+
             ),
+
+
 
             (
 
+
+
                 rect.right - 8,
+
+
 
                 rect.bottom + 6
 
+
+
             ),
 
+
+
             2
+
+
 
         )
 
@@ -1528,45 +3052,95 @@ def personaje(
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # ETIQUETA
 
+
+
 # ===================================
+
+
+
+
 
 
 
 def etiqueta(
 
+
+
     ventana,
+
+
 
     texto,
 
+
+
     centro,
+
+
 
     color=MARFIL,
 
+
+
     tamano=15
+
+
 
 ):
 
 
 
+
+
+
+
     dibujo = fuente(
+
+
 
         tamano,
 
+
+
         True
+
+
 
     ).render(
 
+
+
         texto,
+
+
 
         True,
 
+
+
         color
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1574,9 +3148,19 @@ def etiqueta(
 
     rect = dibujo.get_rect(
 
+
+
         center=centro
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1584,21 +3168,43 @@ def etiqueta(
 
     pygame.draw.rect(
 
+
+
         ventana,
+
+
 
         (19, 31, 39),
 
+
+
         rect.inflate(
+
+
 
             18,
 
+
+
             9
+
+
 
         ),
 
+
+
         border_radius=4
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -1606,9 +3212,15 @@ def etiqueta(
 
     ventana.blit(
 
+
+
         dibujo,
 
+
+
         rect
+
+
 
     )
 
@@ -1616,27 +3228,55 @@ def etiqueta(
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # OBJETOS
 
+
+
 # ===================================
+
+
+
+
 
 
 
 def objeto(
 
+
+
     ventana,
+
+
 
     rect,
 
+
+
     nombre
+
+
 
 ):
 
 
 
+
+
+
+
     x = rect.x
+
+
 
     y = rect.y
 
@@ -1644,25 +3284,51 @@ def objeto(
 
 
 
+
+
+
+
+
+
     # Sombra.
+
+
 
     pygame.draw.ellipse(
 
+
+
         ventana,
+
+
 
         (12, 22, 29),
 
+
+
         (
+
+
 
             x - 5,
 
+
+
             y + 23,
+
+
 
             40,
 
+
+
             12
 
+
+
         )
+
+
 
     )
 
@@ -1670,11 +3336,25 @@ def objeto(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # MEDICAMENTO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -1682,91 +3362,181 @@ def objeto(
 
 
 
+
+
+
+
         pygame.draw.circle(
 
+
+
             ventana,
+
+
 
             MENTA,
 
+
+
             (
+
+
 
                 x + 15,
 
+
+
                 y + 15
 
+
+
             ),
+
+
 
             23,
 
+
+
             1
+
+
 
         )
 
 
 
+
+
+
+
         pygame.draw.rect(
 
+
+
             ventana,
+
+
 
             (205, 221, 207),
 
+
+
             (
+
+
 
                 x,
 
+
+
                 y + 5,
+
+
 
                 30,
 
+
+
                 23
+
+
 
             ),
 
+
+
             border_radius=4
+
+
 
         )
 
 
 
+
+
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (114, 59, 57),
 
+
+
             (
+
+
 
                 x + 11,
 
+
+
                 y + 9,
+
+
 
                 8,
 
+
+
                 15
+
+
 
             )
 
+
+
         )
+
+
+
+
 
 
 
         pygame.draw.rect(
 
+
+
             ventana,
+
+
 
             (114, 59, 57),
 
+
+
             (
+
+
 
                 x + 7,
 
+
+
                 y + 13,
+
+
 
                 16,
 
+
+
                 7
 
+
+
             )
+
+
 
         )
 
@@ -1774,11 +3544,25 @@ def objeto(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # PISTOLA
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -1786,81 +3570,161 @@ def objeto(
 
 
 
+
+
+
+
         pygame.draw.circle(
+
+
 
             ventana,
 
+
+
             ORO,
+
+
 
             (
 
+
+
                 x + 15,
+
+
 
                 y + 15
 
+
+
             ),
+
+
 
             23,
 
+
+
             1
 
+
+
         )
+
+
+
+
 
 
 
         pygame.draw.polygon(
 
+
+
             ventana,
+
+
 
             (164, 178, 183),
 
+
+
             [
+
+
 
                 (x, y + 8),
 
+
+
                 (x + 29, y + 8),
+
+
 
                 (x + 29, y + 16),
 
+
+
                 (x + 16, y + 16),
+
+
 
                 (x + 12, y + 29),
 
+
+
                 (x + 4, y + 27),
+
+
 
                 (x + 8, y + 15),
 
+
+
                 (x, y + 15)
+
+
 
             ]
 
+
+
         )
+
+
+
+
 
 
 
         pygame.draw.line(
 
+
+
             ventana,
+
+
 
             (60, 76, 85),
 
+
+
             (
+
+
 
                 x + 5,
 
+
+
                 y + 10
 
+
+
             ),
+
+
 
             (
 
+
+
                 x + 26,
+
+
 
                 y + 10
 
+
+
             ),
 
+
+
             2
+
+
 
         )
 
@@ -1868,11 +3732,25 @@ def objeto(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # RADIO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -1880,177 +3758,353 @@ def objeto(
 
 
 
+
+
+
+
         pygame.draw.circle(
+
+
 
             ventana,
 
+
+
             MENTA,
+
+
 
             (
 
+
+
                 x + 15,
+
+
 
                 y + 15
 
+
+
             ),
+
+
 
             23,
 
+
+
             1
 
+
+
         )
+
+
+
+
 
 
 
         # Cuerpo.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (45, 62, 72),
+
+
 
             (
 
+
+
                 x + 2,
+
+
 
                 y + 5,
 
+
+
                 27,
+
+
 
                 25
 
+
+
             ),
+
+
 
             border_radius=4
 
+
+
         )
+
+
+
+
 
 
 
         # Borde.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (112, 139, 145),
+
+
 
             (
 
+
+
                 x + 2,
+
+
 
                 y + 5,
 
+
+
                 27,
+
+
 
                 25
 
+
+
             ),
+
+
 
             2,
 
+
+
             border_radius=4
 
+
+
         )
+
+
+
+
 
 
 
         # Pantalla.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             MENTA,
+
+
 
             (
 
+
+
                 x + 7,
+
+
 
                 y + 9,
 
+
+
                 15,
+
+
 
                 6
 
+
+
             ),
+
+
 
             border_radius=2
 
+
+
         )
+
+
+
+
 
 
 
         # Bocina.
 
+
+
         pygame.draw.circle(
+
+
 
             ventana,
 
+
+
             (18, 28, 35),
+
+
 
             (
 
+
+
                 x + 15,
+
+
 
                 y + 22
 
+
+
             ),
+
+
 
             5
 
+
+
         )
+
+
+
+
 
 
 
         # Botón.
 
+
+
         pygame.draw.circle(
+
+
 
             ventana,
 
+
+
             ORO,
+
+
 
             (
 
+
+
                 x + 24,
+
+
 
                 y + 20
 
+
+
             ),
+
+
 
             2
 
+
+
         )
+
+
+
+
 
 
 
         # Antena.
 
+
+
         pygame.draw.line(
+
+
 
             ventana,
 
+
+
             (164, 178, 183),
 
+
+
             (
+
+
 
                 x + 24,
 
+
+
                 y + 6
 
+
+
             ),
+
+
 
             (
 
+
+
                 x + 29,
+
+
 
                 y - 6
 
+
+
             ),
 
+
+
             2
+
+
 
         )
 
@@ -2058,11 +4112,25 @@ def objeto(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # ARCHIVO MILITAR
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -2070,193 +4138,387 @@ def objeto(
 
 
 
+
+
+
+
         # Resplandor de interacción.
+
+
 
         pygame.draw.circle(
 
+
+
             ventana,
+
+
 
             MENTA,
 
+
+
             (
+
+
 
                 x + 15,
 
+
+
                 y + 15
+
+
 
             ),
 
+
+
             23,
+
+
 
             1
 
+
+
         )
+
+
+
+
 
 
 
         # Carpeta militar.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (85, 96, 67),
+
+
 
             (
 
+
+
                 x + 2,
+
+
 
                 y + 8,
 
+
+
                 28,
+
+
 
                 20
 
+
+
             ),
+
+
 
             border_radius=3
 
+
+
         )
+
+
+
+
 
 
 
         # Pestaña de la carpeta.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (112, 124, 83),
+
+
 
             (
 
+
+
                 x + 5,
+
+
 
                 y + 4,
 
+
+
                 12,
+
+
 
                 7
 
+
+
             ),
+
+
 
             border_radius=2
 
+
+
         )
+
+
+
+
 
 
 
         # Hoja confidencial.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (215, 218, 194),
+
+
 
             (
 
+
+
                 x + 7,
+
+
 
                 y + 10,
 
+
+
                 18,
+
+
 
                 14
 
+
+
             )
 
+
+
         )
+
+
+
+
 
 
 
         # Líneas del documento.
 
+
+
         pygame.draw.line(
+
+
 
             ventana,
 
+
+
             (78, 87, 70),
 
+
+
             (
+
+
 
                 x + 10,
 
+
+
                 y + 14
+
+
 
             ),
 
+
+
             (
+
+
 
                 x + 22,
 
+
+
                 y + 14
+
+
 
             ),
 
+
+
             2
 
+
+
         )
+
+
+
+
 
 
 
         pygame.draw.line(
 
+
+
             ventana,
+
+
 
             (78, 87, 70),
 
+
+
             (
+
+
 
                 x + 10,
 
+
+
                 y + 18
 
+
+
             ),
+
+
 
             (
 
+
+
                 x + 19,
+
+
 
                 y + 18
 
+
+
             ),
+
+
 
             2
 
+
+
         )
+
+
+
+
 
 
 
         # Sello de documento clasificado.
 
+
+
         pygame.draw.rect(
+
+
 
             ventana,
 
+
+
             (151, 60, 55),
+
+
 
             (
 
+
+
                 x + 10,
+
+
 
                 y + 20,
 
+
+
                 12,
+
+
 
                 4
 
+
+
             )
+
+
 
         )
 
 
 
+
+
+
+
     # ===================================
+
+
 
     # BALAS
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -2264,95 +4526,189 @@ def objeto(
 
 
 
+
+
+
+
         pygame.draw.circle(
+
+
 
             ventana,
 
+
+
             ORO,
+
+
 
             (
 
+
+
                 x + 15,
+
+
 
                 y + 15
 
+
+
             ),
+
+
 
             23,
 
+
+
             1
+
+
 
         )
 
 
 
+
+
+
+
         for desplazamiento in (
+
+
 
             0,
 
+
+
             10,
 
+
+
             20
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.rect(
+
+
 
                 ventana,
 
+
+
                 (181, 128, 64),
+
+
 
                 (
 
+
+
                     x + desplazamiento,
+
+
 
                     y + 9,
 
+
+
                     7,
+
+
 
                     19
 
+
+
                 )
 
+
+
             )
+
+
+
+
 
 
 
             pygame.draw.polygon(
 
+
+
                 ventana,
+
+
 
                 ORO,
 
+
+
                 [
 
+
+
                     (
+
+
 
                         x + desplazamiento,
 
+
+
                         y + 9
+
+
 
                     ),
 
+
+
                     (
+
+
 
                         x + desplazamiento + 3,
 
+
+
                         y + 3
+
+
 
                     ),
 
+
+
                     (
+
+
 
                         x + desplazamiento + 7,
 
+
+
                         y + 9
+
+
 
                     )
 
+
+
                 ]
+
+
 
             )
 
@@ -2360,11 +4716,25 @@ def objeto(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # OBJETO GENÉRICO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -2372,21 +4742,41 @@ def objeto(
 
 
 
+
+
+
+
         pygame.draw.circle(
+
+
 
             ventana,
 
+
+
             ORO,
+
+
 
             (
 
+
+
                 x + 15,
+
+
 
                 y + 15
 
+
+
             ),
 
+
+
             15
+
+
 
         )
 
@@ -2394,41 +4784,87 @@ def objeto(
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # PISO DE LOS ESCENARIOS
 
+
+
 # ===================================
+
+
+
+
 
 
 
 @lru_cache(maxsize=8)
 
+
+
 def piso(tipo):
+
+
+
+
 
 
 
     # Diego:
 
+
+
     # la decoración es fija
+
+
 
     # y se genera una sola vez.
 
+
+
     #
+
+
 
     # Se utiliza un generador local
 
+
+
     # para que el arte no cambie
+
+
 
     # las probabilidades del combate.
 
 
 
+
+
+
+
     rng = random.Random(
+
+
 
         tipo
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -2436,9 +4872,19 @@ def piso(tipo):
 
     lienzo = pygame.Surface(
 
+
+
         (1000, 650)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -2448,41 +4894,81 @@ def piso(tipo):
 
 
 
+
+
+
+
     "REFUGIO":
+
+
 
         (38, 50, 53),
 
 
 
+
+
+
+
     "HOSPITAL":
+
+
 
         (37, 59, 59),
 
 
 
+
+
+
+
     "SOTANO_HOSPITAL":
+
+
 
         (31, 38, 45),
 
 
 
+
+
+
+
     "COMISARIA":
+
+
 
         (37, 47, 61),
 
 
 
+
+
+
+
     "CALLE":
+
+
 
         (37, 43, 51),
 
 
 
+
+
+
+
     # Base Militar.
+
+
 
     "BASE_MILITAR":
 
+
+
         (43, 51, 45)
+
+
 
 }
 
@@ -2490,9 +4976,19 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     base = bases[
 
+
+
         tipo
+
+
 
     ]
 
@@ -2500,9 +4996,19 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     lienzo.fill(
 
+
+
         (18, 26, 34)
+
+
 
     )
 
@@ -2510,45 +5016,95 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     # -----------------------------------
+
+
 
     # CUADRÍCULA DEL SUELO
 
+
+
     # -----------------------------------
+
+
+
+
 
 
 
     for x in range(
 
+
+
         0,
+
+
 
         1000,
 
+
+
         40
+
+
 
     ):
 
 
 
+
+
+
+
         for y in range(
+
+
 
             0,
 
+
+
             650,
 
+
+
             40
+
+
 
         ):
 
 
 
+
+
+
+
             brillo = rng.randint(
+
+
 
                 -3,
 
+
+
                 3
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2556,11 +5112,23 @@ def piso(tipo):
 
             color = tuple(
 
+
+
                 c + brillo
+
+
 
                 for c in base
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2568,23 +5136,47 @@ def piso(tipo):
 
             pygame.draw.rect(
 
+
+
                 lienzo,
+
+
 
                 color,
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     y,
+
+
 
                     39,
 
+
+
                     39
+
+
 
                 )
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2594,33 +5186,65 @@ def piso(tipo):
 
 
 
+
+
+
+
                 pygame.draw.line(
+
+
 
                     lienzo,
 
+
+
                     tuple(
+
+
 
                         c + 5
 
+
+
                         for c in color
+
+
 
                     ),
 
+
+
                     (
+
+
 
                         x + 8,
 
+
+
                         y + 30
+
+
 
                     ),
 
+
+
                     (
+
+
 
                         x + 22,
 
+
+
                         y + 30
 
+
+
                     )
+
+
 
                 )
 
@@ -2628,11 +5252,25 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # CALLE
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -2640,23 +5278,45 @@ def piso(tipo):
 
 
 
+
+
+
+
         pygame.draw.rect(
+
+
 
             lienzo,
 
+
+
             (50, 59, 65),
+
+
 
             (
 
-                0,
+
 
                 0,
+
+
+
+                0,
+
+
 
                 1000,
 
+
+
                 100
 
+
+
             )
+
+
 
         )
 
@@ -2664,25 +5324,55 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
         pygame.draw.rect(
+
+
 
             lienzo,
 
+
+
             (50, 59, 65),
+
+
 
             (
 
+
+
                 0,
+
+
 
                 550,
 
+
+
                 1000,
+
+
 
                 100
 
+
+
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -2690,35 +5380,71 @@ def piso(tipo):
 
         for x in range(
 
+
+
             120,
+
+
 
             1000,
 
+
+
             120
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.rect(
+
+
 
                 lienzo,
 
+
+
                 (164, 148, 88),
+
+
 
                 (
 
+
+
                     x,
+
+
 
                     322,
 
+
+
                     65,
+
+
 
                     5
 
+
+
                 )
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2726,29 +5452,59 @@ def piso(tipo):
 
         for _ in range(
 
+
+
             30
+
+
 
         ):
 
 
 
+
+
+
+
             x = rng.randrange(
+
+
 
                 80,
 
+
+
                 970
 
+
+
             )
+
+
+
+
 
 
 
             y = rng.randrange(
 
+
+
                 195,
+
+
 
                 550
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2756,43 +5512,87 @@ def piso(tipo):
 
             pygame.draw.lines(
 
+
+
                 lienzo,
+
+
 
                 (25, 32, 39),
 
+
+
                 False,
+
+
 
                 [
 
+
+
                     (
+
+
 
                         x,
 
+
+
                         y
+
+
 
                     ),
 
+
+
                     (
+
+
 
                         x + 14,
 
+
+
                         y - 8
+
+
 
                     ),
 
+
+
                     (
+
+
 
                         x + 23,
 
+
+
                         y - 4
+
+
 
                     )
 
+
+
                 ],
+
+
 
                 2
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2800,35 +5600,71 @@ def piso(tipo):
 
         for x, y in (
 
+
+
             (290, 290),
+
+
 
             (590, 170),
 
+
+
             (820, 490)
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.ellipse(
+
+
 
                 lienzo,
 
+
+
                 (35, 57, 63),
+
+
 
                 (
 
+
+
                     x,
+
+
 
                     y,
 
+
+
                     85,
+
+
 
                     22
 
+
+
                 )
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -2836,27 +5672,51 @@ def piso(tipo):
 
             pygame.draw.arc(
 
+
+
                 lienzo,
+
+
 
                 (61, 88, 88),
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     y,
+
+
 
                     85,
 
+
+
                     22
+
+
 
                 ),
 
+
+
                 0,
+
+
 
                 3,
 
+
+
                 1
+
+
 
             )
 
@@ -2864,11 +5724,25 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # REFUGIO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -2876,49 +5750,101 @@ def piso(tipo):
 
 
 
+
+
+
+
         # Sacos decorativos.
+
+
 
         for y in (
 
+
+
             225,
 
+
+
             260
+
+
 
         ):
 
 
 
+
+
+
+
             for x in (
+
+
 
                 100,
 
+
+
                 250
+
+
 
             ):
 
 
 
+
+
+
+
                 pygame.draw.rect(
 
+
+
                     lienzo,
+
+
 
                     (43, 72, 66),
 
+
+
                     (
+
+
 
                         x,
 
+
+
                         y,
+
+
 
                         85,
 
+
+
                         25
+
+
 
                     ),
 
+
+
                     border_radius=6
 
+
+
                 )
+
+
+
+
+
+
 
 
 
@@ -2926,25 +5852,51 @@ def piso(tipo):
 
                 pygame.draw.rect(
 
+
+
                     lienzo,
+
+
 
                     (133, 152, 126),
 
+
+
                     (
+
+
 
                         x + 5,
 
+
+
                         y + 4,
+
+
 
                         18,
 
+
+
                         17
+
+
 
                     ),
 
+
+
                     border_radius=3
 
+
+
                 )
+
+
+
+
+
+
 
 
 
@@ -2952,27 +5904,55 @@ def piso(tipo):
 
         pygame.draw.rect(
 
+
+
             lienzo,
+
+
 
             (48, 66, 68),
 
+
+
             (
+
+
 
                 590,
 
+
+
                 210,
+
+
 
                 230,
 
+
+
                 105
+
+
 
             ),
 
+
+
             2,
+
+
 
             border_radius=8
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -2980,21 +5960,39 @@ def piso(tipo):
 
         pygame.draw.circle(
 
+
+
             lienzo,
+
+
 
             (68, 92, 85),
 
+
+
             (
+
+
 
                 705,
 
+
+
                 260
+
+
 
             ),
 
+
+
             32,
 
+
+
             2
+
+
 
         )
 
@@ -3002,11 +6000,25 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # HOSPITAL
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -3014,23 +6026,45 @@ def piso(tipo):
 
 
 
+
+
+
+
         pygame.draw.rect(
+
+
 
             lienzo,
 
+
+
             (41, 83, 77),
+
+
 
             (
 
+
+
                 460,
+
+
 
                 75,
 
+
+
                 55,
+
+
 
                 500
 
+
+
             )
+
+
 
         )
 
@@ -3038,43 +6072,91 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
         for y in range(
+
+
 
             95,
 
+
+
             510,
 
+
+
             60
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.line(
+
+
 
                 lienzo,
 
+
+
                 (111, 143, 125),
+
+
 
                 (
 
+
+
                     486,
+
+
 
                     y
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     486,
+
+
 
                     y + 20
 
+
+
                 ),
+
+
 
                 2
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -3082,33 +6164,67 @@ def piso(tipo):
 
         for x, y in (
 
+
+
             (290, 425),
 
+
+
             (835, 220)
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.rect(
+
+
 
                 lienzo,
 
+
+
                 (71, 113, 100),
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     y,
+
+
 
                     12,
 
+
+
                     38
+
+
 
                 )
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -3116,21 +6232,39 @@ def piso(tipo):
 
             pygame.draw.rect(
 
+
+
                 lienzo,
+
+
 
                 (71, 113, 100),
 
+
+
                 (
+
+
 
                     x - 13,
 
+
+
                     y + 13,
+
+
 
                     38,
 
+
+
                     12
 
+
+
                 )
+
+
 
             )
 
@@ -3138,11 +6272,25 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # OTROS ESCENARIOS
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -3150,39 +6298,77 @@ def piso(tipo):
 
 
 
+
+
+
+
         for y in (
+
+
 
             160,
 
+
+
             510
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.line(
+
+
 
                 lienzo,
 
+
+
                 (58, 70, 78),
 
+
+
                 (
+
+
 
                     95,
 
+
+
                     y
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     310,
+
+
 
                     y
 
+
+
                 ),
 
+
+
                 2
+
+
 
             )
 
@@ -3190,43 +6376,91 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
             for x in range(
+
+
 
                 95,
 
+
+
                 310,
 
+
+
                 24
+
+
 
             ):
 
 
 
+
+
+
+
                 pygame.draw.line(
+
+
 
                     lienzo,
 
+
+
                     (58, 70, 78),
 
+
+
                     (
+
+
 
                         x,
 
+
+
                         y - 7
 
+
+
                     ),
+
+
 
                     (
 
+
+
                         x + 8,
+
+
 
                         y + 7
 
+
+
                     ),
+
+
 
                     2
 
+
+
                 )
+
+
+
+
+
+
 
 
 
@@ -3238,39 +6472,83 @@ def piso(tipo):
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # PUERTAS
 
+
+
 # ===================================
+
+
+
+
 
 
 
 def puerta(
 
+
+
     ventana,
+
+
 
     rect,
 
+
+
     texto,
 
+
+
     color=ORO
+
+
 
 ):
 
 
 
+
+
+
+
     pygame.draw.rect(
 
+
+
         ventana,
+
+
 
         (20, 36, 43),
 
+
+
         rect,
+
+
 
         border_radius=4
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -3278,17 +6556,35 @@ def puerta(
 
     pygame.draw.rect(
 
+
+
         ventana,
+
+
 
         color,
 
+
+
         rect,
+
+
 
         2,
 
+
+
         border_radius=4
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -3296,41 +6592,83 @@ def puerta(
 
     for x in range(
 
+
+
         rect.left + 7,
+
+
 
         rect.right - 5,
 
+
+
         15
+
+
 
     ):
 
 
 
+
+
+
+
         pygame.draw.line(
+
+
 
             ventana,
 
+
+
             color,
 
+
+
             (
+
+
 
                 x,
 
+
+
                 rect.bottom - 9
 
+
+
             ),
+
+
 
             (
 
+
+
                 x + 6,
+
+
 
                 rect.bottom - 3
 
+
+
             ),
+
+
 
             2
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3338,21 +6676,39 @@ def puerta(
 
     etiqueta(
 
+
+
         ventana,
+
+
 
         texto,
 
+
+
         (
+
+
 
             rect.centerx,
 
+
+
             rect.top - 15
+
+
 
         ),
 
+
+
         color,
 
+
+
         13
+
+
 
     )
 
@@ -3360,31 +6716,261 @@ def puerta(
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # ESCENARIOS
 
+
+
 # ===================================
+
+
+
+
+
+
+
+# ===================================
+# DECORACION EXTRA DE ESCENARIOS
+# ===================================
+
+def _mesa_visual(ventana, x, y, ancho, alto, color, borde):
+    pygame.draw.rect(ventana, (10, 17, 23), (x+5, y+6, ancho, alto), border_radius=5)
+    pygame.draw.rect(ventana, color, (x, y, ancho, alto), border_radius=5)
+    pygame.draw.rect(ventana, borde, (x, y, ancho, alto), 2, border_radius=5)
+
+
+def _monitor_visual(ventana, x, y, ancho=44, alto=27, luz=MENTA):
+    pygame.draw.rect(ventana, (18, 29, 36), (x, y, ancho, alto), border_radius=3)
+    pygame.draw.rect(ventana, (91, 108, 109), (x, y, ancho, alto), 2, border_radius=3)
+    pygame.draw.rect(ventana, (12, 39, 40), (x+5, y+5, ancho-10, alto-10), border_radius=2)
+    pygame.draw.line(ventana, luz, (x+9, y+10), (x+ancho-9, y+10), 2)
+    pygame.draw.circle(ventana, luz, (x+ancho-8, y+alto-7), 2)
+
+
+def _caja_visual(ventana, x, y, militar=False):
+    relleno=(61,79,61) if militar else (75,69,56)
+    borde=(111,137,91) if militar else (133,113,79)
+    pygame.draw.rect(ventana, (12,18,22), (x+4,y+5,52,34), border_radius=4)
+    pygame.draw.rect(ventana, relleno, (x,y,52,34), border_radius=4)
+    pygame.draw.rect(ventana, borde, (x,y,52,34), 2, border_radius=4)
+    pygame.draw.line(ventana, borde, (x+5,y+17), (x+47,y+17), 2)
+    pygame.draw.line(ventana, borde, (x+26,y+4), (x+26,y+30), 1)
+
+
+def _franja_visual(ventana, x, y, ancho):
+    pygame.draw.rect(ventana, (39,39,32), (x,y,ancho,12))
+    for px in range(x, x+ancho, 22):
+        pygame.draw.line(ventana, ORO, (px,y+12), (min(px+12,x+ancho),y), 4)
+
+
+def _decorar_refugio(ventana):
+    # Camas de supervivientes.
+    for x in (105, 245):
+        pygame.draw.rect(ventana, (31,42,43), (x+4,151,110,38), border_radius=6)
+        pygame.draw.rect(ventana, (66,91,82), (x,146,110,38), border_radius=6)
+        pygame.draw.rect(ventana, (126,145,119), (x+7,153,28,24), border_radius=4)
+        pygame.draw.line(ventana, (44,62,58), (x+42,151), (x+42,179), 2)
+
+    # Almacen de suministros.
+    for x,y in ((105,330),(170,330),(235,330),(137,372),(202,372)):
+        _caja_visual(ventana,x,y)
+
+    # Mesa central con mapa y radio.
+    _mesa_visual(ventana, 590, 175, 235, 105, (53,72,68), (97,120,108))
+    pygame.draw.rect(ventana, (171,162,119), (622,194,145,60), border_radius=3)
+    pygame.draw.lines(ventana, (86,101,84), False,
+                      [(633,233),(667,204),(699,225),(735,201),(754,236)], 2)
+    _monitor_visual(ventana, 773, 196, 36, 25, MENTA)
+
+    # Zona segura iluminada.
+    pygame.draw.rect(ventana, (22,55,49), (570,345,270,78), border_radius=8)
+    pygame.draw.rect(ventana, MENTA, (570,345,270,78), 2, border_radius=8)
+    t=fuente(15,True).render('ZONA SEGURA // REFUGIO 01', True, MENTA)
+    ventana.blit(t, t.get_rect(center=(705,384)))
+
+
+def _decorar_hospital(ventana):
+    # Mostrador de recepcion.
+    _mesa_visual(ventana, 105, 145, 245, 58, (52,78,74), (100,131,118))
+    _monitor_visual(ventana, 130, 159, 49, 27, MENTA)
+    _monitor_visual(ventana, 194, 159, 49, 27, (125,157,140))
+
+    # Sala de espera.
+    for x in (105,165,225,285):
+        pygame.draw.rect(ventana, (57,75,77), (x,310,42,28), border_radius=5)
+        pygame.draw.line(ventana, (104,116,116), (x+6,338), (x+6,349), 2)
+        pygame.draw.line(ventana, (104,116,116), (x+35,338), (x+35,349), 2)
+
+    # Camillas.
+    for x,y in ((605,170),(750,270)):
+        pygame.draw.rect(ventana, (171,187,175), (x,y,112,34), border_radius=5)
+        pygame.draw.rect(ventana, (92,123,113), (x,y,112,34), 2, border_radius=5)
+        pygame.draw.rect(ventana, (216,223,212), (x+8,y+7,29,20), border_radius=4)
+        for px in (x+16,x+94):
+            pygame.draw.line(ventana,(93,104,105),(px,y+34),(px,y+43),3)
+            pygame.draw.circle(ventana,(32,40,44),(px,y+45),4)
+
+    # Farmacia / estanteria.
+    pygame.draw.rect(ventana,(49,70,68),(600,420,220,83),border_radius=5)
+    pygame.draw.rect(ventana,(103,132,120),(600,420,220,83),2,border_radius=5)
+    for py in (446,472):
+        pygame.draw.line(ventana,(103,132,120),(610,py),(810,py),2)
+    for x in range(618,802,29):
+        pygame.draw.rect(ventana,(163,182,162),(x,428,13,14),border_radius=2)
+        pygame.draw.rect(ventana,(82,124,111),(x,456,17,11),border_radius=2)
+
+    # Cruz medica iluminada.
+    pygame.draw.circle(ventana,(24,54,49),(875,135),29)
+    pygame.draw.rect(ventana,MENTA,(870,112,10,46),border_radius=3)
+    pygame.draw.rect(ventana,MENTA,(852,130,46,10),border_radius=3)
+
+    # Señal de evacuacion en el suelo.
+    pygame.draw.line(ventana,MENTA,(395,525),(395,455),4)
+    pygame.draw.polygon(ventana,MENTA,[(395,442),(386,457),(404,457)])
+
+
+def _decorar_comisaria(ventana):
+    # Mostrador y terminales.
+    _mesa_visual(ventana, 95, 150, 245, 58, (47,61,79), (88,108,132))
+    _monitor_visual(ventana, 118, 163, 45, 27, (112,157,172))
+    _monitor_visual(ventana, 178, 163, 45, 27, MENTA)
+
+    # Insignia policial en el suelo.
+    pygame.draw.circle(ventana,(50,65,82),(270,305),55)
+    pygame.draw.circle(ventana,(105,128,145),(270,305),55,3)
+    pygame.draw.polygon(ventana,ORO,
+        [(270,265),(281,291),(310,293),(288,311),(295,340),
+         (270,323),(245,340),(252,311),(230,293),(259,291)],2)
+
+    # Panel de evidencia.
+    pygame.draw.rect(ventana,(66,54,43),(635,145,120,72),border_radius=3)
+    pygame.draw.rect(ventana,(121,97,67),(635,145,120,72),2,border_radius=3)
+    notas=[(646,155,27,18),(707,155,29,20),(677,184,31,20)]
+    for i,r in enumerate(notas):
+        pygame.draw.rect(ventana,(210,206,163) if i!=1 else (179,118,101),r,border_radius=2)
+    pygame.draw.line(ventana,(172,69,64),(673,164),(707,165),2)
+    pygame.draw.line(ventana,(172,69,64),(721,176),(692,184),2)
+
+    # Archivadores.
+    for x in (620,680,740,800):
+        pygame.draw.rect(ventana,(52,65,76),(x,240,46,72),border_radius=3)
+        pygame.draw.rect(ventana,(98,114,124),(x,240,46,72),2,border_radius=3)
+        pygame.draw.line(ventana,(98,114,124),(x+5,259),(x+41,259),1)
+        pygame.draw.line(ventana,(98,114,124),(x+5,282),(x+41,282),1)
+
+    # Celdas decorativas.
+    pygame.draw.rect(ventana,(31,41,50),(105,395,190,82))
+    pygame.draw.rect(ventana,(112,128,132),(105,395,190,82),2)
+    for px in range(115,288,16):
+        pygame.draw.line(ventana,(112,128,132),(px,398),(px,474),3)
+    pygame.draw.line(ventana,(112,128,132),(108,436),(292,436),2)
+
+    # Armeria.
+    pygame.draw.rect(ventana,(35,46,56),(620,390,220,90),border_radius=5)
+    pygame.draw.rect(ventana,(101,114,120),(620,390,220,90),2,border_radius=5)
+    for y in (414,445):
+        pygame.draw.line(ventana,(89,102,107),(635,y),(825,y),2)
+        pygame.draw.line(ventana,(160,169,167),(652,y-8),(718,y-8),5)
+        pygame.draw.line(ventana,(160,169,167),(701,y-8),(714,y+4),4)
+
+
+def _decorar_base_militar(ventana):
+    # Control de acceso.
+    _mesa_visual(ventana,95,150,230,60,(48,64,53),(100,124,91))
+    _monitor_visual(ventana,118,164,48,28,MENTA)
+    _monitor_visual(ventana,181,164,48,28,ORO)
+    pygame.draw.rect(ventana,(63,79,66),(355,170,35,115),border_radius=5)
+    pygame.draw.rect(ventana,MENTA,(355,170,35,115),2,border_radius=5)
+    pygame.draw.circle(ventana,MENTA,(372,191),6)
+
+    # Mesa tactica del centro de comando.
+    _mesa_visual(ventana,585,160,245,100,(49,63,55),(96,117,91))
+    pygame.draw.rect(ventana,(19,49,46),(598,172,219,76),border_radius=4)
+    pygame.draw.rect(ventana,MENTA,(598,172,219,76),1,border_radius=4)
+    pygame.draw.lines(ventana,(74,153,132),False,
+                      [(610,220),(648,185),(690,214),(744,183),(800,222)],2)
+    for p in ((648,185),(690,214),(744,183)):
+        pygame.draw.circle(ventana,ORO,p,4)
+
+    for x in (590,655,720,785):
+        _monitor_visual(ventana,x,285,48,30,MENTA if x!=720 else ORO)
+
+    # Arsenal.
+    for x,y in ((630,405),(695,405),(760,405),(695,450)):
+        _caja_visual(ventana,x,y,True)
+    pygame.draw.rect(ventana,(34,44,37),(540,375,58,125),border_radius=5)
+    pygame.draw.rect(ventana,(99,119,90),(540,375,58,125),2,border_radius=5)
+    for x in (552,570,587):
+        pygame.draw.line(ventana,(147,155,139),(x,391),(x-5,468),4)
+
+    # Franjas de seguridad y emblema.
+    _franja_visual(ventana,95,330,240)
+    _franja_visual(ventana,615,520,225)
+    pygame.draw.circle(ventana,(43,63,51),(455,320),55)
+    pygame.draw.circle(ventana,MENTA,(455,320),55,2)
+    pygame.draw.polygon(ventana,ORO,
+        [(455,282),(465,307),(492,309),(471,326),(478,353),
+         (455,337),(432,353),(439,326),(418,309),(445,307)],2)
+    etiqueta(ventana,'PROTOCOLO Z-01',(455,385),MENTA,12)
+
+
+def decorar_escenario(ventana, tipo):
+    # Decoracion exclusivamente visual. No modifica colisiones.
+    if tipo == 'REFUGIO':
+        _decorar_refugio(ventana)
+    elif tipo == 'HOSPITAL':
+        _decorar_hospital(ventana)
+    elif tipo == 'COMISARIA':
+        _decorar_comisaria(ventana)
+    elif tipo == 'BASE_MILITAR':
+        _decorar_base_militar(ventana)
 
 
 
 def escenario(
 
+
+
     ventana,
+
+
 
     paredes,
 
+
+
     tipo
+
+
 
 ):
 
 
 
+
+
+
+
     ventana.blit(
+
+
 
         piso(tipo),
 
+
+
         (0, 0)
+
+
 
     )
 
@@ -3392,43 +6978,95 @@ def escenario(
 
 
 
-    # Diego:
+
+
+
+
+
+
+    
+    # Decoracion tematica del escenario.
+    # Las colisiones siguen dependiendo solo de \"paredes\".
+    decorar_escenario(
+        ventana,
+        tipo
+    )
+
+# Diego:
+
+
 
     # se decoran las paredes recibidas
 
+
+
     # del mapa.
+
+
 
     #
 
+
+
     # Estas siguen siendo las únicas
+
+
 
     # colisiones del escenario.
 
 
 
+
+
+
+
     for i, pared in enumerate(
 
+
+
         paredes
+
+
 
     ):
 
 
 
+
+
+
+
         pygame.draw.rect(
 
+
+
             ventana,
+
+
 
             (18, 26, 34),
 
+
+
             pared.move(
+
+
 
                 5,
 
+
+
                 7
+
+
 
             ),
 
+
+
             border_radius=3
+
+
 
         )
 
@@ -3436,17 +7074,39 @@ def escenario(
 
 
 
+
+
+
+
+
+
         pygame.draw.rect(
 
+
+
             ventana,
+
+
 
             (67, 81, 85),
 
+
+
             pared,
+
+
 
             border_radius=3
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3454,17 +7114,35 @@ def escenario(
 
         pygame.draw.rect(
 
+
+
             ventana,
+
+
 
             (102, 120, 117),
 
+
+
             pared,
+
+
 
             1,
 
+
+
             border_radius=3
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3472,11 +7150,23 @@ def escenario(
 
         interior = pared.inflate(
 
+
+
             -8,
+
+
 
             -8
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3484,13 +7174,23 @@ def escenario(
 
         pygame.draw.rect(
 
+
+
             ventana,
+
+
 
             (45, 58, 65),
 
+
+
             interior,
 
+
+
             border_radius=2
+
+
 
         )
 
@@ -3498,49 +7198,103 @@ def escenario(
 
 
 
+
+
+
+
+
+
         if (
+
+
 
             tipo == "CALLE"
 
+
+
             and
 
+
+
             pared.width > 100
+
+
 
         ):
 
 
 
+
+
+
+
             for x in range(
+
+
 
                 pared.left + 15,
 
+
+
                 pared.right - 20,
 
+
+
                 35
+
+
 
             ):
 
 
 
+
+
+
+
                 pygame.draw.rect(
+
+
 
                     ventana,
 
+
+
                     (28, 43, 54),
+
+
 
                     (
 
+
+
                         x,
+
+
 
                         pared.top + 18,
 
+
+
                         18,
+
+
 
                         28
 
+
+
                     )
 
+
+
                 )
+
+
+
+
+
+
 
 
 
@@ -3548,29 +7302,59 @@ def escenario(
 
                 pygame.draw.line(
 
+
+
                     ventana,
+
+
 
                     (115, 126, 107),
 
+
+
                     (
+
+
 
                         x,
 
+
+
                         pared.top + 18
 
+
+
                     ),
+
+
 
                     (
 
+
+
                         x + 17,
+
+
 
                         pared.top + 18
 
+
+
                     ),
+
+
 
                     2
 
+
+
                 )
+
+
+
+
+
+
 
 
 
@@ -3580,29 +7364,57 @@ def escenario(
 
 
 
+
+
+
+
             pygame.draw.line(
+
+
 
                 ventana,
 
+
+
                 (111, 152, 138),
 
+
+
                 (
+
+
 
                     pared.left + 18,
 
+
+
                     pared.top + 6
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     pared.left + 65,
+
+
 
                     pared.top + 6
 
+
+
                 ),
 
+
+
                 3
+
+
 
             )
 
@@ -3610,11 +7422,25 @@ def escenario(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # REFUGIO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -3622,19 +7448,37 @@ def escenario(
 
 
 
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "DORMITORIO",
 
+
+
             (
+
+
 
                 235,
 
+
+
                 108
 
+
+
             )
+
+
 
         )
 
@@ -3642,21 +7486,47 @@ def escenario(
 
 
 
+
+
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "ALMACÉN",
 
+
+
             (
+
+
 
                 220,
 
+
+
                 390
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3664,19 +7534,39 @@ def escenario(
 
         etiqueta(
 
+
+
             ventana,
+
+
 
             "SALA PRINCIPAL",
 
+
+
             (
+
+
 
                 690,
 
+
+
                 115
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3684,23 +7574,43 @@ def escenario(
 
         puerta(
 
+
+
             ventana,
+
+
 
             pygame.Rect(
 
+
+
                 897,
+
+
 
                 285,
 
+
+
                 27,
+
+
 
                 82
 
+
+
             ),
+
+
 
             "SALIDA",
 
+
+
             MENTA
+
+
 
         )
 
@@ -3708,11 +7618,25 @@ def escenario(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # CALLE
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -3720,23 +7644,45 @@ def escenario(
 
 
 
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "CALLE ABANDONADA",
 
+
+
             (
+
+
 
                 495,
 
+
+
                 293
 
+
+
             ),
+
+
 
             MARFIL,
 
+
+
             18
+
+
 
         )
 
@@ -3744,25 +7690,51 @@ def escenario(
 
 
 
+
+
+
+
+
+
         puerta(
+
+
 
             ventana,
 
+
+
             pygame.Rect(
 
+
+
                 70,
+
+
 
                 285,
 
+
+
                 16,
+
+
 
                 80
 
+
+
             ),
+
+
 
             "REFUGIO",
 
+
+
             MENTA
+
+
 
         )
 
@@ -3770,25 +7742,55 @@ def escenario(
 
 
 
+
+
+
+
+
+
         puerta(
+
+
 
             ventana,
 
+
+
             pygame.Rect(
+
+
 
                 800,
 
+
+
                 174,
+
+
 
                 70,
 
+
+
                 12
 
+
+
             ),
+
+
 
             "HOSPITAL"
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3796,48 +7798,93 @@ def escenario(
 
         puerta(
 
+
+
             ventana,
 
+
+
             pygame.Rect(
+
+
 
                 120,
 
+
+
                 432,
+
+
 
                 80,
 
+
+
                 14
 
+
+
             ),
+
+
 
             "COMISARÍA"
 
+
+
         )
 
 
+
+
+
         # ===================================
+
         # BASE MILITAR
+
         # ===================================
+
+
 
         puerta(
 
+
+
             ventana,
+
+
 
             pygame.Rect(
 
+
+
                 385,
+
+
 
                 174,
 
+
+
                 100,
+
+
 
                 12
 
+
+
             ),
+
+
 
             "BASE MILITAR",
 
+
+
             MENTA
+
+
 
         )
 
@@ -3845,11 +7892,25 @@ def escenario(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # HOSPITAL
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -3857,19 +7918,37 @@ def escenario(
 
 
 
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "RECEPCIÓN",
 
+
+
             (
+
+
 
                 230,
 
+
+
                 115
 
+
+
             )
+
+
 
         )
 
@@ -3877,21 +7956,47 @@ def escenario(
 
 
 
+
+
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "LABORATORIO",
 
+
+
             (
+
+
 
                 730,
 
+
+
                 112
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3899,19 +8004,35 @@ def escenario(
 
         etiqueta(
 
+
+
             ventana,
+
+
 
             "FARMACIA",
 
+
+
             (
+
+
 
                 695,
 
+
+
                 382
+
+
 
             ),
 
+
+
             MENTA
+
+
 
         )
 
@@ -3919,25 +8040,55 @@ def escenario(
 
 
 
+
+
+
+
+
+
         puerta(
+
+
 
             ventana,
 
+
+
             pygame.Rect(
+
+
 
                 130,
 
+
+
                 210,
+
+
 
                 90,
 
+
+
                 65
+
+
 
             ),
 
+
+
             "SÓTANO"
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -3945,31 +8096,61 @@ def escenario(
 
         puerta(
 
+
+
             ventana,
+
+
 
             pygame.Rect(
 
+
+
                 445,
+
+
 
                 558,
 
+
+
                 110,
+
+
 
                 12
 
+
+
             ),
+
+
 
             "SALIDA",
 
+
+
             MENTA
+
+
 
         )
 
+
+
     # ===================================
+
+
 
     # BASE MILITAR
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -3977,23 +8158,49 @@ def escenario(
 
 
 
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "CONTROL DE ACCESO",
 
+
+
             (
+
+
 
                 205,
 
+
+
                 115
 
+
+
             ),
+
+
 
             MENTA
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4001,21 +8208,43 @@ def escenario(
 
         etiqueta(
 
+
+
             ventana,
+
+
 
             "CENTRO DE COMANDO",
 
+
+
             (
+
+
 
                 700,
 
+
+
                 115
+
+
 
             ),
 
+
+
             ORO
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4023,21 +8252,43 @@ def escenario(
 
         etiqueta(
 
+
+
             ventana,
+
+
 
             "ARSENAL MILITAR",
 
+
+
             (
+
+
 
                 740,
 
+
+
                 365
+
+
 
             ),
 
+
+
             ORO
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4045,27 +8296,55 @@ def escenario(
 
         # Salida hacia la calle.
 
+
+
         puerta(
+
+
 
             ventana,
 
+
+
             pygame.Rect(
+
+
 
                 445,
 
+
+
                 558,
+
+
 
                 110,
 
+
+
                 12
+
+
 
             ),
 
+
+
             "SALIDA",
+
+
 
             MENTA
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4073,41 +8352,83 @@ def escenario(
 
         # Decoración de cajas militares.
 
+
+
         for x, y in (
+
+
 
             (120, 220),
 
+
+
             (200, 220),
+
+
 
             (680, 400),
 
+
+
             (760, 400)
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.rect(
 
+
+
                 ventana,
+
+
 
                 (57, 75, 60),
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     y,
+
+
 
                     55,
 
+
+
                     35
+
+
 
                 ),
 
+
+
                 border_radius=4
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4115,27 +8436,55 @@ def escenario(
 
             pygame.draw.rect(
 
+
+
                 ventana,
+
+
 
                 (102, 126, 91),
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     y,
+
+
 
                     55,
 
+
+
                     35
+
+
 
                 ),
 
+
+
                 2,
+
+
 
                 border_radius=4
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4143,37 +8492,73 @@ def escenario(
 
             pygame.draw.line(
 
+
+
                 ventana,
+
+
 
                 ORO,
 
+
+
                 (
+
+
 
                     x + 5,
 
+
+
                     y + 17
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     x + 50,
+
+
 
                     y + 17
 
+
+
                 ),
 
+
+
                 2
+
+
 
             )
 
 
 
+
+
+
+
     # ===================================
+
+
 
     # SÓTANO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -4181,21 +8566,45 @@ def escenario(
 
 
 
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "GENERADORES",
 
+
+
             (
+
+
 
                 207,
 
+
+
                 115
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4203,19 +8612,39 @@ def escenario(
 
         etiqueta(
 
+
+
             ventana,
+
+
 
             "ARCHIVO CLÍNICO",
 
+
+
             (
+
+
 
                 736,
 
+
+
                 113
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4223,25 +8652,51 @@ def escenario(
 
         puerta(
 
+
+
             ventana,
+
+
 
             pygame.Rect(
 
+
+
                 460,
+
+
 
                 68,
 
+
+
                 80,
+
+
 
                 43
 
+
+
             ),
+
+
 
             "ESCALERAS",
 
+
+
             MENTA
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4249,39 +8704,75 @@ def escenario(
 
         for y in range(
 
+
+
             78,
+
+
 
             110,
 
+
+
             9
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.line(
+
+
 
                 ventana,
 
+
+
                 ORO,
 
+
+
                 (
+
+
 
                     469,
 
+
+
                     y
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     530,
+
+
 
                     y
 
+
+
                 ),
 
+
+
                 2
+
+
 
             )
 
@@ -4289,11 +8780,25 @@ def escenario(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # COMISARÍA
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -4301,19 +8806,37 @@ def escenario(
 
 
 
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "RECEPCIÓN",
 
+
+
             (
+
+
 
                 210,
 
+
+
                 114
 
+
+
             )
+
+
 
         )
 
@@ -4321,21 +8844,47 @@ def escenario(
 
 
 
+
+
+
+
+
+
         etiqueta(
 
+
+
             ventana,
+
+
 
             "ARCHIVO",
 
+
+
             (
+
+
 
                 715,
 
+
+
                 115
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4343,21 +8892,43 @@ def escenario(
 
         etiqueta(
 
+
+
             ventana,
+
+
 
             "ARMERÍA",
 
+
+
             (
+
+
 
                 700,
 
+
+
                 354
+
+
 
             ),
 
+
+
             ORO
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4365,23 +8936,43 @@ def escenario(
 
         puerta(
 
+
+
             ventana,
+
+
 
             pygame.Rect(
 
+
+
                 445,
+
+
 
                 558,
 
+
+
                 110,
+
+
 
                 12
 
+
+
             ),
+
+
 
             "SALIDA",
 
+
+
             MENTA
+
+
 
         )
 
@@ -4389,29 +8980,63 @@ def escenario(
 
 
 
+
+
+
+
+
+
 # ===================================
+
+
 
 # FONDO DE BATALLA
 
+
+
 # ===================================
+
+
+
+
 
 
 
 @lru_cache(maxsize=2)
 
+
+
 def fondo_batalla(
 
+
+
     subterraneo=False
+
+
 
 ):
 
 
 
+
+
+
+
     lienzo = pygame.Surface(
+
+
 
         (1000, 650)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -4419,13 +9044,27 @@ def fondo_batalla(
 
     arriba = (
 
+
+
         (19, 31, 46)
+
+
 
         if not subterraneo
 
+
+
         else (22, 32, 39)
 
+
+
     )
+
+
+
+
+
+
 
 
 
@@ -4433,11 +9072,19 @@ def fondo_batalla(
 
     abajo = (
 
+
+
         (72, 92, 94)
+
+
 
         if not subterraneo
 
+
+
         else (63, 72, 69)
+
+
 
     )
 
@@ -4445,29 +9092,63 @@ def fondo_batalla(
 
 
 
+
+
+
+
+
+
     # -----------------------------------
+
+
 
     # DEGRADADO
 
+
+
     # -----------------------------------
+
+
+
+
 
 
 
     for y in range(
 
+
+
         650
+
+
 
     ):
 
 
 
+
+
+
+
         t = min(
+
+
 
             1,
 
+
+
             y / 460
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4475,23 +9156,47 @@ def fondo_batalla(
 
         color = tuple(
 
+
+
             round(
+
+
 
                 a + (b - a) * t
 
+
+
             )
+
+
 
             for a, b
 
+
+
             in zip(
+
+
 
                 arriba,
 
+
+
                 abajo
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4499,27 +9204,55 @@ def fondo_batalla(
 
         pygame.draw.line(
 
+
+
             lienzo,
+
+
 
             color,
 
+
+
             (
+
+
 
                 0,
 
+
+
                 y
+
+
 
             ),
 
+
+
             (
+
+
 
                 1000,
 
+
+
                 y
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4527,17 +9260,31 @@ def fondo_batalla(
 
     # Diego:
 
+
+
     # Siluetas y luces originales:
 
+
+
     # una arena RPG que conserva
+
+
 
     # el mundo posapocalíptico.
 
 
 
+
+
+
+
     rng = random.Random(
 
+
+
         41
+
+
 
     )
 
@@ -4545,11 +9292,25 @@ def fondo_batalla(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # SÓTANO
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -4557,39 +9318,81 @@ def fondo_batalla(
 
 
 
+
+
+
+
         # Tuberías y generadores.
+
+
 
         for x in range(
 
+
+
             50,
+
+
 
             1000,
 
+
+
             180
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.rect(
 
+
+
                 lienzo,
+
+
 
                 (27, 43, 49),
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     70,
+
+
 
                     100,
 
+
+
                     220
+
+
 
                 )
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4597,25 +9400,51 @@ def fondo_batalla(
 
             pygame.draw.rect(
 
+
+
                 lienzo,
+
+
 
                 (59, 77, 78),
 
+
+
                 (
+
+
 
                     x + 12,
 
+
+
                     100,
+
+
 
                     78,
 
+
+
                     132
+
+
 
                 ),
 
+
+
                 2
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4623,41 +9452,83 @@ def fondo_batalla(
 
             for y in range(
 
+
+
                 120,
+
+
 
                 225,
 
+
+
                 16
+
+
 
             ):
 
 
 
+
+
+
+
                 pygame.draw.line(
+
+
 
                     lienzo,
 
+
+
                     (50, 68, 71),
 
+
+
                     (
+
+
 
                         x + 24,
 
+
+
                         y
 
+
+
                     ),
+
+
 
                     (
 
+
+
                         x + 78,
+
+
 
                         y
 
+
+
                     ),
+
+
 
                     3
 
+
+
                 )
+
+
+
+
+
+
 
 
 
@@ -4665,21 +9536,43 @@ def fondo_batalla(
 
             pygame.draw.circle(
 
+
+
                 lienzo,
+
+
 
                 ORO,
 
+
+
                 (
+
+
 
                     x + 51,
 
+
+
                     93
+
+
 
                 ),
 
+
+
                 3
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4687,39 +9580,79 @@ def fondo_batalla(
 
         for y in (
 
+
+
             77,
 
+
+
             253
+
+
 
         ):
 
 
 
+
+
+
+
             pygame.draw.line(
 
+
+
                 lienzo,
+
+
 
                 (79, 92, 86),
 
+
+
                 (
+
+
 
                     0,
 
+
+
                     y
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     1000,
+
+
 
                     y
 
+
+
                 ),
+
+
 
                 6
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4727,27 +9660,51 @@ def fondo_batalla(
 
             pygame.draw.line(
 
+
+
                 lienzo,
+
+
 
                 (30, 46, 52),
 
+
+
                 (
+
+
 
                     0,
 
+
+
                     y + 5
 
+
+
                 ),
+
+
 
                 (
 
+
+
                     1000,
+
+
 
                     y + 5
 
+
+
                 ),
 
+
+
                 3
+
+
 
             )
 
@@ -4755,11 +9712,25 @@ def fondo_batalla(
 
 
 
+
+
+
+
+
+
     # ===================================
+
+
 
     # SUPERFICIE
 
+
+
     # ===================================
+
+
+
+
 
 
 
@@ -4767,25 +9738,53 @@ def fondo_batalla(
 
 
 
+
+
+
+
         for x in range(
+
+
 
             0,
 
+
+
             1000,
 
+
+
             80
+
+
 
         ):
 
 
 
+
+
+
+
             altura = rng.randrange(
+
+
 
                 90,
 
+
+
                 175
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4793,23 +9792,47 @@ def fondo_batalla(
 
             pygame.draw.rect(
 
+
+
                 lienzo,
+
+
 
                 (25, 40, 51),
 
+
+
                 (
+
+
 
                     x,
 
+
+
                     280 - altura,
+
+
 
                     70,
 
+
+
                     altura
+
+
 
                 )
 
+
+
             )
+
+
+
+
+
+
 
 
 
@@ -4817,43 +9840,83 @@ def fondo_batalla(
 
             for y in range(
 
+
+
                 285 - altura,
+
+
 
                 260,
 
+
+
                 25
+
+
 
             ):
 
 
 
+
+
+
+
                 for wx in (
+
+
 
                     x + 12,
 
+
+
                     x + 39
+
+
 
                 ):
 
 
 
+
+
+
+
                     pygame.draw.rect(
+
+
 
                         lienzo,
 
+
+
                         (65, 84, 85),
+
+
 
                         (
 
+
+
                             wx,
+
+
 
                             y,
 
+
+
                             9,
+
+
 
                             12
 
+
+
                         )
+
+
 
                     )
 
@@ -4861,55 +9924,111 @@ def fondo_batalla(
 
 
 
+
+
+
+
+
+
     # -----------------------------------
+
+
 
     # SUELO DE BATALLA
 
+
+
     # -----------------------------------
+
+
+
+
 
 
 
     pygame.draw.polygon(
 
+
+
         lienzo,
+
+
 
         (37, 54, 61),
 
+
+
         [
+
+
 
             (
 
+
+
                 0,
+
+
 
                 290
 
+
+
             ),
+
+
 
             (
 
+
+
                 1000,
+
+
 
                 250
 
+
+
             ),
 
+
+
             (
+
+
 
                 1000,
 
+
+
                 650
+
+
 
             ),
 
+
+
             (
+
+
 
                 0,
 
+
+
                 650
+
+
 
             )
 
+
+
         ]
+
+
 
     )
 
@@ -4917,43 +10036,91 @@ def fondo_batalla(
 
 
 
+
+
+
+
+
+
     for y in range(
+
+
 
         320,
 
+
+
         470,
 
+
+
         35
+
+
 
     ):
 
 
 
+
+
+
+
         pygame.draw.line(
+
+
 
             lienzo,
 
+
+
             (48, 67, 71),
 
+
+
             (
+
+
 
                 0,
 
+
+
                 y
 
+
+
             ),
+
+
 
             (
 
+
+
                 1000,
+
+
 
                 y - 40
 
+
+
             ),
+
+
 
             1
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -4961,35 +10128,69 @@ def fondo_batalla(
 
     # Plataformas.
 
+
+
     for rect in (
+
+
+
+
 
 
 
         pygame.Rect(
 
+
+
             610,
+
+
 
             264,
 
+
+
             290,
 
+
+
             75
+
+
 
         ),
 
 
 
+
+
+
+
         pygame.Rect(
+
+
 
             105,
 
+
+
             384,
+
+
 
             360,
 
+
+
             83
 
+
+
         )
+
+
+
+
 
 
 
@@ -4997,21 +10198,45 @@ def fondo_batalla(
 
 
 
+
+
+
+
         pygame.draw.ellipse(
 
+
+
             lienzo,
+
+
 
             (23, 36, 45),
 
+
+
             rect.move(
+
+
 
                 0,
 
+
+
                 9
+
+
 
             )
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -5019,11 +10244,19 @@ def fondo_batalla(
 
         pygame.draw.ellipse(
 
+
+
             lienzo,
+
+
 
             (81, 103, 100),
 
+
+
             rect
+
+
 
         )
 
@@ -5031,17 +10264,39 @@ def fondo_batalla(
 
 
 
+
+
+
+
+
+
         pygame.draw.ellipse(
 
+
+
             lienzo,
+
+
 
             (142, 162, 137),
 
+
+
             rect,
+
+
 
             2
 
+
+
         )
+
+
+
+
+
+
 
 
 
@@ -5049,21 +10304,43 @@ def fondo_batalla(
 
         pygame.draw.ellipse(
 
+
+
             lienzo,
+
+
 
             (64, 87, 84),
 
+
+
             rect.inflate(
+
+
 
                 -40,
 
+
+
                 -24
+
+
 
             ),
 
+
+
             2
 
+
+
         )
+
+
+
+
+
+
 
 
 

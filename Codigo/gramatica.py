@@ -3,6 +3,11 @@
 # PARA DIÁLOGOS Y MISIONES
 # ===================================
 
+# Importamos random para poder escoger
+# distintas producciones de la gramática.
+import random
+
+
 class GramaticaDialogos:
 
     def __init__(self):
@@ -44,6 +49,10 @@ class GramaticaDialogos:
                 [
                     "Necesito tu ayuda.",
                     "<MISION>"
+                ],
+                [
+                    "Tenemos un problema.",
+                    "<MISION>"
                 ]
             ],
 
@@ -61,6 +70,9 @@ class GramaticaDialogos:
                 ],
                 [
                     "Encuentra"
+                ],
+                [
+                    "Localiza"
                 ]
             ],
 
@@ -70,24 +82,32 @@ class GramaticaDialogos:
                 ]
             ],
 
+            # Las dos opciones siguen siendo
+            # correctas para el mapa del Hospital.
             "<LUGAR>": [
                 [
-                    "en la farmacia."
+                    "en el hospital."
                 ],
                 [
-                    "en el sotano."
+                    "dentro del hospital."
                 ]
             ],
 
             "<RECORDATORIO>": [
                 [
                     "Todavia necesito los medicamentos."
+                ],
+                [
+                    "No olvides traer los medicamentos."
                 ]
             ],
 
             "<AGRADECIMIENTO>": [
                 [
                     "Gracias por traer los medicamentos."
+                ],
+                [
+                    "Lo lograste. Gracias por los medicamentos."
                 ]
             ],
 
@@ -127,6 +147,10 @@ class GramaticaDialogos:
                 [
                     "Necesito una radio para contactar a los militares.",
                     "<MISION_MARCOS>"
+                ],
+                [
+                    "Debemos recuperar una radio para pedir ayuda.",
+                    "<MISION_MARCOS>"
                 ]
             ],
 
@@ -144,6 +168,9 @@ class GramaticaDialogos:
                 ],
                 [
                     "Encuentra"
+                ],
+                [
+                    "Localiza"
                 ]
             ],
 
@@ -162,12 +189,18 @@ class GramaticaDialogos:
             "<RECORDATORIO_MARCOS>": [
                 [
                     "Todavia necesito la radio."
+                ],
+                [
+                    "Recuerda que necesitamos recuperar la radio."
                 ]
             ],
 
             "<AGRADECIMIENTO_MARCOS>": [
                 [
                     "Gracias por traer la radio. Toma esta tarjeta militar."
+                ],
+                [
+                    "La radio funciona. Toma esta tarjeta militar como recompensa."
                 ]
             ]
         }
@@ -182,22 +215,36 @@ class GramaticaDialogos:
         simbolo
     ):
 
-        # Si no está en las reglas,
-        # significa que es terminal.
+        # Si el símbolo no está dentro
+        # de las reglas, significa que
+        # es un símbolo terminal.
         if simbolo not in self.reglas:
 
             return simbolo
 
 
-        # Elegimos la primera producción.
-        produccion = self.reglas[
-            simbolo
-        ][0]
+        # Antes siempre utilizábamos:
+        #
+        # self.reglas[simbolo][0]
+        #
+        # Eso hacía que siempre se
+        # escogiera la primera opción.
+        #
+        # Ahora escogemos una producción
+        # de manera aleatoria.
+
+        produccion = random.choice(
+            self.reglas[
+                simbolo
+            ]
+        )
 
 
         resultado = []
 
 
+        # Recorremos cada parte
+        # de la producción.
         for parte in produccion:
 
             texto = self.generar(
@@ -223,6 +270,14 @@ class GramaticaDialogos:
         simbolo_inicial
     ):
 
+        # Para mostrar la derivación
+        # formal utilizamos siempre
+        # la primera producción.
+        #
+        # Así la derivación que aparece
+        # en pantalla es estable y fácil
+        # de explicar durante la defensa.
+
         actual = [
             simbolo_inicial
         ]
@@ -240,6 +295,8 @@ class GramaticaDialogos:
 
             continuar = False
 
+            # Recorremos de izquierda
+            # a derecha.
             for posicion in range(
                 len(actual)
             ):
@@ -249,8 +306,13 @@ class GramaticaDialogos:
                 ]
 
 
+                # Encontramos el primer
+                # no terminal.
                 if simbolo in self.reglas:
 
+                    # Para la demostración
+                    # formal usamos la
+                    # primera producción.
                     produccion = (
                         self.reglas[
                             simbolo
@@ -271,6 +333,10 @@ class GramaticaDialogos:
 
                     continuar = True
 
+                    # break hace que siempre
+                    # reemplacemos primero
+                    # el símbolo que se encuentra
+                    # más a la izquierda.
                     break
 
 
@@ -285,7 +351,10 @@ class GramaticaDialogos:
 
         reglas_bnf = [
 
-            # Elena.
+            # ===================================
+            # ELENA
+            # ===================================
+
             "<DIALOGO_INICIO> ::= <NPC> <PETICION>",
 
             "<DIALOGO_RECORDATORIO> ::= <NPC> <RECORDATORIO>",
@@ -294,43 +363,93 @@ class GramaticaDialogos:
 
             '<NPC> ::= "Elena:"',
 
-            '<PETICION> ::= "Necesito tu ayuda." <MISION>',
+            (
+                '<PETICION> ::= '
+                '"Necesito tu ayuda." <MISION> '
+                '| "Tenemos un problema." <MISION>'
+            ),
 
             "<MISION> ::= <ACCION> <OBJETO> <LUGAR>",
 
-            '<ACCION> ::= "Busca" | "Encuentra"',
+            (
+                '<ACCION> ::= '
+                '"Busca" | "Encuentra" | "Localiza"'
+            ),
 
             '<OBJETO> ::= "medicamentos"',
 
-            '<LUGAR> ::= "en la farmacia." | "en el sotano."',
+            (
+                '<LUGAR> ::= '
+                '"en el hospital." '
+                '| "dentro del hospital."'
+            ),
 
-            '<RECORDATORIO> ::= "Todavia necesito los medicamentos."',
+            (
+                '<RECORDATORIO> ::= '
+                '"Todavia necesito los medicamentos." '
+                '| "No olvides traer los medicamentos."'
+            ),
 
-            '<AGRADECIMIENTO> ::= "Gracias por traer los medicamentos."',
+            (
+                '<AGRADECIMIENTO> ::= '
+                '"Gracias por traer los medicamentos." '
+                '| "Lo lograste. Gracias por los medicamentos."'
+            ),
 
 
-            # Marcos.
-            "<DIALOGO_MARCOS_INICIO> ::= <NPC_MARCOS> <PETICION_MARCOS>",
+            # ===================================
+            # MARCOS
+            # ===================================
 
-            "<DIALOGO_MARCOS_RECORDATORIO> ::= <NPC_MARCOS> <RECORDATORIO_MARCOS>",
+            "<DIALOGO_MARCOS_INICIO> ::= "
+            "<NPC_MARCOS> <PETICION_MARCOS>",
 
-            "<DIALOGO_MARCOS_FINAL> ::= <NPC_MARCOS> <AGRADECIMIENTO_MARCOS>",
+            "<DIALOGO_MARCOS_RECORDATORIO> ::= "
+            "<NPC_MARCOS> <RECORDATORIO_MARCOS>",
+
+            "<DIALOGO_MARCOS_FINAL> ::= "
+            "<NPC_MARCOS> <AGRADECIMIENTO_MARCOS>",
 
             '<NPC_MARCOS> ::= "Marcos:"',
 
-            '<PETICION_MARCOS> ::= "Necesito una radio para contactar a los militares." <MISION_MARCOS>',
+            (
+                '<PETICION_MARCOS> ::= '
+                '"Necesito una radio para contactar a los militares." '
+                '<MISION_MARCOS> '
+                '| "Debemos recuperar una radio para pedir ayuda." '
+                '<MISION_MARCOS>'
+            ),
 
-            "<MISION_MARCOS> ::= <ACCION_MARCOS> <OBJETO_MARCOS> <LUGAR_MARCOS>",
+            "<MISION_MARCOS> ::= "
+            "<ACCION_MARCOS> "
+            "<OBJETO_MARCOS> "
+            "<LUGAR_MARCOS>",
 
-            '<ACCION_MARCOS> ::= "Busca" | "Encuentra"',
+            (
+                '<ACCION_MARCOS> ::= '
+                '"Busca" | "Encuentra" | "Localiza"'
+            ),
 
             '<OBJETO_MARCOS> ::= "la radio"',
 
-            '<LUGAR_MARCOS> ::= "en el archivo de la comisaria."',
+            (
+                '<LUGAR_MARCOS> ::= '
+                '"en el archivo de la comisaria."'
+            ),
 
-            '<RECORDATORIO_MARCOS> ::= "Todavia necesito la radio."',
+            (
+                '<RECORDATORIO_MARCOS> ::= '
+                '"Todavia necesito la radio." '
+                '| "Recuerda que necesitamos recuperar la radio."'
+            ),
 
-            '<AGRADECIMIENTO_MARCOS> ::= "Gracias por traer la radio. Toma esta tarjeta militar."'
+            (
+                '<AGRADECIMIENTO_MARCOS> ::= '
+                '"Gracias por traer la radio. '
+                'Toma esta tarjeta militar." '
+                '| "La radio funciona. '
+                'Toma esta tarjeta militar como recompensa."'
+            )
         ]
 
 

@@ -216,6 +216,8 @@ from gramatica import GramaticaDialogos
 
 from finales import SistemaFinales
 
+from cinematicas import CinematicasFinales
+
 
 
 
@@ -654,7 +656,11 @@ from interfaz import (
 
 
 
-    mostrar_gramatica
+    mostrar_gramatica,
+
+
+
+    cambiar_pagina_gramatica
 
 
 
@@ -1039,6 +1045,8 @@ gramatica = GramaticaDialogos()
 
 
 sistema_finales = SistemaFinales()
+
+cinematicas_finales = CinematicasFinales()
 
 
 
@@ -2375,6 +2383,10 @@ while juego_activo:
 
                         )
 
+                        cinematicas_finales.iniciar(
+                            automata.estado_actual
+                        )
+
 
 
 
@@ -2419,6 +2431,10 @@ while juego_activo:
 
                         )
 
+                        cinematicas_finales.iniciar(
+                            automata.estado_actual
+                        )
+
 
 
 
@@ -2461,6 +2477,10 @@ while juego_activo:
 
 
 
+                        )
+
+                        cinematicas_finales.iniciar(
+                            automata.estado_actual
                         )
 
 
@@ -2559,83 +2579,32 @@ while juego_activo:
 
                 elif automata.es_estado_aceptacion():
 
+                    # Mientras la cinemática está activa,
+                    # ENTER o ESPACIO permite saltarla.
+                    if cinematicas_finales.terminada == False:
 
+                        if evento.key in (
+                            pygame.K_RETURN,
+                            pygame.K_SPACE
+                        ):
 
+                            cinematicas_finales.saltar()
 
-
-
-
-
-
-
-
-                    # La tecla R nos permite
-
-
-
-                    # regresar para probar
-
-
-
-                    # los otros finales.
-
-
-
-                    if evento.key == pygame.K_r:
-
-
-
-
-
-
+                    # Cuando termina la cinemática,
+                    # R permite probar otro final como antes.
+                    elif evento.key == pygame.K_r:
 
                         automata.forzar_estado(
-
-
-
                             "CALLE",
-
-
-
                             "REGRESAR_PRUEBA"
-
-
-
                         )
 
-
-
-
-
-
-
-
-
-
+                        cinematicas_finales.reiniciar()
 
                         jugador.cambiar_posicion(
-
-
-
                             780,
-
-
-
                             300
-
-
-
                         )
-
-
-
-
-
-
-
-
-
-
 
                 # ===================================
 
@@ -2686,6 +2655,34 @@ while juego_activo:
 
 
 
+
+
+
+                elif (
+
+                    mostrar_gramatica_activa == True
+
+                    and
+
+                    evento.key == pygame.K_a
+
+                ):
+
+                    cambiar_pagina_gramatica(-1)
+
+
+
+                elif (
+
+                    mostrar_gramatica_activa == True
+
+                    and
+
+                    evento.key == pygame.K_d
+
+                ):
+
+                    cambiar_pagina_gramatica(1)
 
 
 
@@ -4020,89 +4017,13 @@ while juego_activo:
 
                         # -----------------------------------
 
-
-
-                        # ZOMBI CORREDOR
-
-
-
-                        # -----------------------------------
-
-
-
-
-
-
-
-                        if (
-
-
-
-                            zombi_sotano.vivo == True
-
-
-
-                            and
-
-
-
-                            jugador.rectangulo.colliderect(
-
-
-
-                                zombi_sotano.zona_interaccion
-
-
-
-                            )
-
-
-
-                        ):
-
-
-
-
-
-
-
-                            combate.iniciar(
-
-
-
-                                zombi_sotano, jugador
-
-
-
-                            )
-
-
-
-
-
-
-
-
-
-
-
-                        # -----------------------------------
-
-
-
                         # SUBIR AL HOSPITAL
 
-
-
                         # -----------------------------------
 
 
 
-
-
-
-
-                        elif jugador.rectangulo.colliderect(
+                        if jugador.rectangulo.colliderect(
 
 
 
@@ -4415,70 +4336,6 @@ while juego_activo:
 
 
                                 "Has encontrado la radio."
-
-
-
-                            )
-
-
-
-
-
-
-
-                        # -----------------------------------
-
-
-
-                        # ZOMBI POLICÍA
-
-
-
-                        # -----------------------------------
-
-
-
-
-
-
-
-                        elif (
-
-
-
-                            zombi_comisaria.vivo == True
-
-
-
-                            and
-
-
-
-                            jugador.rectangulo.colliderect(
-
-
-
-                                zombi_comisaria.zona_interaccion
-
-
-
-                            )
-
-
-
-                        ):
-
-
-
-
-
-
-
-                            combate.iniciar(
-
-
-
-                                zombi_comisaria, jugador
 
 
 
@@ -5963,7 +5820,38 @@ while juego_activo:
 
 
 
-        # Si el zombi sigue vivo,
+                # -----------------------------------
+        # PERSECUCIÓN DEL ZOMBI CORREDOR
+        # -----------------------------------
+
+        if (
+
+            combate.activo == False
+
+            and
+
+            zombi_sotano.vivo == True
+
+            and
+
+            mostrar_gramatica_activa == False
+
+            and
+
+            not mostrar_diario_activo
+
+        ):
+
+            zombi_sotano.perseguir(
+
+                jugador,
+
+                paredes_sotano
+
+            )
+
+
+# Si el zombi sigue vivo,
 
 
 
@@ -6070,6 +5958,32 @@ while juego_activo:
             )
 
 
+        # -----------------------------------
+        # COMBATE AUTOMATICO
+        # -----------------------------------
+
+        if (
+
+            combate.activo == False
+
+            and
+
+            zombi_sotano.vivo == True
+
+            and
+
+            zombi_sotano.puede_iniciar_combate(
+                jugador
+            )
+
+        ):
+
+            combate.iniciar(
+                zombi_sotano,
+                jugador
+            )
+
+
 
 
 
@@ -6159,86 +6073,6 @@ while juego_activo:
 
 
 
-        # ZOMBI CORREDOR
-
-
-
-        # -----------------------------------
-
-
-
-
-
-
-
-        if (
-
-
-
-            combate.activo == False
-
-
-
-            and
-
-
-
-            zombi_sotano.vivo == True
-
-
-
-            and
-
-
-
-            jugador.rectangulo.colliderect(
-
-
-
-                zombi_sotano.zona_interaccion
-
-
-
-            )
-
-
-
-        ):
-
-
-
-
-
-
-
-            mostrar_interaccion(
-
-
-
-                mensajes,
-
-
-
-                "E - Enfrentar zombi corredor"
-
-
-
-            )
-
-
-
-
-
-
-
-
-
-
-
-        # -----------------------------------
-
-
-
         # ESCALERAS
 
 
@@ -6251,7 +6085,7 @@ while juego_activo:
 
 
 
-        elif (
+        if (
 
 
 
@@ -6423,7 +6257,40 @@ while juego_activo:
 
 
 
-        # Si el zombi sigue vivo, también funciona como obstáculo.
+                # -----------------------------------
+        # PERSECUCIÓN DEL ZOMBI POLICÍA
+        # -----------------------------------
+
+        if (
+
+            combate.activo == False
+
+            and
+
+            zombi_comisaria.vivo == True
+
+            and
+
+            mostrar_gramatica_activa == False
+
+            and
+
+            not mostrar_diario_activo
+
+        ):
+
+            # El zombi respeta las paredes
+            # y tampoco atraviesa a Marcos.
+            zombi_comisaria.perseguir(
+
+                jugador,
+
+                paredes_comisaria_actuales
+
+            )
+
+
+# Si el zombi sigue vivo, también funciona como obstáculo.
 
 
 
@@ -6495,6 +6362,32 @@ while juego_activo:
 
 
 
+            )
+
+
+        # -----------------------------------
+        # COMBATE AUTOMATICO
+        # -----------------------------------
+
+        if (
+
+            combate.activo == False
+
+            and
+
+            zombi_comisaria.vivo == True
+
+            and
+
+            zombi_comisaria.puede_iniciar_combate(
+                jugador
+            )
+
+        ):
+
+            combate.iniciar(
+                zombi_comisaria,
+                jugador
             )
 
 
@@ -6824,82 +6717,6 @@ while juego_activo:
 
 
                 "E - Recoger radio"
-
-
-
-            )
-
-
-
-
-
-
-
-        # -----------------------------------
-
-
-
-        # ZOMBI
-
-
-
-        # -----------------------------------
-
-
-
-
-
-
-
-        elif (
-
-
-
-            combate.activo == False
-
-
-
-            and
-
-
-
-            zombi_comisaria.vivo == True
-
-
-
-            and
-
-
-
-            jugador.rectangulo.colliderect(
-
-
-
-                zombi_comisaria.zona_interaccion
-
-
-
-            )
-
-
-
-        ):
-
-
-
-
-
-
-
-            mostrar_interaccion(
-
-
-
-                mensajes,
-
-
-
-                "E - Enfrentar zombi"
 
 
 
@@ -7589,35 +7406,22 @@ while juego_activo:
 
     elif automata.es_estado_aceptacion():
 
+        # Primero mostramos la cinemática correspondiente.
+        if cinematicas_finales.terminada == False:
 
+            cinematicas_finales.dibujar(
+                ventana,
+                automata.estado_actual
+            )
 
+        # Después conservamos la pantalla final formal
+        # que ya existía en finales.py.
+        else:
 
-
-
-
-        sistema_finales.dibujar_final(
-
-
-
-            ventana,
-
-
-
-            automata.estado_actual
-
-
-
-        )
-
-
-
-
-
-
-
-
-
-
+            sistema_finales.dibujar_final(
+                ventana,
+                automata.estado_actual
+            )
 
     # ===================================
 
