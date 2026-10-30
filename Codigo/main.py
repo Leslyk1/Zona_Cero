@@ -736,7 +736,8 @@ pantalla = pygame.display.set_mode(
 
 
 
-    )
+    ),
+    pygame.RESIZABLE
 
 
 
@@ -816,56 +817,22 @@ mensajes = composicion.subsurface((0, ALTO_CABECERA + ALTO, ANCHO, ALTO_MENSAJES
 
 
 
-# Una sola escala para ambos ejes evita deformar el mapa al añadir la columna.
+# Una sola escala para ambos ejes conserva el mapa y las coordenadas lógicas.
+def recalcular_interfaz():
+    ancho_actual, alto_actual = pantalla.get_size()
+    escala = min(ancho_actual / ANCHO_INTERFAZ, alto_actual / ALTO_INTERFAZ)
+    tamano = (
+        max(1, round(ANCHO_INTERFAZ * escala)),
+        max(1, round(ALTO_INTERFAZ * escala))
+    )
+    posicion = (
+        (ancho_actual - tamano[0]) // 2,
+        (alto_actual - tamano[1]) // 2
+    )
+    return escala, tamano, pygame.Surface(tamano), posicion
 
 
-
-escala_interfaz = min(ANCHO_VENTANA / ANCHO_INTERFAZ, ALTO_VENTANA / ALTO_INTERFAZ)
-
-
-
-tamano_interfaz = (
-
-
-
-    round(ANCHO_INTERFAZ * escala_interfaz),
-
-
-
-    round(ALTO_INTERFAZ * escala_interfaz)
-
-
-
-)
-
-
-
-interfaz_escalada = pygame.Surface(tamano_interfaz)
-
-
-
-posicion_interfaz = (
-
-
-
-    (ANCHO_VENTANA - tamano_interfaz[0]) // 2,
-
-
-
-    (ALTO_VENTANA - tamano_interfaz[1]) // 2
-
-
-
-)
-
-
-
-
-
-
-
-
-
+escala_interfaz, tamano_interfaz, interfaz_escalada, posicion_interfaz = recalcular_interfaz()
 
 
 pygame.display.set_caption(
@@ -886,6 +853,16 @@ pygame.display.set_caption(
 
 
 
+
+
+from inicio import mostrar_inicio
+
+if not mostrar_inicio(pantalla):
+    pygame.quit()
+    raise SystemExit
+
+# El menú puede haber cambiado el tamaño de la ventana.
+escala_interfaz, tamano_interfaz, interfaz_escalada, posicion_interfaz = recalcular_interfaz()
 
 
 # ===================================
@@ -1745,6 +1722,13 @@ juego_activo = True
 
 
 
+from audio_juego import AudioJuego
+from dialogos_ui import DialogoUI
+
+audio_juego = AudioJuego()
+dialogo_ui = DialogoUI()
+inicio_fundido = pygame.time.get_ticks()
+
 while juego_activo:
 
 
@@ -1813,25 +1797,39 @@ while juego_activo:
 
 
 
-        if evento.type == pygame.QUIT:
+        # Esc cierra primero los paneles; después abre la pausa incluso en combate.
+        solicitar_pausa = (evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE)
+        if solicitar_pausa and (mostrar_diario_activo or mostrar_gramatica_activa):
+            mostrar_diario_activo = False
+            mostrar_gramatica_activa = False
+            continue
+        if evento.type == pygame.QUIT or solicitar_pausa:
+            inicio_pausa = pygame.time.get_ticks()
+            dialogo_ui.visibilidad(False)
+            audio_juego.suspender()
+            resultado_pausa = mostrar_inicio(pantalla, pausa=True, confirmar=evento.type == pygame.QUIT)
+            if resultado_pausa == "menu":
+                resultado_pausa = mostrar_inicio(pantalla, partida_activa=True)
+            audio_juego.reanudar()
+            dialogo_ui.visibilidad(True)
+            duracion_pausa = pygame.time.get_ticks() - inicio_pausa
+            # Descontamos la pausa de los relojes existentes sin cambiar sus reglas.
+            if combate.activo:
+                combate.inicio_fase += duracion_pausa
+            if cinematicas_finales.estado is not None:
+                cinematicas_finales.inicio += duracion_pausa
+            for mision_pausada in (mision_medicamentos, mision_radio):
+                if mision_pausada.tiempo_completada:
+                    mision_pausada.tiempo_completada += duracion_pausa
+            escala_interfaz, tamano_interfaz, interfaz_escalada, posicion_interfaz = recalcular_interfaz()
+            if not resultado_pausa:
+                juego_activo = False
+            # Descarta entradas capturadas antes de abrir el menú.
+            break
 
-
-
-
-
-
-
-            juego_activo = False
-
-
-
-
-
-
-
-
-
-
+        # Pygame 2 actualiza la superficie también al maximizar/restaurar.
+        if evento.type in (pygame.VIDEORESIZE, pygame.WINDOWSIZECHANGED):
+            escala_interfaz, tamano_interfaz, interfaz_escalada, posicion_interfaz = recalcular_interfaz()
 
         # Diego: el clic se traduce de la ventana ampliada al mapa lógico.
 
@@ -1904,6 +1902,13 @@ while juego_activo:
 
 
 
+
+        if (evento.type == pygame.KEYDOWN and evento.key == pygame.K_SPACE
+                and not combate.activo and not mostrar_diario_activo
+                and not mostrar_gramatica_activa and dialogo_ui.escribiendo
+                and dialogo_ui.mensaje == dialogo_actual):
+            dialogo_ui.revelar()
+            continue
 
         if evento.type == pygame.KEYDOWN:
 
@@ -3636,6 +3641,8 @@ while juego_activo:
 
 
                             )
+                            dialogo_ui.iniciar("elena", dialogo_actual)
+                            audio_juego.dialogo("elena")
 
 
 
@@ -4228,6 +4235,8 @@ while juego_activo:
 
 
                             )
+                            dialogo_ui.iniciar("marcos", dialogo_actual)
+                            audio_juego.dialogo("marcos")
 
 
 
@@ -4619,6 +4628,9 @@ while juego_activo:
 
 
 
+    if not juego_activo:
+        break
+
     combate.actualizar(jugador)
 
 
@@ -4639,6 +4651,15 @@ while juego_activo:
 
 
 
+    dialogo_ui.sincronizar(dialogo_actual, automata.estado_actual)
+    dialogo_ui.visibilidad(not combate.activo and not mostrar_gramatica_activa
+                           and not mostrar_diario_activo)
+    if dialogo_ui.caducado:
+        # Limpiamos también el mensaje para que no reaparezca como aviso genérico.
+        dialogo_actual = ""
+        dialogo_ui.sincronizar(dialogo_actual, automata.estado_actual)
+    ventana_interaccion = (None if combate.activo or mostrar_gramatica_activa
+                           or mostrar_diario_activo else ventana)
     jugador.moviendo = False
 
 
@@ -4755,7 +4776,7 @@ while juego_activo:
 
 
 
-                "E - Salir del refugio"
+                "E - Salir del refugio", ventana_interaccion, jugador
 
 
 
@@ -5015,7 +5036,7 @@ while juego_activo:
 
 
 
-                    "E - Ir al punto de evacuacion"
+                    "E - Ir al punto de evacuacion", ventana_interaccion, jugador
 
 
 
@@ -5047,7 +5068,7 @@ while juego_activo:
 
 
 
-                    "Completa los objetivos principales"
+                    "Completa los objetivos principales", ventana_interaccion, jugador
 
 
 
@@ -5103,7 +5124,7 @@ while juego_activo:
 
 
 
-                "E - Entrar al refugio"
+                "E - Entrar al refugio", ventana_interaccion, jugador
 
 
 
@@ -5159,7 +5180,7 @@ while juego_activo:
 
 
 
-                "E - Entrar al hospital"
+                "E - Entrar al hospital", ventana_interaccion, jugador
 
 
 
@@ -5215,7 +5236,7 @@ while juego_activo:
 
 
 
-                "E - Entrar a la comisaria"
+                "E - Entrar a la comisaria", ventana_interaccion, jugador
 
 
 
@@ -5249,11 +5270,13 @@ while juego_activo:
 
         elif jugador.rectangulo.colliderect(entrada_base_militar):
 
-            mostrar_interaccion(mensajes, "E - Entrar a la Base Militar")
+            mostrar_interaccion(mensajes,
+                                "E - Entrar a la Base Militar" if inventario.tiene("Tarjeta Militar")
+                                else "Necesitas la Tarjeta Militar", ventana_interaccion, jugador)
 
             if dialogo_actual:
 
-                mostrar_dialogo(mensajes, dialogo_actual)
+                mostrar_dialogo(mensajes, dialogo_actual, dialogo_ui)
 
 
 
@@ -5293,7 +5316,7 @@ while juego_activo:
 
             mostrar_interaccion(
                 mensajes,
-                "E - Examinar archivo militar"
+                "E - Examinar archivo militar", ventana_interaccion, jugador
             )
 
         # -----------------------------------
@@ -5306,7 +5329,7 @@ while juego_activo:
 
             mostrar_interaccion(
                 mensajes,
-                "E - Salir a la calle"
+                "E - Salir a la calle", ventana_interaccion, jugador
             )
 
         # -----------------------------------
@@ -5317,7 +5340,7 @@ while juego_activo:
 
             mostrar_dialogo(
                 mensajes,
-                dialogo_actual
+                dialogo_actual, dialogo_ui
             )
 
     elif automata.estado_actual == "HOSPITAL":
@@ -5532,7 +5555,7 @@ while juego_activo:
 
 
 
-                "E - Hablar con Elena"
+                "E - Hablar con Elena", ventana_interaccion, jugador
 
 
 
@@ -5604,7 +5627,7 @@ while juego_activo:
 
 
 
-                "E - Recoger medicamento"
+                "E - Recoger medicamento", ventana_interaccion, jugador
 
 
 
@@ -5660,7 +5683,7 @@ while juego_activo:
 
 
 
-                "E - Bajar al sotano"
+                "E - Bajar al sotano", ventana_interaccion, jugador
 
 
 
@@ -5716,7 +5739,7 @@ while juego_activo:
 
 
 
-                "E - Salir del hospital"
+                "E - Salir del hospital", ventana_interaccion, jugador
 
 
 
@@ -5764,7 +5787,7 @@ while juego_activo:
 
 
 
-                dialogo_actual
+                dialogo_actual, dialogo_ui
 
 
 
@@ -6125,7 +6148,7 @@ while juego_activo:
 
 
 
-                "E - Subir al hospital"
+                "E - Subir al hospital", ventana_interaccion, jugador
 
 
 
@@ -6189,7 +6212,7 @@ while juego_activo:
 
 
 
-                dialogo_actual
+                dialogo_actual, dialogo_ui
 
 
 
@@ -6624,7 +6647,7 @@ while juego_activo:
 
 
 
-                "E - Hablar con Marcos"
+                "E - Hablar con Marcos", ventana_interaccion, jugador
 
 
 
@@ -6716,7 +6739,7 @@ while juego_activo:
 
 
 
-                "E - Recoger radio"
+                "E - Recoger radio", ventana_interaccion, jugador
 
 
 
@@ -6800,7 +6823,7 @@ while juego_activo:
 
 
 
-                "E - Recoger pistola"
+                "E - Recoger pistola", ventana_interaccion, jugador
 
 
 
@@ -6884,7 +6907,7 @@ while juego_activo:
 
 
 
-                "E - Recoger 12 balas"
+                "E - Recoger 12 balas", ventana_interaccion, jugador
 
 
 
@@ -6952,7 +6975,7 @@ while juego_activo:
 
 
 
-                "E - Salir de la comisaria"
+                "E - Salir de la comisaria", ventana_interaccion, jugador
 
 
 
@@ -7012,7 +7035,7 @@ while juego_activo:
 
 
 
-                dialogo_actual
+                dialogo_actual, dialogo_ui
 
 
 
@@ -7451,7 +7474,18 @@ while juego_activo:
 
 
 
-        pygame.transform.smoothscale(ventana, (ANCHO_VENTANA, ALTO_VENTANA), pantalla)
+        ancho_actual, alto_actual = pantalla.get_size()
+        escala_final = min(ancho_actual / ANCHO, alto_actual / ALTO)
+        tamano_final = (
+            max(1, round(ANCHO * escala_final)),
+            max(1, round(ALTO * escala_final))
+        )
+        posicion_final = (
+            (ancho_actual - tamano_final[0]) // 2,
+            (alto_actual - tamano_final[1]) // 2
+        )
+        pantalla.fill((10, 18, 26))
+        pantalla.blit(pygame.transform.smoothscale(ventana, tamano_final), posicion_final)
 
 
 
@@ -7463,11 +7497,13 @@ while juego_activo:
 
 
 
+        if combate.activo or mostrar_gramatica_activa or mostrar_diario_activo:
+            mensajes.fill((10, 18, 26))
         composicion.blit(ventana, (0, ALTO_CABECERA))
 
 
 
-        pygame.transform.smoothscale(composicion, tamano_interfaz, interfaz_escalada)
+        pygame.transform.scale(composicion, tamano_interfaz, interfaz_escalada)
 
 
 
@@ -7487,6 +7523,19 @@ while juego_activo:
 
 
 
+    # Fundido de entrada: la escena ya usa el tamaño actual de la ventana.
+    tiempo_fundido = pygame.time.get_ticks() - inicio_fundido
+    if tiempo_fundido < 650:
+        velo_entrada = pygame.Surface(pantalla.get_size())
+        velo_entrada.fill((0, 0, 0))
+        velo_entrada.set_alpha(round(255 * (1 - tiempo_fundido / 650)))
+        pantalla.blit(velo_entrada, (0, 0))
+
+    dialogo_visible = (not combate.activo and not mostrar_diario_activo
+                       and not mostrar_gramatica_activa)
+    dialogo_ui.visibilidad(dialogo_visible)
+    audio_juego.actualizar_dialogo(dialogo_ui.personaje, dialogo_visible and dialogo_ui.escribiendo)
+    audio_juego.actualizar(combate)
     pygame.display.update()
 
 
@@ -7551,4 +7600,5 @@ while juego_activo:
 
 
 
+audio_juego.detener()
 pygame.quit()

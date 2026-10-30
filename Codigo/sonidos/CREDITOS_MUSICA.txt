@@ -1,0 +1,62 @@
+ZONA CERO: ÚLTIMO REFUGIO — MÚSICA
+================================
+
+ESTADO ACTUAL: música desactivada en el juego y los menús. Los recursos
+musicales anteriores se conservan aquí, pero no se cargan ni se reproducen.
+El audio activo utiliza voces y efectos originales de botones y combate.
+
+Los archivos se incluyen localmente; el juego no requiere conexión ni cuentas.
+Los nombres locales indican el escenario, no el título original de la obra.
+Las piezas se conservan completas, sin cambiar su velocidad ni composición.
+El volumen y los fundidos se aplican durante la reproducción.
+
+CALLE, HOSPITAL, COMISARÍA, BASE MILITAR Y SÓTANO
+Autor: Joth
+Colección: Ambience Pack 1 -- Sci Fi Horror
+Fuente: https://opengameart.org/content/ambience-pack-1-sci-fi-horror
+Licencia: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+calle.mp3         — The Surreal Truth
+hospital.mp3      — Final Captain's Log
+comisaria.mp3     — Cage of the Cryptid
+base_militar.mp3  — Infestation in the Control Room
+sotano.mp3        — The Depths of Hell
+
+REFUGIO
+Título publicado: Save sound (suspense)
+Autor: allen yatsura
+Archivo local: refugio.mp3
+Fuente: https://opengameart.org/content/save-sound-suspense
+Licencia: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+MENÚ Y PAUSA
+Título: Ambient Horror Track 01
+Music by Cleyton Kauffman - https://soundcloud.com/cleytonkauffman
+Archivo local: menu.ogg
+Fuente: https://opengameart.org/content/ambient-horror-track-01
+Licencia: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+COMBATE
+Título: Perpetual Tension
+Autor: Zander Noriega
+Perfil: https://opengameart.org/users/zander-noriega
+Archivo local: combate.mp3
+Fuente: https://opengameart.org/content/perpetual-tension
+Licencia: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+Se permite compartir y adaptar con atribución, enlace a la licencia e indicación
+de los cambios. No se aplican restricciones adicionales a esta pieza.
+Cambios: únicamente el nombre del archivo dentro del proyecto; audio intacto.
+
+EFECTOS DE DIÁLOGO, BOTONES Y COMBATE
+Los WAV de Elena y Marcos, los tonos de botones y los efectos de combate son
+síntesis original del proyecto. generar.py regenera las voces y los efectos
+de combate; audio_menu.py genera los tonos de botones. No reemplazan la música
+licenciada.
+
+Preparación de recursos: descargar_musica.py descarga las obras de sus páginas
+originales. Las licencias se revisaron en las páginas de los autores el
+30 de octubre de 2026. Conservar este archivo al distribuir el juego.

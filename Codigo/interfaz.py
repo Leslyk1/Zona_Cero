@@ -1,4 +1,5 @@
-from arte import fuente as fuente_arte
+from arte_inicio import fuente as fuente_arte, panel as panel_pixel
+from dialogos_ui import indicador_interaccion
 
 from batalla import dibujar_batalla, BOTONES_COMBATE
 
@@ -34,7 +35,7 @@ ROJO_COMBATE = (255, 65, 65)
 
 BLANCO = (235, 240, 238)
 
-GRIS_TEXTO = (149, 174, 183)
+GRIS_TEXTO = (185, 201, 205)
 
 GRIS_BORDE = (70, 88, 88)
 
@@ -46,155 +47,15 @@ def _fuente(tamano, negrita=False):
 
     # Diego: tipografía más legible y almacenada en caché para toda la interfaz.
 
-    return fuente_arte(tamano + 2, negrita)
+    return fuente_arte(max(16, tamano + 2), negrita)
 
 
 
 
 
-def _panel(
-
-    ventana,
-
-    rectangulo,
-
-    color_borde,
-
-    grosor=2,
-
-    recorte=10
-
-):
-
-
-
-    x = rectangulo.x
-
-    y = rectangulo.y
-
-    ancho = rectangulo.width
-
-    alto = rectangulo.height
-
-
-
-
-
-    puntos = [
-
-        (x + recorte, y),
-
-        (x + ancho - recorte, y),
-
-        (x + ancho, y + recorte),
-
-        (x + ancho, y + alto - recorte),
-
-        (x + ancho - recorte, y + alto),
-
-        (x + recorte, y + alto),
-
-        (x, y + alto - recorte),
-
-        (x, y + recorte)
-
-    ]
-
-
-
-
-
-    sombra = [
-
-        (punto_x + 3, punto_y + 3)
-
-        for punto_x, punto_y in puntos
-
-    ]
-
-
-
-
-
-    pygame.draw.polygon(
-
-        ventana,
-
-        (0, 5, 5),
-
-        sombra
-
-    )
-
-
-
-
-
-    pygame.draw.polygon(
-
-        ventana,
-
-        FONDO_PANEL,
-
-        puntos
-
-    )
-
-
-
-
-
-    pygame.draw.lines(
-
-        ventana,
-
-        color_borde,
-
-        True,
-
-        puntos,
-
-        grosor
-
-    )
-
-
-
-
-
-    # Detalles cortos de las esquinas.
-
-    pygame.draw.line(
-
-        ventana,
-
-        color_borde,
-
-        (x + 4, y + 16),
-
-        (x + 4, y + 35),
-
-        3
-
-    )
-
-
-
-
-
-    pygame.draw.line(
-
-        ventana,
-
-        color_borde,
-
-        (x + ancho - 28, y + alto - 5),
-
-        (x + ancho - 10, y + alto - 5),
-
-        3
-
-    )
+def _panel(ventana, rectangulo, color_borde, grosor=2, recorte=10):
+    # Misma chapa remachada que la portada, sin cambiar el área del panel.
+    panel_pixel(ventana, rectangulo, FONDO_PANEL, color_borde)
 
 
 
@@ -220,7 +81,7 @@ def _caja_interna(
 
         rectangulo,
 
-        border_radius=4
+        border_radius=0
 
     )
 
@@ -238,7 +99,7 @@ def _caja_interna(
 
         1,
 
-        border_radius=4
+        border_radius=0
 
     )
 
@@ -342,227 +203,40 @@ def _dividir_texto(
     return lineas
 
 
-def _icono_informacion(
+def _icono_informacion(ventana, centro, color):
+    rect = pygame.Rect(0, 0, 30, 30)
+    rect.center = centro
+    pygame.draw.rect(ventana, color, rect, 2)
+    texto = _fuente(21, True).render("i", True, color)
+    ventana.blit(texto, texto.get_rect(center=centro))
 
-    ventana,
 
-    centro,
 
-    color
 
-):
 
+def _icono_mochila(ventana, x, y):
+    pygame.draw.rect(ventana, VERDE_NEON, (x + 6, y + 1, 10, 8), 2)
+    pygame.draw.rect(ventana, VERDE_NEON, (x, y + 7, 22, 25), 2)
+    pygame.draw.rect(ventana, VERDE_NEON, (x + 4, y + 19, 14, 8), 2)
 
 
-    pygame.draw.circle(
 
-        ventana,
 
-        color,
 
-        centro,
+def _icono_corazon(ventana, x, y):
+    filas = ("0110110", "1111111", "1111111", "0111110", "0011100", "0001000")
+    for fila, bloques in enumerate(filas):
+        for columna, bloque in enumerate(bloques):
+            if bloque == "1":
+                pygame.draw.rect(ventana, ROJO_VIDA, (x + columna*3, y + fila*3, 3, 3))
 
-        17,
 
-        2
 
-    )
 
 
-
-
-
-    fuente = _fuente(21, True)
-
-
-
-    texto = fuente.render(
-
-        "i",
-
-        True,
-
-        color
-
-    )
-
-
-
-
-
-    ventana.blit(
-
-        texto,
-
-        texto.get_rect(center=centro)
-
-    )
-
-
-
-
-
-def _icono_mochila(
-
-    ventana,
-
-    x,
-
-    y
-
-):
-
-
-
-    pygame.draw.rect(
-
-        ventana,
-
-        VERDE_NEON,
-
-        (x, y + 7, 22, 25),
-
-        2,
-
-        border_radius=4
-
-    )
-
-
-
-
-
-    pygame.draw.arc(
-
-        ventana,
-
-        VERDE_NEON,
-
-        (x + 5, y, 12, 15),
-
-        3.1,
-
-        6.3,
-
-        2
-
-    )
-
-
-
-
-
-    pygame.draw.line(
-
-        ventana,
-
-        VERDE_NEON,
-
-        (x + 5, y + 20),
-
-        (x + 17, y + 20),
-
-        2
-
-    )
-
-
-
-
-
-def _icono_corazon(
-
-    ventana,
-
-    x,
-
-    y
-
-):
-
-
-
-    pygame.draw.circle(
-
-        ventana,
-
-        VERDE_NEON,
-
-        (x + 7, y + 7),
-
-        7
-
-    )
-
-
-
-
-
-    pygame.draw.circle(
-
-        ventana,
-
-        VERDE_NEON,
-
-        (x + 18, y + 7),
-
-        7
-
-    )
-
-
-
-
-
-    pygame.draw.polygon(
-
-        ventana,
-
-        VERDE_NEON,
-
-        [
-
-            (x + 1, y + 8),
-
-            (x + 24, y + 8),
-
-            (x + 12, y + 23)
-
-        ]
-
-    )
-
-
-
-
-
-def _icono_pila(
-
-    ventana,
-
-    x,
-
-    y
-
-):
-
-
-
-    for desplazamiento in [0, 6, 12]:
-
-
-
-        pygame.draw.ellipse(
-
-            ventana,
-
-            AMARILLO_NEON,
-
-            (x, y + desplazamiento, 24, 9),
-
-            2
-
-        )
+def _icono_pila(ventana, x, y):
+    for desplazamiento in (0, 8, 16):
+        pygame.draw.rect(ventana, AMARILLO_NEON, (x, y + desplazamiento, 24, 6), 2)
 
 
 
@@ -608,7 +282,7 @@ def _tecla(
 
         caja,
 
-        border_radius=6
+        border_radius=0
 
     )
 
@@ -626,7 +300,7 @@ def _tecla(
 
         2,
 
-        border_radius=6
+        border_radius=0
 
     )
 
@@ -672,26 +346,16 @@ def _tecla(
 
 
 
-def mostrar_interaccion(ventana, mensaje):
-
-    # Diego: esta función dibuja en la franja inferior, fuera del mapa.
-
+def mostrar_interaccion(ventana, mensaje, mapa=None, jugador=None):
     fondo = pygame.Rect(620, 10, 370, 60)
-
-    _panel(ventana, fondo, VERDE_NEON, 2, 9)
-
-    tiene_tecla = mensaje.startswith("E -")
-
-    if tiene_tecla:
-
+    _panel(ventana, fondo, VERDE_NEON if mensaje.startswith("E -") else AMARILLO_NEON, 2, 9)
+    if mapa is not None and jugador is not None:
+        indicador_interaccion(mapa, jugador.rectangulo, mensaje)
+    if mensaje.startswith("E -"):
         _tecla(ventana, "E", 632, 20, VERDE_NEON)
-
         mensaje = mensaje[3:].strip()
-
     else:
-
         _icono_informacion(ventana, (654, 40), AMARILLO_NEON)
-
     _texto_en_lineas(ventana, mensaje, 690, 23, 280, 2, _fuente(13, True))
 
 
@@ -1090,15 +754,15 @@ def mostrar_vida(ventana, jugador):
 
     barra = pygame.Rect(23, 192, 204, 18)
 
-    pygame.draw.rect(ventana, (30, 35, 35), barra, border_radius=3)
+    pygame.draw.rect(ventana, (30, 35, 35), barra, border_radius=0)
 
     relleno = pygame.Rect(barra.x + 3, barra.y + 3,
 
                          int((barra.width - 6) * porcentaje), barra.height - 6)
 
-    pygame.draw.rect(ventana, ROJO_VIDA, relleno, border_radius=2)
+    pygame.draw.rect(ventana, ROJO_VIDA, relleno, border_radius=0)
 
-    pygame.draw.rect(ventana, BLANCO, barra, 2, border_radius=3)
+    pygame.draw.rect(ventana, BLANCO, barra, 2, border_radius=0)
 
 
 
@@ -1112,16 +776,12 @@ def mostrar_vida(ventana, jugador):
 
 
 
-def mostrar_dialogo(ventana, mensaje):
-
-    # Diego: los diálogos comparten la franja inferior con la interacción,
-
-    # pero ocupan su propio espacio y pueden mostrar dos líneas.
-
+def mostrar_dialogo(ventana, mensaje, conversacion=None):
+    if conversacion is not None and conversacion.personaje and conversacion.mensaje == mensaje:
+        conversacion.dibujar(ventana)
+        return
     _panel(ventana, pygame.Rect(10, 10, 600, 60), VERDE_NEON, 2, 8)
-
     _icono_informacion(ventana, (35, 40), VERDE_NEON)
-
     _texto_en_lineas(ventana, mensaje, 65, 22, 530, 2, _fuente(13))
 
 
@@ -1248,8 +908,8 @@ def mostrar_inventario(ventana, inventario):
     inicio_x = contenido.x + 6
     inicio_y = contenido.y + 5
 
-    fuente_nombre = _fuente(10, True)
-    fuente_cantidad = _fuente(9, True)
+    fuente_nombre = fuente_arte(14, True)
+    fuente_cantidad = fuente_arte(14, True)
 
     clip_anterior = ventana.get_clip()
     ventana.set_clip(contenido.inflate(-2, -2))
@@ -1430,9 +1090,9 @@ def _fuente_reglas_que_cabe(
 ):
 
     # Probamos desde una letra grande hacia abajo.
-    for tamano in (13, 12, 11, 10):
+    for tamano in (16, 15, 14):
 
-        fuente = _fuente(tamano)
+        fuente = fuente_arte(tamano)
         alto_linea = fuente.get_linesize()
         altura_total = 0
 
@@ -1444,13 +1104,13 @@ def _fuente_reglas_que_cabe(
             )
             altura_total += (
                 len(lineas) * alto_linea
-                + 5
+                + 4
             )
 
         if altura_total <= alto_disponible:
             return fuente
 
-    return _fuente(10)
+    return fuente_arte(14)
 
 
 def _dibujar_pagina_reglas(
@@ -1526,7 +1186,7 @@ def _dibujar_pagina_reglas(
             )
             posicion_y += alto_linea
 
-        posicion_y += 5
+        posicion_y += 4
 
     ventana.set_clip(clip_anterior)
 
@@ -1777,23 +1437,18 @@ def mostrar_controles(ventana):
 
     for fila, texto in enumerate(("W A S D  Moverse", "E  Interactuar", "J  Misiones y progreso", "G  Gramática / BNF", "X  Explorar en la calle")):
 
-        ventana.blit(fuente.render(texto, True, GRIS_TEXTO), (23, 563 + fila * 16))
+        ventana.blit(fuente.render(texto, True, GRIS_TEXTO), (23, 555 + fila * 18))
 
 
 
 
 
 def _marca_objetivo(ventana, centro, hecho):
-
     color = VERDE_NEON if hecho else GRIS_BORDE
-
-    pygame.draw.circle(ventana, color, centro, 7, 2)
-
+    x, y = centro
+    pygame.draw.rect(ventana, color, (x-6, y-6, 12, 12), 2)
     if hecho:
-
-        x, y = centro
-
-        pygame.draw.lines(ventana, VERDE_NEON, False, [(x-3, y), (x-1, y+3), (x+4, y-3)], 2)
+        pygame.draw.rect(ventana, VERDE_NEON, (x-2, y-2, 4, 4))
 
 
 
@@ -1809,29 +1464,30 @@ def mostrar_resumen_misiones(ventana, diario, mision):
 
     aviso = mision.completada and pygame.time.get_ticks() - mision.tiempo_completada < 4000
 
-    titulo = "¡MISIÓN COMPLETADA!" if aviso else "OBJETIVOS  " + str(diario.completadas) + "/3"
+    titulo = "¡MISIÓN COMPLETADA!" if aviso else f"OBJETIVOS  {diario.completadas}/{len(diario.misiones)}"
 
     ventana.blit(_fuente(13, True).render(titulo, True, VERDE_NEON if aviso else AMARILLO_NEON), (23, 437))
 
-    abreviados = ("Ayudar a Elena", "Despejar comisaría", "Despejar el sótano")
+    abreviados = ("Ayudar a Elena", "Despejar comisaría", "Despejar el sótano",
+                 "Conseguir tarjeta militar")
 
     for i, (nombre, m) in enumerate(zip(abreviados, diario.misiones)):
 
-        y = 470 + i*21
+        y = 467 + i*19
 
         _marca_objetivo(ventana, (30, y), m["completa"])
 
         color = VERDE_NEON if m["completa"] else BLANCO
 
-        ventana.blit(_fuente(12).render(nombre, True, color), (44, y-9))
+        ventana.blit(_fuente(11).render(nombre, True, color), (44, y-10))
 
     barra = pygame.Rect(23, 538, 204, 4)
 
-    pygame.draw.rect(ventana, GRIS_BORDE, barra, border_radius=2)
+    pygame.draw.rect(ventana, GRIS_BORDE, barra, border_radius=0)
 
     if diario.porcentaje:
 
-        pygame.draw.rect(ventana, VERDE_NEON, (barra.x, barra.y, round(barra.width*diario.porcentaje/100), 4), border_radius=2)
+        pygame.draw.rect(ventana, VERDE_NEON, (barra.x, barra.y, round(barra.width*diario.porcentaje/100), 4), border_radius=0)
 
 
 
@@ -2091,7 +1747,7 @@ def mostrar_diario(
 
         ),
 
-        border_radius=2
+        border_radius=0
 
     )
 
@@ -2133,7 +1789,7 @@ def mostrar_diario(
 
             ),
 
-            border_radius=2
+            border_radius=0
 
         )
 
@@ -2563,7 +2219,7 @@ def mostrar_diario(
 
         inicio_pasos = (
 
-            y + 103
+            y + 115
 
         )
 

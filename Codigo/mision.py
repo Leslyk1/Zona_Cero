@@ -218,7 +218,7 @@ class DiarioMisiones:
                     radio_entregada,
 
                 "descripcion":
-                    "Marcos necesita una radio para intentar contactar a los militares.",
+                    "Devuelve la radio a Marcos para conseguir la tarjeta militar.",
 
                 "pasos": [
 
@@ -233,7 +233,7 @@ class DiarioMisiones:
                     ),
 
                     (
-                        "Regresa con Marcos",
+                        "Entrega la radio y recibe la tarjeta militar",
                         radio_entregada
                     )
                 ]
